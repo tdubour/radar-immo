@@ -57,7 +57,7 @@
     {
       "id": "geolocaux-41",
       "label": "Geolocaux Loir-et-Cher",
-      "waitMs": 1200,
+      "waitMs": 2000,
       "targets": [
         { "url": "https://www.geolocaux.com/vente/entrepot/le-controis-en-sologne-41700/", "city": "Le Controis-en-Sologne", "postalCode": "41700" },
         { "url": "https://www.geolocaux.com/vente/entrepot/mer-41500/", "city": "Mer", "postalCode": "41500" },
@@ -73,7 +73,7 @@
     {
       "id": "geolocaux-45",
       "label": "Geolocaux Loiret",
-      "waitMs": 1200,
+      "waitMs": 2000,
       "targets": [
         { "url": "https://www.geolocaux.com/vente/entrepot/orleans-45000/", "city": "Orléans", "postalCode": "45000" },
         { "url": "https://www.geolocaux.com/vente/entrepot/olivet-45160/", "city": "Olivet", "postalCode": "45160" },
@@ -91,7 +91,7 @@
     {
       "id": "geolocaux-18",
       "label": "Geolocaux Cher",
-      "waitMs": 1200,
+      "waitMs": 2000,
       "targets": [
         { "url": "https://www.geolocaux.com/vente/entrepot/bourges-18000/", "city": "Bourges", "postalCode": "18000" },
         { "url": "https://www.geolocaux.com/vente/entrepot/vierzon-18100/", "city": "Vierzon", "postalCode": "18100" }

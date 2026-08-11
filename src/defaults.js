@@ -7,6 +7,7 @@ export function createDefaultProject() {
     dpe: "D",
     acquisition: {
       purchasePrice: 180000,
+      surfaceM2: 180,
       agencyFees: 0,
       notaryRatePct: 8,
       works: 35000,
@@ -28,6 +29,8 @@ export function createDefaultProject() {
     longTerm: {
       monthlyRent: 2200,
       monthlyParkingAndAnnexes: 0,
+      rentDeferralMonths: 0,
+      vacancyMonths: 0,
       vacancyPct: 5,
       unpaidPct: 1,
       managementPct: 0,
@@ -36,7 +39,8 @@ export function createDefaultProject() {
       propertyTaxAnnual: 2500,
       coproNonRecoverableAnnual: 0,
       pnoAnnual: 450,
-      accountingAnnual: 1200,
+      accountingMode: "internal",
+      accountingAnnual: 0,
       cfeAnnual: 300,
       ownerUtilitiesAnnual: 600,
       otherAnnual: 300

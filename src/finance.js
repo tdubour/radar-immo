@@ -109,13 +109,38 @@ function fixedLongTermCharges(project) {
     x.cfeAnnual + x.ownerUtilitiesAnnual + x.otherAnnual;
 }
 
+function bankability(project, result) {
+  const acquisition = result.acquisition;
+  const equityRatio = divide(acquisition.equity, acquisition.totalProjectCost);
+  const loanToCost = divide(acquisition.loanAmount, acquisition.totalProjectCost);
+  const dscr = result.longTerm.dscr;
+  const cashflowAfterTaxMonthly = result.longTerm.cashflowAfterTaxMonthly;
+  const score = clamp(
+    clamp((dscr - 0.8) / 0.7, 0, 1) * 40 +
+    clamp((cashflowAfterTaxMonthly + 300) / 1000, 0, 1) * 25 +
+    clamp(equityRatio / 0.25, 0, 1) * 20 +
+    clamp((0.95 - loanToCost) / 0.35, 0, 1) * 15,
+    0, 100
+  );
+  let verdict = "Non bancable en l’état";
+  if (score >= 75) verdict = "Très bancable sous réserve";
+  else if (score >= 60) verdict = "Bancable à défendre";
+  else if (score >= 45) verdict = "Bancabilité fragile";
+  const comment = score >= 60
+    ? "Le projet présente une couverture de dette et un cash-flow compatibles avec un dossier SCI IS, sous réserve de la qualité des baux, des justificatifs de loyers, de l’apport et de la validation bancaire."
+    : "Le projet doit être renforcé avant présentation : augmenter l’apport, réduire le prix ou les charges, sécuriser les loyers et documenter précisément le plan de financement.";
+  return { score, verdict, dscr, cashflowAfterTaxMonthly, equityRatio, loanToCost, comment };
+}
+
 function longTermCore(project, targetRent = project.longTerm.monthlyRent) {
   const acquisition = acquisitionSummary(project);
   const loan = loanSummary(project, acquisition);
   const depreciation = annualDepreciation(project, acquisition);
   const l = project.longTerm;
   const grossRevenueAnnual = (targetRent + l.monthlyParkingAndAnnexes) * 12;
-  const vacancyLoss = grossRevenueAnnual * pct(l.vacancyPct);
+  const deferralMonths = clamp(l.rentDeferralMonths, 0, 12);
+  const vacancyRate = Math.max(pct(l.vacancyPct), clamp(Number(l.vacancyMonths || 0) / 12, 0, 1));
+  const vacancyLoss = grossRevenueAnnual * Math.min(1, vacancyRate + deferralMonths / 12);
   const afterVacancy = grossRevenueAnnual - vacancyLoss;
   const unpaidProvision = afterVacancy * pct(l.unpaidPct);
   const effectiveRevenueAnnual = afterVacancy - unpaidProvision;
@@ -145,7 +170,7 @@ function longTermCore(project, targetRent = project.longTerm.monthlyRent) {
     netYield: divide(noiAnnual, acquisition.totalProjectCost),
     returnOnEquity: divide(cashflowAfterTaxAnnual, acquisition.equity),
     dscr: divide(noiAnnual, loan.annualDebtService),
-    details: { vacancyLoss, unpaidProvision, management, gli, maintenance, fixedCharges }
+    details: { vacancyLoss, unpaidProvision, management, gli, maintenance, fixedCharges, vacancyRate, deferralMonths }
   };
 }
 
@@ -282,7 +307,7 @@ export function flipResult(project) {
 
 export function analyzeProject(project) {
   const acquisition = acquisitionSummary(project);
-  return {
+  const result = {
     acquisition,
     loan: loanSummary(project, acquisition),
     depreciationAnnual: annualDepreciation(project, acquisition),
@@ -290,6 +315,8 @@ export function analyzeProject(project) {
     shortTerm: shortTermResult(project),
     flip: flipResult(project)
   };
+  result.bankability = bankability(project, result);
+  return result;
 }
 
 export function scenarioTable(project) {
@@ -356,6 +383,7 @@ export function longTermProjection(project) {
   const loan = loanSummary(project, acquisition);
   const schedule = amortizationSchedule(acquisition.loanAmount, project.financing.annualRatePct, project.financing.durationYears);
   const depreciation = annualDepreciation(project, acquisition);
+  const depreciationBase = depreciation * Math.max(1, project.projection.years);
   const base = longTermResult(project);
   let revenue = base.effectiveRevenueAnnual;
   let charges = base.operatingChargesAnnual;
@@ -365,18 +393,33 @@ export function longTermProjection(project) {
     const period = schedule.slice((year - 1) * 12, year * 12);
     const interest = period.reduce((sum, row) => sum + row.interest, 0);
     const principalAndInterest = period.reduce((sum, row) => sum + row.payment, 0);
+    const principalPaid = period.reduce((sum, row) => sum + row.principalPaid, 0);
     const insurance = period.length * loan.monthlyInsurance;
     const noi = revenue - charges;
-    const tax = corporateTax(noi - interest - insurance - depreciation, project.sci.reducedTaxThreshold, project.sci.reducedTaxRatePct, project.sci.normalTaxRatePct);
+    const taxableResult = noi - interest - insurance - depreciation;
+    const tax = corporateTax(taxableResult, project.sci.reducedTaxThreshold, project.sci.reducedTaxRatePct, project.sci.normalTaxRatePct);
     const annualCashflow = noi - principalAndInterest - insurance - tax;
+    const accumulatedDepreciation = Math.min(depreciationBase, depreciation * year);
+    const bookValue = Math.max(0, acquisition.totalProjectCost - accumulatedDepreciation);
     cumulative += annualCashflow;
     rows.push({
       year,
       revenue,
       charges,
+      interest,
+      principalPaid,
+      debtService: principalAndInterest + insurance,
       debtBalance: period.at(-1)?.balance ?? 0,
+      depreciation,
+      taxableResult,
+      corporateTax: tax,
+      cashflowBeforeTax: noi - principalAndInterest - insurance,
+      cashflowAfterTax: annualCashflow,
       annualCashflow,
       cumulativeCashflow: cumulative,
+      cashAvailable: cumulative,
+      bookValue,
+      resaleTax: Math.max(0, (project.flip.resalePrice - bookValue) * pct(project.sci.normalTaxRatePct)),
       estimatedValue: project.acquisition.purchasePrice * Math.pow(1 + pct(project.projection.propertyGrowthPct), year)
     });
     revenue *= 1 + pct(project.projection.rentGrowthPct);

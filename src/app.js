@@ -9,10 +9,13 @@ import {
   scenarioTable
 } from "./finance.js";
 import { barChart, chartCard, lineChart } from "./charts.js";
+import { createDefaultRadarConfig, rankCandidates } from "./radar.js";
 
 const DRAFT_KEY = "radar-immo:draft:v1";
 const SAVED_KEY = "radar-immo:projects:v1";
 const THEME_KEY = "radar-immo:theme";
+const RADAR_CONFIG_KEY = "radar-immo:watch-config:v1";
+const RADAR_LISTINGS_KEY = "radar-immo:listings:v1";
 const app = document.querySelector("#app");
 
 const e = (value = "") => String(value).replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[char]));
@@ -24,9 +27,31 @@ function parseStorage(key, fallback) {
   try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; }
 }
 
+function mergeDefaults(defaults, value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return structuredClone(defaults);
+  const merged = structuredClone(defaults);
+  Object.entries(value).forEach(([key, child]) => {
+    if (child && typeof child === "object" && !Array.isArray(child) && merged[key] && typeof merged[key] === "object") merged[key] = mergeDefaults(merged[key], child);
+    else merged[key] = child;
+  });
+  return merged;
+}
+
+function hydrateProject(value) {
+  const hadAccountingMode = Boolean(value?.longTerm?.accountingMode);
+  const project = mergeDefaults(createDefaultProject(), value);
+  if (!hadAccountingMode) {
+    project.longTerm.accountingMode = "internal";
+    project.longTerm.accountingAnnual = 0;
+  }
+  return project;
+}
+
 const state = {
-  project: parseStorage(DRAFT_KEY, createDefaultProject()),
-  saved: parseStorage(SAVED_KEY, []),
+  project: hydrateProject(parseStorage(DRAFT_KEY, createDefaultProject())),
+  saved: parseStorage(SAVED_KEY, []).map(hydrateProject),
+  radarConfig: mergeDefaults(createDefaultRadarConfig(), parseStorage(RADAR_CONFIG_KEY, createDefaultRadarConfig())),
+  radarListings: parseStorage(RADAR_LISTINGS_KEY, []),
   page: "dashboard",
   formTab: "acquisition",
   theme: localStorage.getItem(THEME_KEY) || "dark",
@@ -39,6 +64,7 @@ const navItems = [
   ["dashboard", "⌂", "Tableau de bord"],
   ["analysis", "∑", "Analyse du projet"],
   ["sensitivity", "⌁", "Seuils & scénarios"],
+  ["radar", "◎", "Radar annonces"],
   ["projects", "▣", "Projets enregistrés"],
   ["methodology", "?", "Méthodologie"]
 ];
@@ -54,7 +80,8 @@ const formTabs = [
 
 const controls = {
   acquisition: [
-    ["acquisition.purchasePrice", "Prix d’achat négocié", 10000, 2000000, 1000, "€", "Prix hors frais annexes. Le financement et les rendements partent de cette valeur."],
+  ["acquisition.purchasePrice", "Prix d’achat négocié", 10000, 2000000, 1000, "€", "Prix hors frais annexes. Le financement et les rendements partent de cette valeur."],
+    ["acquisition.surfaceM2", "Surface du logement", 1, 5000, 1, "m²", "Surface utile ou habitable utilisée pour le prix au m²."],
     ["acquisition.notaryRatePct", "Frais de notaire (% du prix)", 0, 12, .1, "%", "Hypothèse paramétrable. Le taux réel dépend de la nature de l’acquisition."],
     ["acquisition.works", "Travaux estimés", 0, 1000000, 1000, "€", "Budget travaux hors aléas."],
     ["acquisition.worksContingencyPct", "Aléas travaux (% du budget travaux)", 0, 50, 1, "%", "Provision de sécurité ajoutée au coût total."],
@@ -75,6 +102,8 @@ const controls = {
   longTerm: [
     ["longTerm.monthlyRent", "Loyer mensuel total hors charges", 0, 30000, 50, "€", "Somme des loyers de tous les lots."],
     ["longTerm.monthlyParkingAndAnnexes", "Parking et annexes par mois", 0, 5000, 25, "€", "Revenus de parkings, caves ou dépendances."],
+    ["longTerm.rentDeferralMonths", "Différé de loyer", 0, 24, 1, "mois", "Période sans loyer prévue au démarrage ou pendant les travaux."],
+    ["longTerm.vacancyMonths", "Vacance locative annuelle", 0, 12, .5, "mois", "Nombre moyen de mois non loués par an. Converti automatiquement en taux."],
     ["longTerm.vacancyPct", "Vacance longue durée (% des loyers)", 0, 30, .5, "%", "Perte de loyers liée aux périodes sans locataire."],
     ["longTerm.unpaidPct", "Provision impayés (% après vacance)", 0, 15, .5, "%", "Provision de risque sur les loyers après vacance."],
     ["longTerm.managementPct", "Gestion locative (% des loyers encaissés)", 0, 15, .5, "%", "Commission de gestion hors GLI."],
@@ -83,7 +112,7 @@ const controls = {
     ["longTerm.propertyTaxAnnual", "Taxe foncière annuelle", 0, 30000, 100, "€", "Part restant à la charge du propriétaire."],
     ["longTerm.coproNonRecoverableAnnual", "Copropriété non récupérable/an", 0, 30000, 100, "€", "Charges de copropriété non refacturables."],
     ["longTerm.pnoAnnual", "Assurance PNO/an", 0, 10000, 50, "€", "Assurance propriétaire non occupant."],
-    ["longTerm.accountingAnnual", "Expert-comptable/an", 0, 10000, 100, "€", "Comptabilité et obligations annuelles."],
+    ["longTerm.accountingAnnual", "Coût comptable annuel", 0, 10000, 100, "€", "0 € en tenue interne. Conserver un budget ponctuel si une validation ou une liasse externe devient nécessaire."],
     ["longTerm.cfeAnnual", "CFE/an", 0, 10000, 50, "€", "Hypothèse de cotisation foncière des entreprises."],
     ["longTerm.ownerUtilitiesAnnual", "Fluides restant au propriétaire/an", 0, 30000, 100, "€", "Eau, électricité, internet ou chauffage collectif non récupéré."],
     ["longTerm.otherAnnual", "Autres charges annuelles", 0, 30000, 100, "€", "Toute charge récurrente non classée ailleurs."]
@@ -142,6 +171,8 @@ function setPath(object, path, value) {
 function persist() {
   localStorage.setItem(DRAFT_KEY, JSON.stringify(state.project));
   localStorage.setItem(SAVED_KEY, JSON.stringify(state.saved));
+  localStorage.setItem(RADAR_CONFIG_KEY, JSON.stringify(state.radarConfig));
+  localStorage.setItem(RADAR_LISTINGS_KEY, JSON.stringify(state.radarListings));
 }
 function showToast(message) {
   state.toast = message;
@@ -244,15 +275,20 @@ function shell(content) {
       <header class="topbar"><div><span class="eyebrow">${e(state.project.city || "Projet sans ville")}</span><h1>${e(pageLabel(state.page))} — ${e(state.project.name || "Sans titre")}</h1></div>${headerActions()}</header>
       <main class="content">${content}</main>
     </div>
-  </div>${state.toast ? `<div class="toast">${e(state.toast)}</div>` : ""}<input id="import-json" class="hidden" type="file" accept="application/json,.json">`;
+  </div>${state.toast ? `<div class="toast">${e(state.toast)}</div>` : ""}<input id="import-json" class="hidden" type="file" accept="application/json,.json"><input id="import-radar-json" class="hidden" type="file" accept="application/json,.json">`;
 }
 
 function dashboardHtml() {
   const result = analyzeProject(state.project);
+  const internalProject = setPath(setPath(state.project, "longTerm.accountingMode", "internal"), "longTerm.accountingAnnual", 0);
+  const externalProject = setPath(setPath(state.project, "longTerm.accountingMode", "external"), "longTerm.accountingAnnual", 1200);
+  const internalCashflow = analyzeProject(internalProject).longTerm.cashflowAfterTaxMonthly;
+  const externalCashflow = analyzeProject(externalProject).longTerm.cashflowAfterTaxMonthly;
   const recommendation = getRecommendation(result);
   const scenarios = scenarioTable(state.project);
   const occupancy = occupancySensitivity(state.project);
   const warnings = projectWarnings(result);
+  const bankability = result.bankability;
   const strategyReason = recommendation.strategy === "Achat-revente"
     ? `${euros(recommendation.netProfit)} de marge nette estimée sur ${state.project.flip.holdingMonths} mois.`
     : `${euros(recommendation.cashflowAfterTaxMonthly)}/mois après IS estimé, score ${recommendation.score.toFixed(0)}/100.`;
@@ -269,6 +305,7 @@ function dashboardHtml() {
       ${kpi("Montant financé", euros(result.loan.principal), `${euros(result.acquisition.equity)} d’apport`)}
       ${kpi("Mensualité complète", euros(result.loan.monthlyDebtService), `capital + intérêts + ${euros(result.loan.monthlyInsurance)} d’assurance`)}
       ${kpi("Amortissements SCI IS", euros(result.depreciationAnnual), "estimation annuelle paramétrable")}
+      ${kpi("Note bancaire SCI IS", `${bankability.score.toFixed(0)}/100`, bankability.verdict)}
     </section>
 
     <section class="panel recommendation-panel">
@@ -277,6 +314,27 @@ function dashboardHtml() {
         ${strategyCard(result.longTerm, recommendation.strategy === result.longTerm.strategy)}
         ${strategyCard(result.shortTerm, recommendation.strategy === result.shortTerm.strategy)}
         ${strategyCard(result.flip, recommendation.strategy === result.flip.strategy)}
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-title"><div><span class="eyebrow">Financement professionnel</span><h2>Bancabilité SCI à l’IS</h2></div><p>Analyse basée uniquement sur la société et l’opération, sans revenus personnels.</p></div>
+      <div class="threshold-grid">
+        <article class="threshold-card"><span>DSCR avant IS</span><strong>${bankability.dscr.toFixed(2)}×</strong><small>Objectif bancaire courant : ≥ 1,20×</small></article>
+        <article class="threshold-card"><span>Cash-flow après IS</span><strong class="${bankability.cashflowAfterTaxMonthly >= 0 ? "positive-text" : "negative-text"}">${euros(bankability.cashflowAfterTaxMonthly)}/mois</strong><small>Après dette et IS estimé</small></article>
+        <article class="threshold-card"><span>Apport / coût total</span><strong>${percent(bankability.equityRatio)}</strong><small>Effort de fonds propres</small></article>
+        <article class="threshold-card"><span>Dette / coût total</span><strong>${percent(bankability.loanToCost)}</strong><small>Levier de l’opération</small></article>
+      </div>
+      <p class="control-help">${e(bankability.comment)}</p>
+    </section>
+
+    <section class="panel">
+      <div class="section-title"><div><span class="eyebrow">Charges évitables</span><h2>Comptabilité SCI : interne ou cabinet</h2></div><p>Comparaison isolant uniquement le coût comptable, toutes les autres hypothèses restant identiques.</p></div>
+      <div class="threshold-grid">
+        <article class="threshold-card"><span>Tenue interne</span><strong class="${internalCashflow >= 0 ? "positive-text" : "negative-text"}">${euros(internalCashflow)}/mois</strong><small>0 €/an par défaut</small></article>
+        <article class="threshold-card"><span>Cabinet externe</span><strong class="${externalCashflow >= 0 ? "positive-text" : "negative-text"}">${euros(externalCashflow)}/mois</strong><small>Hypothèse 1 200 €/an</small></article>
+        <article class="threshold-card"><span>Gain de trésorerie</span><strong>${euros(internalCashflow - externalCashflow)}/mois</strong><small>Écart après effet estimé de l’IS</small></article>
+        <article class="threshold-card"><span>Mode retenu</span><strong>${e(state.project.longTerm.accountingMode === "internal" ? "Interne" : state.project.longTerm.accountingMode === "hybrid" ? "Hybride" : "Cabinet")}</strong><small>${euros(state.project.longTerm.accountingAnnual)}/an</small></article>
       </div>
     </section>
 
@@ -289,6 +347,27 @@ function dashboardHtml() {
       <div class="section-title"><div><span class="eyebrow">Contrôles de cohérence</span><h2>Risques et informations à confirmer</h2></div><p>${warnings.length} point${warnings.length > 1 ? "s" : ""} relevé${warnings.length > 1 ? "s" : ""}</p></div>
       ${warnings.length ? `<ul class="risk-list">${warnings.map((warning) => `<li>${e(warning)}</li>`).join("")}</ul>` : `<div class="success-box">Aucun signal critique détecté avec les hypothèses actuelles.</div>`}
     </section>
+  </div>`;
+}
+
+function radarHtml() {
+  const config = state.radarConfig;
+  const sources = config.sources.filter((source) => source.enabled);
+  const listings = rankCandidates(state.radarListings, config);
+  const qualified = listings.filter((listing) => listing.qualified);
+  const statusLabel = (status) => ({ qualified: "À étudier", "below-cashflow": "CF insuffisant", "outside-area": "Hors zone", "needs-analysis": "À compléter" }[status] || status);
+  return `<div class="page-stack">
+    <section class="hero-panel"><div><span class="eyebrow">Veille quotidienne préparée</span><h2>Radar cash-flow SCI à l’IS</h2><p>Recherche centrée sur Chaumont-sur-Tharonne, particuliers prioritaires, logements et locaux professionnels inclus. Le moteur ne retient qu’un bien estimé à au moins ${euros(config.minCashflowAfterTaxMonthly)}/mois après charges et IS.</p></div><div class="hero-actions"><button class="secondary" data-action="import-radar-listings">Importer des annonces</button><button class="primary" data-action="export-radar-config">Exporter la configuration</button></div></section>
+    <section class="kpi-grid">
+      ${kpi("Sources configurées", String(sources.length), "résidentiel et professionnel")}
+      ${kpi("Zone principale", `${config.primaryRadiusKm} km`, `puis ${config.extendedRadiusKm} km pour villes ≥ ${new Intl.NumberFormat("fr-FR").format(config.extendedMinPopulation)} hab.`)}
+      ${kpi("Cash-flow minimum", `${euros(config.minCashflowAfterTaxMonthly)}/mois`, "après charges, dette et IS")}
+      ${kpi("Annonces qualifiées", String(qualified.length), `${listings.length} annonce${listings.length > 1 ? "s" : ""} importée${listings.length > 1 ? "s" : ""}`)}
+    </section>
+    <section class="panel warning"><strong>Collecte automatique non branchée</strong><p>L’interface, les filtres, le dédoublonnage et le classement sont prêts. Les portails doivent encore être reliés à un collecteur serveur autorisé ; aucun faux résultat n’est affiché entre-temps.</p></section>
+    <section class="panel"><div class="section-title"><div><span class="eyebrow">Portails</span><h2>Sources retenues</h2></div><p>Les sources « priorité » passent avant les autres. Les annonces de particuliers gagnent des points ; les agences sont pénalisées mais restent visibles si l’opération est forte.</p></div><div class="radar-source-grid">${sources.map((source) => `<article class="radar-source"><div><strong>${e(source.label)}</strong><small>${source.id.includes("pro") || ["geolocaux", "bureauxlocaux", "bpifrance", "eol", "arthur-loyd"].includes(source.id) ? "Professionnel" : "Immobilier"}</small></div><span class="status-badge ${source.priority ? "priority" : ""}">${source.priority ? "Priorité" : "Actif"}</span></article>`).join("")}</div></section>
+    <section class="panel"><div class="section-title"><div><span class="eyebrow">Périmètre</span><h2>Biens et budgets de départ</h2></div><p>Ces plafonds réduisent les requêtes ; ils seront affinés à partir des premières opportunités réellement analysées.</p></div><div class="threshold-grid"><article class="threshold-card"><span>Résidentiel</span><strong>${euros(config.residentialBudgetMax)}</strong><small>budget maximal affiché</small></article><article class="threshold-card"><span>Immeubles</span><strong>${euros(config.buildingBudgetMax)}</strong><small>rapport, mixte, divisible</small></article><article class="threshold-card"><span>Locaux professionnels</span><strong>${euros(config.professionalBudgetMax)}</strong><small>hangars, entrepôts, murs, ateliers</small></article><article class="threshold-card"><span>Fréquence cible</span><strong>Chaque jour</strong><small>nouvelles annonces uniquement</small></article></div><h3 class="subheading">Inclus</h3><div class="chip-list">${config.propertyTypes.map((type) => `<span class="chip">${e(type)}</span>`).join("")}</div><h3 class="subheading">Exclus au départ</h3><div class="chip-list">${config.excludedTypes.map((type) => `<span class="chip muted">${e(type)}</span>`).join("")}</div></section>
+    <section class="panel"><div class="section-title"><div><span class="eyebrow">Résultats</span><h2>Annonces classées</h2></div><p>Score combinant cash-flow, bancabilité, qualité des données, distance et type de vendeur.</p></div>${listings.length ? `<div class="table-wrap"><table><thead><tr><th>Annonce</th><th>Ville</th><th>Prix</th><th>Distance</th><th>Vendeur</th><th>CF après IS</th><th>Score</th><th>Statut</th></tr></thead><tbody>${listings.map((item) => `<tr><td>${e(item.title || "Sans titre")}</td><td>${e(item.city || "—")}</td><td>${e(euros(item.askingPrice))}</td><td>${e(`${Number(item.distanceKm || 0).toFixed(0)} km`)}</td><td>${e(item.sellerType === "private" ? "Particulier" : item.sellerType === "agency" ? "Agence" : "Inconnu")}</td><td class="${Number(item.cashflowAfterTaxMonthly) >= config.minCashflowAfterTaxMonthly ? "positive-text" : "negative-text"}">${Number.isFinite(Number(item.cashflowAfterTaxMonthly)) ? e(`${euros(item.cashflowAfterTaxMonthly)}/mois`) : "À calculer"}</td><td>${item.score.toFixed(0)}/100</td><td><span class="status-badge ${item.qualified ? "priority" : ""}">${e(statusLabel(item.status))}</span></td></tr>`).join("")}</tbody></table></div>` : `<div class="empty"><div class="brand-mark">◎</div><h3>Aucune annonce importée</h3><p>Le radar est prêt à recevoir un fichier JSON provenant des futurs collecteurs. Les doublons seront supprimés et les biens classés automatiquement.</p><button class="primary" data-action="import-radar-listings">Importer un lot d’annonces</button></div>`}</section>
   </div>`;
 }
 
@@ -313,6 +392,15 @@ function acquisitionBreakdown(result) {
   return `<div class="table-wrap"><table><thead><tr><th>Poste</th><th>Montant</th><th>Part du total</th></tr></thead><tbody>${rows.map(([label, value]) => `<tr><td>${e(label)}</td><td>${e(euros(value))}</td><td>${e(percent(value / result.acquisition.totalProjectCost))}</td></tr>`).join("")}<tr class="total-row"><td>Coût total</td><td>${e(euros(result.acquisition.totalProjectCost))}</td><td>100 %</td></tr></tbody></table></div>`;
 }
 
+function accountingModeHtml() {
+  const modes = [
+    ["internal", "Interne", 0, "Tenue et obligations courantes réalisées en interne."],
+    ["hybrid", "Hybride", 500, "Tenue interne avec contrôle ou assistance ponctuelle."],
+    ["external", "Cabinet", 1200, "Budget annuel indicatif pour une externalisation simple."]
+  ];
+  return `<div class="accounting-modes">${modes.map(([key, label, annual, description]) => `<button type="button" data-accounting-mode="${key}" data-accounting-annual="${annual}" class="${state.project.longTerm.accountingMode === key ? "active" : ""}"><strong>${label}</strong><span>${euros(annual)}/an</span><small>${description}</small></button>`).join("")}</div>`;
+}
+
 function analysisHtml() {
   const result = analyzeProject(state.project);
   const activeControls = controls[state.formTab] ?? [];
@@ -334,6 +422,7 @@ function analysisHtml() {
     <section class="panel form-panel">
       <div class="tab-list">${formTabs.map(([key, label]) => `<button data-form-tab="${key}" class="${state.formTab === key ? "active" : ""}">${e(label)}</button>`).join("")}</div>
       <div class="section-title compact"><div><span class="eyebrow">Hypothèses</span><h2>${e(formTabs.find(([key]) => key === state.formTab)?.[1] ?? "Paramètres")}</h2></div><p>${e(tabDescription)}</p></div>
+      ${state.formTab === "longTerm" ? accountingModeHtml() : ""}
       <div class="controls-grid">${activeControls.map(controlHtml).join("")}</div>
     </section>
 
@@ -365,6 +454,7 @@ function sensitivityHtml() {
   const occupancy = occupancySensitivity(state.project);
   const projection = longTermProjection(state.project);
   const scenarios = scenarioTable(state.project);
+  const projectionYears = longTermProjection(state.project);
   const priceCrossLong = findCrossing(prices, "price", "longueDuree");
   const priceCrossShort = findCrossing(prices, "price", "courteDuree");
   const rateCrossLong = findCrossing(rates, "rate", "longueDuree");
@@ -393,6 +483,10 @@ function sensitivityHtml() {
       ${chartCard("Cash-flow selon le taux du crédit", `Taux actuel : ${state.project.financing.annualRatePct.toFixed(2)} %`, lineChart(rates, { xKey: "rate", series: [{ key: "longueDuree", label: "Longue durée", color: "var(--chart1)" }, { key: "courteDuree", label: "Courte durée", color: "var(--chart2)" }], formatX: (v) => `${Number(v).toFixed(1)} %`, formatY: compactEuros }))}
       ${chartCard("Courte durée selon l’occupation", `Point mort : ${result.shortTerm.breakEven.toFixed(1)} %`, lineChart(occupancy, { xKey: "occupancy", series: [{ key: "cashflow", label: "Cash-flow mensuel", color: "var(--chart3)" }], formatX: (v) => `${v} %`, formatY: compactEuros }))}
       ${chartCard("Projection longue durée", `${state.project.projection.years} ans · loyers, dette et trésorerie cumulée`, lineChart(projection, { xKey: "year", series: [{ key: "debtBalance", label: "Capital restant dû", color: "var(--chart1)" }, { key: "cumulativeCashflow", label: "Trésorerie cumulée", color: "var(--chart2)" }, { key: "estimatedValue", label: "Valeur estimée", color: "var(--chart3)" }], formatX: (v) => `A${v}`, formatY: compactEuros, zero: true }))}
+    </section>
+    <section class="panel">
+      <div class="section-title"><div><span class="eyebrow">SCI à l’IS</span><h2>Tableau annuel de bancabilité et de fiscalité</h2></div><p>Équivalent simplifié du tableau annuel Simloc, limité au montage SCI IS.</p></div>
+      <div class="table-wrap"><table><thead><tr><th>Année</th><th>Intérêts</th><th>Capital remboursé</th><th>CRD</th><th>Loyers</th><th>Charges</th><th>Amortissement</th><th>Résultat fiscal</th><th>IS</th><th>Cash disponible</th><th>VNC</th></tr></thead><tbody>${projectionYears.map((row) => `<tr><td>${row.year}</td><td>${e(euros(row.interest))}</td><td>${e(euros(row.principalPaid))}</td><td>${e(euros(row.debtBalance))}</td><td>${e(euros(row.revenue))}</td><td>${e(euros(row.charges))}</td><td>${e(euros(row.depreciation))}</td><td>${e(euros(row.taxableResult))}</td><td>${e(euros(row.corporateTax))}</td><td class="${row.cashflowAfterTax >= 0 ? "positive-text" : "negative-text"}">${e(euros(row.cashflowAfterTax))}</td><td>${e(euros(row.bookValue))}</td></tr>`).join("")}</tbody></table></div>
     </section>
   </div>`;
 }
@@ -434,6 +528,7 @@ function render() {
   let content;
   if (state.page === "analysis") content = analysisHtml();
   else if (state.page === "sensitivity") content = sensitivityHtml();
+  else if (state.page === "radar") content = radarHtml();
   else if (state.page === "projects") content = projectsHtml();
   else if (state.page === "methodology") content = methodologyHtml();
   else content = dashboardHtml();
@@ -507,6 +602,14 @@ app.addEventListener("click", (event) => {
     render();
     return;
   }
+  const accountingButton = event.target.closest("[data-accounting-mode]");
+  if (accountingButton) {
+    state.project = setPath(state.project, "longTerm.accountingMode", accountingButton.dataset.accountingMode);
+    state.project = setPath(state.project, "longTerm.accountingAnnual", Number(accountingButton.dataset.accountingAnnual));
+    persist();
+    render();
+    return;
+  }
   const actionButton = event.target.closest("[data-action]");
   if (!actionButton) return;
   const action = actionButton.dataset.action;
@@ -520,6 +623,8 @@ app.addEventListener("click", (event) => {
   if (action === "export-current") downloadJson(state.project, `radar-immo-${(state.project.name || "projet").toLowerCase().replace(/[^a-z0-9]+/gi, "-")}.json`);
   if (action === "export-all") downloadJson({ version: 1, projects: state.saved, draft: state.project }, "radar-immo-portefeuille.json");
   if (action === "import") app.querySelector("#import-json")?.click();
+  if (action === "import-radar-listings") app.querySelector("#import-radar-json")?.click();
+  if (action === "export-radar-config") downloadJson({ version: 1, generatedAt: new Date().toISOString(), config: state.radarConfig }, "radar-immo-configuration.json");
   if (action === "new") {
     const project = createDefaultProject();
     project.name = "Nouveau projet";
@@ -534,7 +639,7 @@ app.addEventListener("click", (event) => {
   if (action === "load") {
     const project = state.saved.find((item) => item.id === actionButton.dataset.id);
     if (project) {
-      state.project = structuredClone(project);
+      state.project = hydrateProject(project);
       state.page = "dashboard";
       persist();
       render();
@@ -573,10 +678,10 @@ app.addEventListener("change", (event) => {
       try {
         const parsed = JSON.parse(String(reader.result));
         if (Array.isArray(parsed.projects)) {
-          state.saved = parsed.projects;
-          if (parsed.draft) state.project = parsed.draft;
+          state.saved = parsed.projects.map(hydrateProject);
+          if (parsed.draft) state.project = hydrateProject(parsed.draft);
         } else if (parsed.acquisition && parsed.financing) {
-          state.project = parsed;
+          state.project = hydrateProject(parsed);
         } else throw new Error("Structure inconnue");
         persist();
         state.page = "dashboard";
@@ -584,6 +689,21 @@ app.addEventListener("change", (event) => {
       } catch (error) {
         window.alert(`Import impossible : ${error.message}`);
       }
+    };
+    reader.readAsText(target.files[0]);
+  }
+  if (target.id === "import-radar-json" && target.files?.[0]) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(reader.result);
+        const listings = Array.isArray(parsed) ? parsed : parsed.listings;
+        if (!Array.isArray(listings)) throw new Error("format");
+        state.radarListings = listings;
+        state.page = "radar";
+        persist();
+        showToast(`${rankCandidates(listings, state.radarConfig).length} annonce(s) importée(s) après dédoublonnage.`);
+      } catch { showToast("Fichier d’annonces invalide."); }
     };
     reader.readAsText(target.files[0]);
   }

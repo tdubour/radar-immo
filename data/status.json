@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "generatedAt": "2026-08-11T02:40:04.683Z",
+  "generatedAt": "2026-08-11T02:52:33.531Z",
   "message": "73 annonces actives",
   "sources": [
     {
@@ -44,10 +44,34 @@
     },
     {
       "id": "pap",
-      "label": "PAP Centre-Val de Loire",
+      "label": "PAP via sitemap officiel",
       "ok": false,
       "count": 0,
-      "error": "Blocage HTTP/navigation (403)"
+      "error": "Sitemap HTTP 403"
+    },
+    {
+      "id": "paruvendu-41",
+      "label": "ParuVendu Loir-et-Cher",
+      "ok": true,
+      "count": 1
+    },
+    {
+      "id": "geolocaux-41",
+      "label": "Geolocaux Loir-et-Cher",
+      "ok": true,
+      "count": 0
+    },
+    {
+      "id": "geolocaux-45",
+      "label": "Geolocaux Loiret",
+      "ok": true,
+      "count": 0
+    },
+    {
+      "id": "geolocaux-18",
+      "label": "Geolocaux Cher",
+      "ok": true,
+      "count": 0
     }
   ]
 }

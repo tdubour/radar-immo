@@ -14,6 +14,7 @@ const numeric = (value) => {
   return Number.isFinite(parsed) ? parsed : null;
 };
 const hash = (value) => createHash("sha256").update(value).digest("hex");
+const comparable = (value) => clean(value).normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/gi, "").toLowerCase();
 const radians = (value) => value * Math.PI / 180;
 const distanceKm = (a, b) => {
   const dLat = radians(b.latitude - a.latitude); const dLon = radians(b.longitude - a.longitude);
@@ -28,8 +29,9 @@ function parseCard(row, source) {
   const roomsMatch = text.match(/([0-9]+)\s*pi[eè]ces?/i);
   const postalMatch = text.match(/\b(18|28|36|37|41|45)\d{3}\b/);
   const dpeMatch = text.match(/(?:DPE|classe énergie|énergie)\s*[:\-]?\s*([A-G])\b/i);
+  const cityMatch = text.match(/\b(?:18|28|36|37|41|45)\d{3}\s+([A-ZÀ-Ÿ][A-Za-zÀ-ÿ' -]+?)(?:\s*\(|\s+[0-9]|$)/);
   const askingPrice = numeric(priceMatch?.[1]);
-  if (!row.url || !askingPrice || askingPrice > 750000) return null;
+  if (!row.url || !askingPrice || askingPrice > 750000 || /viager|résidence\s+(services?|seniors?)|programme\s+neuf|terrain\s+non\s+constructible|parking\s+seul/i.test(text)) return null;
   const externalId = row.url.match(/(?:\/|=)([0-9]{6,})(?:[/?#-]|$)/)?.[1] || null;
   const title = clean(row.title || text.split(/\n|\|/)[0]).slice(0, 240);
   if (!title) return null;
@@ -37,7 +39,7 @@ function parseCard(row, source) {
   return {
     fingerprint, sourceId: source.id.replace(/-\d+$/, ""), externalId, sourceUrl: row.url, title,
     description: text.slice(0, 1500), askingPrice, surfaceM2: numeric(surfaceMatch?.[1]), rooms: numeric(roomsMatch?.[1]),
-    postalCode: postalMatch?.[0] || null, city: null, dpe: dpeMatch?.[1]?.toUpperCase() || null,
+    postalCode: postalMatch?.[0] || null, city: clean(cityMatch?.[1]) || null, dpe: dpeMatch?.[1]?.toUpperCase() || null,
     sellerType: /particulier/i.test(text) ? "private" : /agence|professionnel|\bpro\b/i.test(text) ? "agency" : "unknown",
     firstSeenAt: previous.listings?.find((item) => item.fingerprint === fingerprint)?.firstSeenAt || now,
     lastSeenAt: now
@@ -81,9 +83,11 @@ async function geocode(listing) {
   if (!communeCache.has(listing.postalCode)) {
     const response = await fetch(`https://geo.api.gouv.fr/communes?codePostal=${listing.postalCode}&fields=nom,centre,population,codesPostaux&format=json&geometry=centre`);
     const rows = response.ok ? await response.json() : [];
-    communeCache.set(listing.postalCode, rows[0] || null);
+    communeCache.set(listing.postalCode, rows);
   }
-  const commune = communeCache.get(listing.postalCode);
+  const communes = communeCache.get(listing.postalCode) || [];
+  const wanted = comparable(listing.city);
+  const commune = communes.find((row) => comparable(row.nom) === wanted) || communes.find((row) => comparable(row.nom).includes(wanted) || wanted.includes(comparable(row.nom))) || communes[0];
   if (!commune?.centre?.coordinates) return listing;
   const [longitude, latitude] = commune.centre.coordinates;
   const km = distanceKm(config.center, { latitude, longitude });

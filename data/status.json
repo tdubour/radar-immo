@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "generatedAt": "2026-08-11T02:52:33.531Z",
+  "generatedAt": "2026-08-11T02:57:55.030Z",
   "message": "73 annonces actives",
   "sources": [
     {
@@ -64,14 +64,16 @@
     {
       "id": "geolocaux-45",
       "label": "Geolocaux Loiret",
-      "ok": true,
-      "count": 0
+      "ok": false,
+      "count": 0,
+      "error": "Blocage HTTP/navigation (410)"
     },
     {
       "id": "geolocaux-18",
       "label": "Geolocaux Cher",
-      "ok": true,
-      "count": 0
+      "ok": false,
+      "count": 0,
+      "error": "Blocage HTTP/navigation (410)"
     }
   ]
 }

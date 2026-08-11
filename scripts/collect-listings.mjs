@@ -24,13 +24,13 @@ const distanceKm = (a, b) => {
 
 function parseCard(row, source) {
   const text = clean(row.text);
-  const priceMatch = text.match(/([0-9][0-9 .]{2,})\s*€/);
+  const prices = [...text.matchAll(/([0-9][0-9 .]{2,})\s*€/g)].map((match) => numeric(match[1])).filter(Boolean);
   const surfaceMatch = text.match(/([0-9]+(?:[,.][0-9]+)?)\s*m[²2]/i);
   const roomsMatch = text.match(/([0-9]+)\s*pi[eè]ces?/i);
   const postalMatch = text.match(/\b(18|28|36|37|41|45)\d{3}\b/);
   const dpeMatch = text.match(/(?:DPE|classe énergie|énergie)\s*[:\-]?\s*([A-G])\b/i);
   const cityMatch = text.match(/\b(?:18|28|36|37|41|45)\d{3}\s+([A-ZÀ-Ÿ][A-Za-zÀ-ÿ' -]+?)(?:\s*\(|\s+[0-9]|$)/);
-  const askingPrice = numeric(priceMatch?.[1]);
+  const askingPrice = prices.length ? Math.max(...prices) : null;
   if (!row.url || !askingPrice || askingPrice > 750000 || /viager|résidence\s+(services?|seniors?)|programme\s+neuf|terrain\s+non\s+constructible|parking\s+seul/i.test(text)) return null;
   const externalId = row.url.match(/(?:\/|=)([0-9]{6,})(?:[/?#-]|$)/)?.[1] || null;
   const title = clean(row.title || text.split(/\n|\|/)[0]).slice(0, 240);
@@ -77,6 +77,29 @@ async function extractSource(page, source) {
   return cards.slice(0, config.maxListingsPerPage).map((row) => parseCard(row, source)).filter(Boolean);
 }
 
+async function extractSitemap(page, source) {
+  const response = await fetch(source.url, { headers: { "User-Agent": "RadarImmo/1.0 (+https://radar-immo-blond.vercel.app)" } });
+  if (!response.ok) throw new Error(`Sitemap HTTP ${response.status}`);
+  const xml = await response.text();
+  const urls = [...xml.matchAll(/<loc>([\s\S]*?)<\/loc>/gi)]
+    .map((match) => match[1].replace(/&amp;/g, "&").trim())
+    .filter((url) => source.targetSlugs.some((slug) => comparable(url).includes(comparable(slug))))
+    .slice(0, config.maxListingsPerPage);
+  const rows = [];
+  for (const url of urls) {
+    try {
+      const navigation = await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
+      if (navigation?.status() >= 400) continue;
+      const text = clean(await page.locator("body").innerText().catch(() => ""));
+      const title = await page.title();
+      const parsed = parseCard({ url, title, text }, source);
+      if (parsed) rows.push(parsed);
+      await page.waitForTimeout(250);
+    } catch { /* annonce retirée ou inaccessible */ }
+  }
+  return rows;
+}
+
 const communeCache = new Map();
 async function geocode(listing) {
   if (!listing.postalCode) return listing;
@@ -100,7 +123,7 @@ const page = await context.newPage();
 const collected = []; const statuses = [];
 for (const source of config.sources) {
   try {
-    const rows = await extractSource(page, source); collected.push(...rows);
+    const rows = source.kind === "sitemap" ? await extractSitemap(page, source) : await extractSource(page, source); collected.push(...rows);
     statuses.push({ id: source.id, label: source.label, ok: true, count: rows.length });
   } catch (error) { statuses.push({ id: source.id, label: source.label, ok: false, count: 0, error: error.message }); }
 }

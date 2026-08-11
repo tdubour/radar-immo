@@ -31,7 +31,7 @@ function parseCard(row, source) {
   const dpeMatch = text.match(/(?:DPE|classe énergie|énergie)\s*[:\-]?\s*([A-G])\b/i);
   const cityMatch = text.match(/\b(?:18|28|36|37|41|45)\d{3}\s+([A-ZÀ-Ÿ][A-Za-zÀ-ÿ' -]+?)(?:\s*\(|\s+[0-9]|$)/);
   const askingPrice = prices.length ? Math.max(...prices) : null;
-  if (!row.url || !askingPrice || askingPrice > 750000 || /viager|résidence\s+(services?|seniors?)|programme\s+neuf|terrain\s+non\s+constructible|parking\s+seul/i.test(text)) return null;
+  if (!row.url || !askingPrice || askingPrice < 10000 || askingPrice > 750000 || /viager|résidence\s+(services?|seniors?)|programme\s+neuf|terrain\s+non\s+constructible|parking\s+seul/i.test(text)) return null;
   const externalId = row.url.match(/(?:\/|=)([0-9]{6,})(?:[/?#-]|$)/)?.[1] || null;
   const title = clean(row.title || text.split(/\n|\|/)[0]).slice(0, 240);
   if (!title) return null;
@@ -47,34 +47,39 @@ function parseCard(row, source) {
 }
 
 async function extractSource(page, source) {
-  const response = await page.goto(source.url, { waitUntil: "domcontentloaded", timeout: 45000 });
-  await page.waitForTimeout(3500);
-  for (const label of ["Tout accepter", "Accepter", "J’accepte", "Continuer sans accepter"]) {
-    const button = page.getByRole("button", { name: label, exact: false }).first();
-    if (await button.isVisible().catch(() => false)) { await button.click().catch(() => {}); break; }
-  }
-  await page.waitForTimeout(1500);
-  const title = await page.title();
-  const body = clean(await page.locator("body").innerText().catch(() => ""));
-  if (response?.status() >= 400 || /access denied|captcha|vérifier que vous êtes humain|forbidden/i.test(`${title} ${body.slice(0, 500)}`)) throw new Error(`Blocage HTTP/navigation (${response?.status() || "?"})`);
-  const pattern = source.linkPattern;
-  const cards = await page.locator("a[href]").evaluateAll((anchors, linkPattern) => {
-    const matcher = new RegExp(linkPattern, "i"); const seen = new Set(); const output = [];
-    for (const anchor of anchors) {
-      const url = anchor.href; if (!url || !matcher.test(new URL(url).pathname) || seen.has(url)) continue;
-      seen.add(url);
-      let container = anchor;
-      for (let i = 0; i < 5 && container.parentElement; i += 1) {
-        if ((container.innerText || "").length >= 50) break;
-        container = container.parentElement;
-      }
-      const heading = container.querySelector("h1,h2,h3,[role=heading]");
-      const image = container.querySelector("img[alt]");
-      output.push({ url, title: heading?.textContent || image?.alt || anchor.getAttribute("aria-label") || "", text: (container.innerText || anchor.innerText || "").slice(0, 2500) });
+  const targets = source.targets || [{ url: source.url }];
+  const listings = [];
+  for (const target of targets) {
+    const response = await page.goto(target.url, { waitUntil: "domcontentloaded", timeout: 45000 });
+    await page.waitForTimeout(source.waitMs ?? 3500);
+    for (const label of ["Tout accepter", "Accepter", "J’accepte", "Continuer sans accepter"]) {
+      const button = page.getByRole("button", { name: label, exact: false }).first();
+      if (await button.isVisible().catch(() => false)) { await button.click().catch(() => {}); break; }
     }
-    return output;
-  }, pattern);
-  return cards.slice(0, config.maxListingsPerPage).map((row) => parseCard(row, source)).filter(Boolean);
+    await page.waitForTimeout(source.waitMs ? 400 : 1500);
+    const title = await page.title();
+    const body = clean(await page.locator("body").innerText().catch(() => ""));
+    if (response?.status() >= 400 || /access denied|captcha|vérifier que vous êtes humain|forbidden/i.test(`${title} ${body.slice(0, 500)}`)) throw new Error(`Blocage HTTP/navigation (${response?.status() || "?"})`);
+    const cards = await page.locator("a[href]").evaluateAll((anchors, linkPattern) => {
+      const matcher = new RegExp(linkPattern, "i"); const seen = new Set(); const output = [];
+      for (const anchor of anchors) {
+        const url = anchor.href; if (!url || !matcher.test(new URL(url).pathname) || seen.has(url)) continue;
+        seen.add(url);
+        let container = anchor;
+        for (let i = 0; i < 5 && container.parentElement; i += 1) {
+          if ((container.innerText || "").length >= 50) break;
+          container = container.parentElement;
+        }
+        const heading = container.querySelector("h1,h2,h3,[role=heading]");
+        const image = container.querySelector("img[alt]");
+        output.push({ url, title: heading?.textContent || image?.alt || anchor.getAttribute("aria-label") || "", text: (container.innerText || anchor.innerText || "").slice(0, 2500) });
+      }
+      return output;
+    }, source.linkPattern);
+    const locationHint = target.postalCode ? ` ${target.postalCode} ${target.city}` : "";
+    listings.push(...cards.map((row) => parseCard({ ...row, text: `${row.text}${locationHint}` }, source)).filter(Boolean));
+  }
+  return [...new Map(listings.map((row) => [row.fingerprint, row])).values()].slice(0, config.maxListingsPerPage);
 }
 
 async function extractSitemap(page, source) {

@@ -49,36 +49,43 @@ function parseCard(row, source) {
 async function extractSource(page, source) {
   const targets = source.targets || [{ url: source.url }];
   const listings = [];
+  let reachableTargets = 0;
   for (const target of targets) {
-    const response = await page.goto(target.url, { waitUntil: "domcontentloaded", timeout: 45000 });
-    await page.waitForTimeout(source.waitMs ?? 3500);
-    for (const label of ["Tout accepter", "Accepter", "J’accepte", "Continuer sans accepter"]) {
-      const button = page.getByRole("button", { name: label, exact: false }).first();
-      if (await button.isVisible().catch(() => false)) { await button.click().catch(() => {}); break; }
-    }
-    await page.waitForTimeout(source.waitMs ? 400 : 1500);
-    const title = await page.title();
-    const body = clean(await page.locator("body").innerText().catch(() => ""));
-    if (response?.status() >= 400 || /access denied|captcha|vérifier que vous êtes humain|forbidden/i.test(`${title} ${body.slice(0, 500)}`)) throw new Error(`Blocage HTTP/navigation (${response?.status() || "?"})`);
-    const cards = await page.locator("a[href]").evaluateAll((anchors, linkPattern) => {
-      const matcher = new RegExp(linkPattern, "i"); const seen = new Set(); const output = [];
-      for (const anchor of anchors) {
-        const url = anchor.href; if (!url || !matcher.test(new URL(url).pathname) || seen.has(url)) continue;
-        seen.add(url);
-        let container = anchor;
-        for (let i = 0; i < 5 && container.parentElement; i += 1) {
-          if ((container.innerText || "").length >= 50) break;
-          container = container.parentElement;
-        }
-        const heading = container.querySelector("h1,h2,h3,[role=heading]");
-        const image = container.querySelector("img[alt]");
-        output.push({ url, title: heading?.textContent || image?.alt || anchor.getAttribute("aria-label") || "", text: (container.innerText || anchor.innerText || "").slice(0, 2500) });
+    try {
+      const response = await page.goto(target.url, { waitUntil: "domcontentloaded", timeout: 45000 });
+      if (response?.status() >= 400) continue;
+      reachableTargets += 1;
+      await page.waitForTimeout(source.waitMs ?? 3500);
+      for (const label of ["Tout accepter", "Accepter", "J’accepte", "Continuer sans accepter"]) {
+        const button = page.getByRole("button", { name: label, exact: false }).first();
+        if (await button.isVisible().catch(() => false)) { await button.click().catch(() => {}); break; }
       }
-      return output;
-    }, source.linkPattern);
-    const locationHint = target.postalCode ? ` ${target.postalCode} ${target.city}` : "";
-    listings.push(...cards.map((row) => parseCard({ ...row, text: `${row.text}${locationHint}` }, source)).filter(Boolean));
+      await page.waitForTimeout(source.waitMs ? 400 : 1500);
+      const title = await page.title();
+      const body = clean(await page.locator("body").innerText().catch(() => ""));
+      if (/access denied|captcha|vérifier que vous êtes humain|forbidden/i.test(`${title} ${body.slice(0, 500)}`)) continue;
+      const cards = await page.locator("a[href]").evaluateAll((anchors, linkPattern) => {
+        const matcher = new RegExp(linkPattern, "i"); const seen = new Set(); const output = [];
+        for (const anchor of anchors) {
+          const url = anchor.href; if (!url || !matcher.test(new URL(url).pathname) || seen.has(url)) continue;
+          seen.add(url);
+          let container = anchor;
+          for (let i = 0; i < 8 && container.parentElement; i += 1) {
+            const containerText = container.innerText || "";
+            if (containerText.length >= 50 && /€/.test(containerText)) break;
+            container = container.parentElement;
+          }
+          const heading = container.querySelector("h1,h2,h3,[role=heading]");
+          const image = container.querySelector("img[alt]");
+          output.push({ url, title: heading?.textContent || image?.alt || anchor.getAttribute("aria-label") || "", text: (container.innerText || anchor.innerText || "").slice(0, 2500) });
+        }
+        return output;
+      }, source.linkPattern);
+      const locationHint = target.postalCode ? ` ${target.postalCode} ${target.city}` : "";
+      listings.push(...cards.map((row) => parseCard({ ...row, text: `${row.text}${locationHint}` }, source)).filter(Boolean));
+    } catch { /* une ville vide ou retirée ne doit pas bloquer le département */ }
   }
+  if (!reachableTargets) throw new Error("Aucune page locale accessible");
   return [...new Map(listings.map((row) => [row.fingerprint, row])).values()].slice(0, config.maxListingsPerPage);
 }
 

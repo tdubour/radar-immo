@@ -1,0 +1,51 @@
+{
+  "center": { "name": "Chaumont-sur-Tharonne", "latitude": 47.611, "longitude": 2.183 },
+  "primaryRadiusKm": 100,
+  "extendedRadiusKm": 150,
+  "extendedMinPopulation": 10000,
+  "maxListingsPerPage": 80,
+  "sources": [
+    {
+      "id": "leboncoin",
+      "label": "Leboncoin résidentiel",
+      "url": "https://www.leboncoin.fr/recherche?category=9&locations=Chaumont-sur-Tharonne_41600__47.611_2.183_100000_100000&price=max-750000&sort=time&order=desc",
+      "linkPattern": "\\/(ad|ventes_immobilieres)\\/"
+    },
+    {
+      "id": "leboncoin-pro",
+      "label": "Leboncoin locaux professionnels",
+      "url": "https://www.leboncoin.fr/recherche?category=10&locations=Chaumont-sur-Tharonne_41600__47.611_2.183_100000_100000&price=max-750000&sort=time&order=desc",
+      "linkPattern": "\\/(ad|bureaux_commerces)\\/"
+    },
+    {
+      "id": "seloger",
+      "label": "SeLoger",
+      "url": "https://www.seloger.com/recherche/achat/immobilier/centre-val-de-loire/chaumont-sur-tharonne-41600/ad08fr16270",
+      "linkPattern": "\\/(annonces|annonce)\\/"
+    },
+    {
+      "id": "bienici-41",
+      "label": "Bien'ici Loir-et-Cher",
+      "url": "https://www.bienici.com/recherche/achat/loir-et-cher-41",
+      "linkPattern": "\\/annonce\\/"
+    },
+    {
+      "id": "bienici-45",
+      "label": "Bien'ici Loiret",
+      "url": "https://www.bienici.com/recherche/achat/loiret-45",
+      "linkPattern": "\\/annonce\\/"
+    },
+    {
+      "id": "bienici-18",
+      "label": "Bien'ici Cher",
+      "url": "https://www.bienici.com/recherche/achat/cher-18",
+      "linkPattern": "\\/annonce\\/"
+    },
+    {
+      "id": "pap",
+      "label": "PAP Centre-Val de Loire",
+      "url": "https://www.pap.fr/annonce/vente-immobiliere-centre-val-de-loire-g466",
+      "linkPattern": "\\/annonces\\/"
+    }
+  ]
+}

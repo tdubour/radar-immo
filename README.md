@@ -38,16 +38,15 @@ Puis ouvrir `http://localhost:8080`.
 
 `vercel.json` configure les routes et plusieurs en-têtes de sécurité. Le fichier `index.html` contient également une directive `noindex`.
 
-### Backend Radar
+### Collecte Radar sans service payant
 
-La migration `supabase/migrations/20260811030000_radar_listings.sql` crée les annonces, l’historique des prix et le journal des collectes. Variables Vercel nécessaires :
+Le workflow GitHub Actions `radar-collect.yml` lance notre collecteur Playwright chaque jour à 05:15 UTC. Il visite uniquement les pages de recherche configurées dans `config/radar-sources.json`, dédoublonne les annonces et écrit :
 
-- `SUPABASE_URL`
-- `SUPABASE_SERVICE_ROLE_KEY` (serveur uniquement)
-- `CRON_SECRET`
-- `APIFY_TOKEN`, `APIFY_START_URLS_JSON` et éventuellement `APIFY_MAX_ITEMS` pour le collecteur multi-source
+- `data/listings.json` : base active consommée directement par l’application ;
+- `data/history.json` : historique des prix par annonce ;
+- `data/status.json` : résultat et erreurs de chaque source.
 
-Le cron appelle `/api/cron/collect` chaque jour à 05:15 UTC. Les tables sont protégées par RLS et ne sont jamais ouvertes directement au navigateur.
+Les communes, populations et distances sont vérifiées avec l’API publique française `geo.api.gouv.fr`. Aucun Supabase, Apify ou autre service payant n’est nécessaire. Si un portail bloque GitHub Actions, son échec est journalisé sans fabriquer de donnée.
 
 ## Tests
 

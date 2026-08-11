@@ -714,12 +714,12 @@ render();
 
 async function refreshRemoteRadar() {
   try {
-    const [listingsResponse, healthResponse] = await Promise.all([fetch("/api/listings"), fetch("/api/health")]);
-    if (!listingsResponse.ok || !healthResponse.ok) throw new Error("base non configurée");
+    const [listingsResponse, healthResponse] = await Promise.all([fetch("/data/listings.json", { cache: "no-store" }), fetch("/data/status.json", { cache: "no-store" })]);
+    if (!listingsResponse.ok || !healthResponse.ok) throw new Error("fichiers du radar indisponibles");
     const payload = await listingsResponse.json();
     const health = await healthResponse.json();
     state.radarListings = Array.isArray(payload.listings) ? payload.listings : [];
-    state.radarStatus = { loading: false, connected: true, lastRun: health.lastRun, error: "" };
+    state.radarStatus = { loading: false, connected: Boolean(health.ok), lastRun: health.generatedAt ? { started_at: health.generatedAt } : null, error: health.ok ? "" : health.message };
     persist();
     if (state.page === "radar") render();
   } catch (error) {

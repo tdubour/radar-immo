@@ -57,19 +57,45 @@
     {
       "id": "geolocaux-41",
       "label": "Geolocaux Loir-et-Cher",
-      "url": "https://www.geolocaux.com/vente/entrepot/loir-et-cher-41/",
+      "waitMs": 1200,
+      "targets": [
+        { "url": "https://www.geolocaux.com/vente/entrepot/le-controis-en-sologne-41700/", "city": "Le Controis-en-Sologne", "postalCode": "41700" },
+        { "url": "https://www.geolocaux.com/vente/entrepot/mer-41500/", "city": "Mer", "postalCode": "41500" },
+        { "url": "https://www.geolocaux.com/vente/entrepot/lamotte-beuvron-41600/", "city": "Lamotte-Beuvron", "postalCode": "41600" },
+        { "url": "https://www.geolocaux.com/vente/entrepot/la-chaussee-saint-victor-41260/", "city": "La Chaussée-Saint-Victor", "postalCode": "41260" },
+        { "url": "https://www.geolocaux.com/vente/entrepot/blois-41000/", "city": "Blois", "postalCode": "41000" },
+        { "url": "https://www.geolocaux.com/vente/entrepot/romorantin-lanthenay-41200/", "city": "Romorantin-Lanthenay", "postalCode": "41200" },
+        { "url": "https://www.geolocaux.com/vente/entrepot/contres-41700/", "city": "Contres", "postalCode": "41700" },
+        { "url": "https://www.geolocaux.com/vente/entrepot/mur-de-sologne-41230/", "city": "Mur-de-Sologne", "postalCode": "41230" }
+      ],
       "linkPattern": "\\/annonce\\/"
     },
     {
       "id": "geolocaux-45",
       "label": "Geolocaux Loiret",
-      "url": "https://www.geolocaux.com/vente/entrepot/loiret-45/",
+      "waitMs": 1200,
+      "targets": [
+        { "url": "https://www.geolocaux.com/vente/entrepot/orleans-45000/", "city": "Orléans", "postalCode": "45000" },
+        { "url": "https://www.geolocaux.com/vente/entrepot/olivet-45160/", "city": "Olivet", "postalCode": "45160" },
+        { "url": "https://www.geolocaux.com/vente/entrepot/saint-jean-de-braye-45800/", "city": "Saint-Jean-de-Braye", "postalCode": "45800" },
+        { "url": "https://www.geolocaux.com/vente/entrepot/la-chapelle-saint-mesmin-45380/", "city": "La Chapelle-Saint-Mesmin", "postalCode": "45380" },
+        { "url": "https://www.geolocaux.com/vente/entrepot/meung-sur-loire-45130/", "city": "Meung-sur-Loire", "postalCode": "45130" },
+        { "url": "https://www.geolocaux.com/vente/entrepot/chateauneuf-sur-loire-45110/", "city": "Châteauneuf-sur-Loire", "postalCode": "45110" },
+        { "url": "https://www.geolocaux.com/vente/entrepot/sully-sur-loire-45600/", "city": "Sully-sur-Loire", "postalCode": "45600" },
+        { "url": "https://www.geolocaux.com/vente/entrepot/checy-45430/", "city": "Chécy", "postalCode": "45430" },
+        { "url": "https://www.geolocaux.com/vente/entrepot/fleury-les-aubrais-45400/", "city": "Fleury-les-Aubrais", "postalCode": "45400" },
+        { "url": "https://www.geolocaux.com/vente/entrepot/saran-45770/", "city": "Saran", "postalCode": "45770" }
+      ],
       "linkPattern": "\\/annonce\\/"
     },
     {
       "id": "geolocaux-18",
       "label": "Geolocaux Cher",
-      "url": "https://www.geolocaux.com/vente/entrepot/cher-18/",
+      "waitMs": 1200,
+      "targets": [
+        { "url": "https://www.geolocaux.com/vente/entrepot/bourges-18000/", "city": "Bourges", "postalCode": "18000" },
+        { "url": "https://www.geolocaux.com/vente/entrepot/vierzon-18100/", "city": "Vierzon", "postalCode": "18100" }
+      ],
       "linkPattern": "\\/annonce\\/"
     }
   ]

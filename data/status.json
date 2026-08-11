@@ -1,28 +1,28 @@
 {
   "ok": true,
-  "generatedAt": "2026-08-11T02:57:55.030Z",
-  "message": "73 annonces actives",
+  "generatedAt": "2026-08-11T03:02:28.231Z",
+  "message": "89 annonces actives",
   "sources": [
     {
       "id": "leboncoin",
       "label": "Leboncoin résidentiel",
       "ok": false,
       "count": 0,
-      "error": "Blocage HTTP/navigation (403)"
+      "error": "Aucune page locale accessible"
     },
     {
       "id": "leboncoin-pro",
       "label": "Leboncoin locaux professionnels",
       "ok": false,
       "count": 0,
-      "error": "Blocage HTTP/navigation (403)"
+      "error": "Aucune page locale accessible"
     },
     {
       "id": "seloger",
       "label": "SeLoger",
       "ok": false,
       "count": 0,
-      "error": "Blocage HTTP/navigation (403)"
+      "error": "Aucune page locale accessible"
     },
     {
       "id": "bienici-41",
@@ -59,21 +59,20 @@
       "id": "geolocaux-41",
       "label": "Geolocaux Loir-et-Cher",
       "ok": true,
-      "count": 0
+      "count": 3
     },
     {
       "id": "geolocaux-45",
       "label": "Geolocaux Loiret",
-      "ok": false,
-      "count": 0,
-      "error": "Blocage HTTP/navigation (410)"
+      "ok": true,
+      "count": 13
     },
     {
       "id": "geolocaux-18",
       "label": "Geolocaux Cher",
       "ok": false,
       "count": 0,
-      "error": "Blocage HTTP/navigation (410)"
+      "error": "Aucune page locale accessible"
     }
   ]
 }

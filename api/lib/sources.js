@@ -41,19 +41,19 @@ async function publicPageConnector(source) {
   } finally { clearTimeout(timeout); }
 }
 
-async function apifyConnector(source) {
-  if (!process.env.APIFY_TOKEN || !source.apifyDatasetId) return [];
-  const url = `https://api.apify.com/v2/datasets/${encodeURIComponent(source.apifyDatasetId)}/items?clean=true&format=json&limit=1000&token=${encodeURIComponent(process.env.APIFY_TOKEN)}`;
-  const response = await fetch(url);
+export async function collectApifyBatch() {
+  if (!process.env.APIFY_TOKEN || !process.env.APIFY_START_URLS_JSON) return [];
+  const startUrls = JSON.parse(process.env.APIFY_START_URLS_JSON);
+  if (!Array.isArray(startUrls) || !startUrls.length) return [];
+  const actor = process.env.APIFY_ACTOR_ID || "dltik~pige-immo-fr-scraper";
+  const url = `https://api.apify.com/v2/acts/${encodeURIComponent(actor)}/run-sync-get-dataset-items?clean=true&format=json&token=${encodeURIComponent(process.env.APIFY_TOKEN)}&timeout=240`;
+  const response = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ sources: ["leboncoin", "seloger", "bienici", "pap"], startUrls, maxItems: Number(process.env.APIFY_MAX_ITEMS || 1000) }) });
   if (!response.ok) throw new Error(`Apify HTTP ${response.status}`);
   const rows = await response.json();
-  return rows.map((row) => normalizeListing(row, source.id)).filter(Boolean);
+  return rows.map((row) => normalizeListing(row, String(row.source || row.sourceId || "multi-source").toLowerCase())).filter(Boolean);
 }
 
 export const sources = [
-  { id: "leboncoin", label: "Leboncoin", kind: "apify", apifyDatasetId: process.env.APIFY_DATASET_LEBONCOIN },
-  { id: "seloger", label: "SeLoger", kind: "apify", apifyDatasetId: process.env.APIFY_DATASET_SELOGER },
-  { id: "bienici", label: "Bien’ici", kind: "apify", apifyDatasetId: process.env.APIFY_DATASET_BIENICI },
   { id: "pap", label: "PAP", kind: "page", url: process.env.SOURCE_URL_PAP },
   { id: "paruvendu", label: "ParuVendu", kind: "page", url: process.env.SOURCE_URL_PARUVENDU },
   { id: "geolocaux", label: "Geolocaux", kind: "page", url: process.env.SOURCE_URL_GEOLOCAUX },
@@ -61,7 +61,6 @@ export const sources = [
 ];
 
 export async function collectSource(source) {
-  if (source.kind === "apify") return apifyConnector(source);
   if (!source.url) return [];
   return publicPageConnector(source);
 }

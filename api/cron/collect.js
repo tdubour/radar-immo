@@ -1,5 +1,5 @@
 import { db } from "../lib/db.js";
-import { collectSource, sources } from "../lib/sources.js";
+import { collectApifyBatch, collectSource, sources } from "../lib/sources.js";
 
 export const config = { maxDuration: 300 };
 
@@ -16,8 +16,14 @@ async function saveListings(rows) {
 
 export default async function handler(request, response) {
   if (request.headers.authorization !== `Bearer ${process.env.CRON_SECRET}`) return response.status(401).json({ error: "Unauthorized" });
-  const [run] = await db.insert("radar_collection_runs", [{ sources_attempted: sources.length }]);
+  const attempted = sources.length + 1;
+  const [run] = await db.insert("radar_collection_runs", [{ sources_attempted: attempted }]);
   const errors = []; let succeeded = 0; let seen = 0; let added = 0;
+  try {
+    const rows = await collectApifyBatch();
+    const result = await saveListings(rows);
+    seen += result.seen; added += result.added; succeeded += 1;
+  } catch (error) { errors.push({ source: "apify-multi-source", message: error.message }); }
   for (const source of sources) {
     try {
       const rows = await collectSource(source);
@@ -27,5 +33,5 @@ export default async function handler(request, response) {
   }
   const status = errors.length === 0 ? "success" : succeeded ? "partial" : "failed";
   await db.update("radar_collection_runs", `id=eq.${run.id}`, { finished_at: new Date().toISOString(), status, sources_succeeded: succeeded, listings_seen: seen, listings_new: added, errors });
-  return response.status(status === "failed" ? 500 : 200).json({ ok: status !== "failed", status, sources: { attempted: sources.length, succeeded }, listings: { seen, added }, errors });
+  return response.status(status === "failed" ? 500 : 200).json({ ok: status !== "failed", status, sources: { attempted, succeeded }, listings: { seen, added }, errors });
 }

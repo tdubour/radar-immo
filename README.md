@@ -45,7 +45,7 @@ La migration `supabase/migrations/20260811030000_radar_listings.sql` crée les a
 - `SUPABASE_URL`
 - `SUPABASE_SERVICE_ROLE_KEY` (serveur uniquement)
 - `CRON_SECRET`
-- `APIFY_TOKEN` et les identifiants de datasets des trois portails principaux, si ces collecteurs sont utilisés
+- `APIFY_TOKEN`, `APIFY_START_URLS_JSON` et éventuellement `APIFY_MAX_ITEMS` pour le collecteur multi-source
 
 Le cron appelle `/api/cron/collect` chaque jour à 05:15 UTC. Les tables sont protégées par RLS et ne sont jamais ouvertes directement au navigateur.
 

@@ -430,5 +430,11 @@
       "observedAt": "2026-08-11T02:37:29.906Z",
       "askingPrice": 219900
     }
+  ],
+  "8be4f8ee6674e5bb1c9466c1b60fec5df70867d45fcd27abb479aba76450ef2a": [
+    {
+      "observedAt": "2026-08-11T02:40:04.683Z",
+      "askingPrice": 285000
+    }
   ]
 }

@@ -14,6 +14,7 @@ Application web statique d’analyse immobilière, sans compte et sans backend. 
 - courbes de sensibilité au prix, au taux et au taux d’occupation ;
 - projection patrimoniale sur vingt ans ;
 - sauvegarde locale et export/import JSON ;
+- radar quotidien persistant, dédoublonnage et historique des prix ;
 - mode clair/sombre ;
 - curseurs avec valeur, unité, minimum, maximum, pas et champ numérique direct.
 
@@ -36,6 +37,17 @@ Puis ouvrir `http://localhost:8080`.
 5. Déployer.
 
 `vercel.json` configure les routes et plusieurs en-têtes de sécurité. Le fichier `index.html` contient également une directive `noindex`.
+
+### Backend Radar
+
+La migration `supabase/migrations/20260811030000_radar_listings.sql` crée les annonces, l’historique des prix et le journal des collectes. Variables Vercel nécessaires :
+
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY` (serveur uniquement)
+- `CRON_SECRET`
+- `APIFY_TOKEN` et les identifiants de datasets des trois portails principaux, si ces collecteurs sont utilisés
+
+Le cron appelle `/api/cron/collect` chaque jour à 05:15 UTC. Les tables sont protégées par RLS et ne sont jamais ouvertes directement au navigateur.
 
 ## Tests
 

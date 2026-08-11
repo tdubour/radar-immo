@@ -1,6 +1,53 @@
 {
-  "ok": false,
-  "generatedAt": null,
-  "message": "Première collecte en attente",
-  "sources": []
+  "ok": true,
+  "generatedAt": "2026-08-11T02:37:29.906Z",
+  "message": "72 annonces actives",
+  "sources": [
+    {
+      "id": "leboncoin",
+      "label": "Leboncoin résidentiel",
+      "ok": false,
+      "count": 0,
+      "error": "Blocage HTTP/navigation (403)"
+    },
+    {
+      "id": "leboncoin-pro",
+      "label": "Leboncoin locaux professionnels",
+      "ok": false,
+      "count": 0,
+      "error": "Blocage HTTP/navigation (403)"
+    },
+    {
+      "id": "seloger",
+      "label": "SeLoger",
+      "ok": false,
+      "count": 0,
+      "error": "Blocage HTTP/navigation (403)"
+    },
+    {
+      "id": "bienici-41",
+      "label": "Bien'ici Loir-et-Cher",
+      "ok": true,
+      "count": 25
+    },
+    {
+      "id": "bienici-45",
+      "label": "Bien'ici Loiret",
+      "ok": true,
+      "count": 24
+    },
+    {
+      "id": "bienici-18",
+      "label": "Bien'ici Cher",
+      "ok": true,
+      "count": 26
+    },
+    {
+      "id": "pap",
+      "label": "PAP Centre-Val de Loire",
+      "ok": false,
+      "count": 0,
+      "error": "Blocage HTTP/navigation (403)"
+    }
+  ]
 }

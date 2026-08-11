@@ -43,9 +43,34 @@
     },
     {
       "id": "pap",
-      "label": "PAP Centre-Val de Loire",
-      "url": "https://www.pap.fr/annonce/vente-immobiliere-centre-val-de-loire-g466",
-      "linkPattern": "\\/annonces\\/"
+      "label": "PAP via sitemap officiel",
+      "kind": "sitemap",
+      "url": "https://www.pap.fr/download/sitemap/liste_annonces.xml",
+      "targetSlugs": ["blois", "orleans", "bourges", "vierzon", "romorantin", "lamotte-beuvron", "chaumont-sur-tharonne", "gien", "chateauroux", "vendome", "naveil", "selles-sur-cher", "salbris", "aubigny-sur-nere", "meung-sur-loire", "olivet", "fleury-les-aubrais"]
+    },
+    {
+      "id": "paruvendu-41",
+      "label": "ParuVendu Loir-et-Cher",
+      "url": "https://www.paruvendu.fr/immobilier/vente/loir-et-cher-41/",
+      "linkPattern": "\\/immobilier\\/vente\\/"
+    },
+    {
+      "id": "geolocaux-41",
+      "label": "Geolocaux Loir-et-Cher",
+      "url": "https://www.geolocaux.com/vente/entrepot/loir-et-cher-41/",
+      "linkPattern": "\\/annonce\\/"
+    },
+    {
+      "id": "geolocaux-45",
+      "label": "Geolocaux Loiret",
+      "url": "https://www.geolocaux.com/vente/entrepot/loiret-45/",
+      "linkPattern": "\\/annonce\\/"
+    },
+    {
+      "id": "geolocaux-18",
+      "label": "Geolocaux Cher",
+      "url": "https://www.geolocaux.com/vente/entrepot/cher-18/",
+      "linkPattern": "\\/annonce\\/"
     }
   ]
 }

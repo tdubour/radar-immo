@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "generatedAt": "2026-08-13T06:47:23.189Z",
+  "generatedAt": "2026-08-14T06:44:42.991Z",
   "message": "88 annonces actives",
   "sources": [
     {
@@ -28,7 +28,7 @@
       "id": "bienici-41",
       "label": "Bien'ici Loir-et-Cher",
       "ok": true,
-      "count": 24
+      "count": 25
     },
     {
       "id": "bienici-45",
@@ -40,7 +40,7 @@
       "id": "bienici-18",
       "label": "Bien'ici Cher",
       "ok": true,
-      "count": 26
+      "count": 25
     },
     {
       "id": "pap",
@@ -53,7 +53,7 @@
       "id": "paruvendu-41",
       "label": "ParuVendu Loir-et-Cher",
       "ok": true,
-      "count": 0
+      "count": 3
     },
     {
       "id": "geolocaux-41",

@@ -1,7 +1,7 @@
 {
   "ok": true,
-  "generatedAt": "2026-08-14T06:44:42.991Z",
-  "message": "88 annonces actives",
+  "generatedAt": "2026-08-15T05:43:35.698Z",
+  "message": "89 annonces actives",
   "sources": [
     {
       "id": "leboncoin",
@@ -40,7 +40,7 @@
       "id": "bienici-18",
       "label": "Bien'ici Cher",
       "ok": true,
-      "count": 25
+      "count": 26
     },
     {
       "id": "pap",
@@ -53,7 +53,7 @@
       "id": "paruvendu-41",
       "label": "ParuVendu Loir-et-Cher",
       "ok": true,
-      "count": 3
+      "count": 2
     },
     {
       "id": "geolocaux-41",

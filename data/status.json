@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "generatedAt": "2026-08-20T05:48:31.522Z",
+  "generatedAt": "2026-08-21T05:49:52.555Z",
   "message": "87 annonces actives",
   "sources": [
     {
@@ -40,7 +40,7 @@
       "id": "bienici-18",
       "label": "Bien'ici Cher",
       "ok": true,
-      "count": 25
+      "count": 26
     },
     {
       "id": "pap",

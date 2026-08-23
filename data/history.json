@@ -982,5 +982,47 @@
       "observedAt": "2026-08-22T05:44:57.413Z",
       "askingPrice": 600000
     }
+  ],
+  "59d3bcb989c81da9754faad58e0d8e61500050520ef00a1a732f50c93fd99d54": [
+    {
+      "observedAt": "2026-08-23T05:47:18.324Z",
+      "askingPrice": 179000
+    }
+  ],
+  "e7d884ecb662bfb41626d3f9def9a3de2dbbbf11b73543ecd29236d0453e3809": [
+    {
+      "observedAt": "2026-08-23T05:47:18.324Z",
+      "askingPrice": 92500
+    }
+  ],
+  "27f76832649446da53bd40c51a3fc5831ebb0d5e547c8b6769350231566d80d6": [
+    {
+      "observedAt": "2026-08-23T05:47:18.324Z",
+      "askingPrice": 79900
+    }
+  ],
+  "e63998d9e1845a9dba00c4555c410205798cd034a3fdb34986dc49075c1f519e": [
+    {
+      "observedAt": "2026-08-23T05:47:18.324Z",
+      "askingPrice": 215000
+    }
+  ],
+  "71b9d76dd37c11416c5132952632320c71ee57f46d3671308c47f6fd0e3cc108": [
+    {
+      "observedAt": "2026-08-23T05:47:18.324Z",
+      "askingPrice": 128500
+    }
+  ],
+  "8839340c3e4214aa344d6caa2c0eaccbcbf8ac40d4db65a75e468dff861c8572": [
+    {
+      "observedAt": "2026-08-23T05:47:18.324Z",
+      "askingPrice": 228800
+    }
+  ],
+  "cb26a8eabb763eb2da43d5ebdd667f8a02bc614fe029cb6c2e3e7a1711ca6b78": [
+    {
+      "observedAt": "2026-08-23T05:47:18.324Z",
+      "askingPrice": 125000
+    }
   ]
 }

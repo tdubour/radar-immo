@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "generatedAt": "2026-08-27T16:32:59.164Z",
+  "generatedAt": "2026-08-28T17:27:59.641Z",
   "message": "86 annonces actives",
   "sources": [
     {
@@ -28,7 +28,7 @@
       "id": "bienici-41",
       "label": "Bien'ici Loir-et-Cher",
       "ok": true,
-      "count": 24
+      "count": 25
     },
     {
       "id": "bienici-45",

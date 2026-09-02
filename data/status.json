@@ -1,7 +1,7 @@
 {
   "ok": true,
-  "generatedAt": "2026-09-01T10:10:33.406Z",
-  "message": "87 annonces actives",
+  "generatedAt": "2026-09-02T09:41:07.309Z",
+  "message": "88 annonces actives",
   "sources": [
     {
       "id": "leboncoin",
@@ -59,7 +59,7 @@
       "id": "geolocaux-41",
       "label": "Geolocaux Loir-et-Cher",
       "ok": true,
-      "count": 2
+      "count": 3
     },
     {
       "id": "geolocaux-45",

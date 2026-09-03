@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "generatedAt": "2026-09-02T09:41:07.309Z",
+  "generatedAt": "2026-09-03T09:53:44.690Z",
   "message": "88 annonces actives",
   "sources": [
     {
@@ -53,7 +53,7 @@
       "id": "paruvendu-41",
       "label": "ParuVendu Loir-et-Cher",
       "ok": true,
-      "count": 0
+      "count": 1
     },
     {
       "id": "geolocaux-41",

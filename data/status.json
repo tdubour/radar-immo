@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "generatedAt": "2026-09-06T09:28:05.955Z",
+  "generatedAt": "2026-09-06T19:12:45.699Z",
   "message": "87 annonces actives",
   "sources": [
     {
@@ -34,13 +34,13 @@
       "id": "bienici-45",
       "label": "Bien'ici Loiret",
       "ok": true,
-      "count": 24
+      "count": 23
     },
     {
       "id": "bienici-18",
       "label": "Bien'ici Cher",
       "ok": true,
-      "count": 25
+      "count": 26
     },
     {
       "id": "pap",

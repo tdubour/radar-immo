@@ -20,7 +20,18 @@
     {
       "id": "seloger",
       "label": "SeLoger",
-      "url": "https://www.seloger.com/recherche/achat/immobilier/centre-val-de-loire/chaumont-sur-tharonne-41600/ad08fr16270",
+      "waitMs": 2500,
+      "targets": [
+        { "url": "https://www.seloger.com/recherche/achat/appartement/orleans-45000/bannier-coligny-45000/nbh2fr3416", "city": "Orléans", "postalCode": "45000" },
+        { "url": "https://www.seloger.com/recherche/achat/appartement/orleans-45000/beaumont-vauquois-45000/nbh2fr3417", "city": "Orléans", "postalCode": "45000" },
+        { "url": "https://www.seloger.com/recherche/achat/appartement/orleans-45000/cigogne-45100/nbh2fr3420", "city": "Orléans", "postalCode": "45100" },
+        { "url": "https://www.seloger.com/recherche/achat/appartement/blois-41000/est-41000/nbh2fr3022", "city": "Blois", "postalCode": "41000" },
+        { "url": "https://www.seloger.com/recherche/achat/appartement/blois-41000/vienne-41000/nbh2fr3028", "city": "Blois", "postalCode": "41000" },
+        { "url": "https://www.seloger.com/recherche/achat/appartement/bourges-18000/pignoux-18000/nbh2fr1342", "city": "Bourges", "postalCode": "18000" },
+        { "url": "https://www.seloger.com/recherche/achat/appartement/bourges-18000/chancellerie-18000/nbh2fr1346", "city": "Bourges", "postalCode": "18000" },
+        { "url": "https://www.seloger.com/recherche/achat/appartement/vierzon-18100/centre-ville-18100/nbh2fr1362", "city": "Vierzon", "postalCode": "18100" },
+        { "url": "https://www.seloger.com/recherche/achat/appartement/vierzon-18100/bois-d-yevre-18100/nbh2fr1363", "city": "Vierzon", "postalCode": "18100" }
+      ],
       "linkPattern": "\\/(annonces|annonce)\\/"
     },
     {

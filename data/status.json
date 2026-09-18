@@ -1,7 +1,7 @@
 {
   "ok": true,
-  "generatedAt": "2026-09-17T10:02:24.921Z",
-  "message": "87 annonces actives",
+  "generatedAt": "2026-09-18T09:49:24.915Z",
+  "message": "86 annonces actives",
   "sources": [
     {
       "id": "leboncoin",
@@ -53,7 +53,7 @@
       "id": "paruvendu-41",
       "label": "ParuVendu Loir-et-Cher",
       "ok": true,
-      "count": 0
+      "count": 2
     },
     {
       "id": "geolocaux-41",
@@ -70,9 +70,8 @@
     {
       "id": "geolocaux-18",
       "label": "Geolocaux Cher",
-      "ok": false,
-      "count": 0,
-      "error": "Aucune page locale accessible"
+      "ok": true,
+      "count": 0
     }
   ]
 }

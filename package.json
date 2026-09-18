@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "node --test",
-    "check": "node --check src/app.js && node --check src/finance.js && node --check src/charts.js && node --check src/radar.js && node --check scripts/collect-listings.mjs",
+    "check": "node --check src/app.js && node --check src/finance.js && node --check src/charts.js && node --check src/radar.js && node --check src/extension-contract.js && node --check api/extension-config.js && node --check api/extension-ingest.js && node --check scripts/collect-listings.mjs",
     "collect": "node scripts/collect-listings.mjs"
   },
   "devDependencies": {

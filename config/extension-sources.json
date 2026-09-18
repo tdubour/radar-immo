@@ -1,0 +1,233 @@
+{
+  "version": 1,
+  "updatedAt": "2026-09-18",
+  "center": { "name": "Chaumont-sur-Tharonne", "latitude": 47.611, "longitude": 2.183 },
+  "scope": { "primaryRadiusKm": 100, "extendedRadiusKm": 150, "extendedMinPopulation": 10000 },
+  "defaults": { "delayMinMs": 2500, "delayMaxMs": 6500, "maxPagesPerRun": 12, "maxListingsPerBatch": 100 },
+  "sources": [
+    {
+      "id": "leboncoin",
+      "label": "Leboncoin",
+      "category": "residential",
+      "priority": 1,
+      "collector": "browser-extension",
+      "homeUrl": "https://www.leboncoin.fr/c/ventes_immobilieres",
+      "seedUrls": [
+        "https://www.leboncoin.fr/recherche?category=9&locations=Chaumont-sur-Tharonne_41600__47.611_2.183_100000_100000&price=max-400000&real_estate_type=1,2,3,4,5&sort=time&order=desc"
+      ],
+      "listingPathPattern": "\\/ad\\/ventes_immobilieres\\/|\\/ventes_immobilieres\\/",
+      "notes": "Session utilisateur normale. Arrêt immédiat si vérification humaine ou CAPTCHA."
+    },
+    {
+      "id": "leboncoin-pro",
+      "label": "Leboncoin Bureaux & Commerces",
+      "category": "professional",
+      "priority": 1,
+      "collector": "browser-extension",
+      "homeUrl": "https://www.leboncoin.fr/c/bureaux_commerces",
+      "seedUrls": [
+        "https://www.leboncoin.fr/recherche?category=10&locations=Chaumont-sur-Tharonne_41600__47.611_2.183_100000_100000&price=max-750000&sort=time&order=desc"
+      ],
+      "listingPathPattern": "\\/ad\\/bureaux_commerces\\/|\\/bureaux_commerces\\/"
+    },
+    {
+      "id": "seloger",
+      "label": "SeLoger",
+      "category": "residential",
+      "priority": 1,
+      "collector": "browser-extension",
+      "homeUrl": "https://www.seloger.com/",
+      "seedUrls": [
+        "https://www.seloger.com/recherche/achat/appartement/orleans-45000/bannier-coligny-45000/nbh2fr3416",
+        "https://www.seloger.com/recherche/achat/appartement/orleans-45000/beaumont-vauquois-45000/nbh2fr3417",
+        "https://www.seloger.com/recherche/achat/appartement/blois-41000/est-41000/nbh2fr3022",
+        "https://www.seloger.com/recherche/achat/appartement/bourges-18000/pignoux-18000/nbh2fr1342",
+        "https://www.seloger.com/recherche/achat/appartement/vierzon-18100/centre-ville-18100/nbh2fr1362"
+      ],
+      "listingPathPattern": "\\/annonce\\/"
+    },
+    {
+      "id": "bienici",
+      "label": "Bien’ici",
+      "category": "residential",
+      "priority": 1,
+      "collector": "server-primary-extension-fallback",
+      "homeUrl": "https://www.bienici.com/",
+      "seedUrls": [
+        "https://www.bienici.com/recherche/achat/loir-et-cher-41",
+        "https://www.bienici.com/recherche/achat/loiret-45",
+        "https://www.bienici.com/recherche/achat/cher-18",
+        "https://www.bienici.com/recherche/achat/indre-36",
+        "https://www.bienici.com/recherche/achat/indre-et-loire-37",
+        "https://www.bienici.com/recherche/achat/eure-et-loir-28"
+      ],
+      "listingPathPattern": "\\/annonce\\/"
+    },
+    {
+      "id": "pap",
+      "label": "PAP",
+      "category": "private-residential",
+      "priority": 2,
+      "collector": "browser-extension",
+      "homeUrl": "https://www.pap.fr/annonce/vente-immobiliere",
+      "seedUrls": [],
+      "listingPathPattern": "\\/annonces\\/"
+    },
+    {
+      "id": "paruvendu",
+      "label": "ParuVendu",
+      "category": "residential",
+      "priority": 2,
+      "collector": "server-primary-extension-fallback",
+      "homeUrl": "https://www.paruvendu.fr/immobilier/vente/",
+      "seedUrls": ["https://www.paruvendu.fr/immobilier/vente/loir-et-cher-41/"],
+      "listingPathPattern": "\\/immobilier\\/vente\\/"
+    },
+    {
+      "id": "logic-immo",
+      "label": "Logic-Immo",
+      "category": "residential",
+      "priority": 2,
+      "collector": "browser-extension",
+      "homeUrl": "https://www.logic-immo.com/",
+      "seedUrls": [],
+      "listingPathPattern": "annonce|vente-immobilier"
+    },
+    {
+      "id": "superimmo",
+      "label": "Superimmo",
+      "category": "residential",
+      "priority": 2,
+      "collector": "browser-extension",
+      "homeUrl": "https://www.superimmo.com/",
+      "seedUrls": [],
+      "listingPathPattern": "annonce|achat"
+    },
+    {
+      "id": "figaro-immo",
+      "label": "Figaro Immobilier",
+      "category": "residential",
+      "priority": 2,
+      "collector": "browser-extension",
+      "homeUrl": "https://immobilier.lefigaro.fr/",
+      "seedUrls": [],
+      "listingPathPattern": "annonces|annonce"
+    },
+    {
+      "id": "green-acres",
+      "label": "Green-Acres",
+      "category": "residential",
+      "priority": 3,
+      "collector": "browser-extension",
+      "homeUrl": "https://www.green-acres.fr/",
+      "seedUrls": [],
+      "listingPathPattern": "property-for-sale|propriete"
+    },
+    {
+      "id": "entreparticuliers",
+      "label": "Entreparticuliers",
+      "category": "private-residential",
+      "priority": 2,
+      "collector": "browser-extension",
+      "homeUrl": "https://www.entreparticuliers.com/",
+      "seedUrls": [],
+      "listingPathPattern": "annonce"
+    },
+    {
+      "id": "immonot",
+      "label": "Immonot",
+      "category": "notary-residential",
+      "priority": 2,
+      "collector": "browser-extension",
+      "homeUrl": "https://www.immonot.com/",
+      "seedUrls": [],
+      "listingPathPattern": "annonce-immobiliere"
+    },
+    {
+      "id": "immobilier-notaires",
+      "label": "Immobilier.notaires",
+      "category": "notary-residential",
+      "priority": 2,
+      "collector": "browser-extension",
+      "homeUrl": "https://www.immobilier.notaires.fr/",
+      "seedUrls": [],
+      "listingPathPattern": "annonce"
+    },
+    {
+      "id": "geolocaux",
+      "label": "Geolocaux",
+      "category": "professional",
+      "priority": 1,
+      "collector": "server-primary-extension-fallback",
+      "homeUrl": "https://www.geolocaux.com/",
+      "seedUrls": [
+        "https://www.geolocaux.com/vente/entrepot/orleans-45000/",
+        "https://www.geolocaux.com/vente/entrepot/blois-41000/",
+        "https://www.geolocaux.com/vente/entrepot/bourges-18000/",
+        "https://www.geolocaux.com/vente/entrepot/vierzon-18100/"
+      ],
+      "listingPathPattern": "\\/annonce\\/"
+    },
+    {
+      "id": "bureauxlocaux",
+      "label": "BureauxLocaux",
+      "category": "professional",
+      "priority": 2,
+      "collector": "browser-extension",
+      "homeUrl": "https://www.bureauxlocaux.com/",
+      "seedUrls": [],
+      "listingPathPattern": "annonce"
+    },
+    {
+      "id": "arthur-loyd",
+      "label": "Arthur Loyd",
+      "category": "professional",
+      "priority": 2,
+      "collector": "browser-extension",
+      "homeUrl": "https://www.arthur-loyd.com/",
+      "seedUrls": [],
+      "listingPathPattern": "annonce|offre"
+    },
+    {
+      "id": "eol",
+      "label": "EOL",
+      "category": "professional",
+      "priority": 3,
+      "collector": "browser-extension",
+      "homeUrl": "https://www.eol.fr/",
+      "seedUrls": [],
+      "listingPathPattern": "annonce|offre"
+    },
+    {
+      "id": "bpifrance-locaux",
+      "label": "Bpifrance — locaux et entreprises",
+      "category": "professional",
+      "priority": 3,
+      "collector": "browser-extension",
+      "homeUrl": "https://reprise-entreprise.bpifrance.fr/",
+      "seedUrls": [],
+      "listingPathPattern": "annonce|opportunite"
+    },
+    {
+      "id": "agorastore",
+      "label": "Agorastore Immobilier",
+      "category": "auction",
+      "priority": 3,
+      "collector": "browser-extension",
+      "homeUrl": "https://www.agorastore.fr/ventes-immobilieres",
+      "seedUrls": [],
+      "listingPathPattern": "vente|bien"
+    },
+    {
+      "id": "encheres-domaine",
+      "label": "Enchères du Domaine",
+      "category": "auction",
+      "priority": 3,
+      "collector": "browser-extension",
+      "homeUrl": "https://encheres-domaine.gouv.fr/",
+      "seedUrls": [],
+      "listingPathPattern": "lot|vente"
+    }
+  ]
+}
+

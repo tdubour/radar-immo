@@ -48,6 +48,22 @@ Le workflow GitHub Actions `radar-collect.yml` lance notre collecteur Playwright
 
 Les communes, populations et distances sont vérifiées avec l’API publique française `geo.api.gouv.fr`. Aucun Supabase, Apify ou autre service payant n’est nécessaire. Si un portail bloque GitHub Actions, son échec est journalisé sans fabriquer de donnée.
 
+### Préparation de l’extension multi-plateformes
+
+Le registre public `config/extension-sources.json` décrit les portails, leurs liens de départ, leur priorité et la méthode de collecte prévue. Il est également disponible via `GET /api/extension-config` afin que l’extension puisse recevoir les mises à jour sans nouvelle publication dans le Chrome Web Store.
+
+L’extension enverra des lots de 1 à 100 annonces vers `POST /api/extension-ingest`. Le serveur supprime les champs non autorisés, normalise les nombres, contrôle les URL, calcule une empreinte stable et refuse les lots incomplets. Aucun numéro de téléphone, e-mail, cookie ou donnée de session n’est accepté dans le contrat.
+
+L’ingestion restera inactive tant que les variables suivantes ne seront pas configurées :
+
+- `EXTENSION_INGEST_TOKEN` : secret partagé avec l’extension ;
+- `EXTENSION_ALLOWED_ORIGINS` : identifiant(s) `chrome-extension://…` autorisé(s) ;
+- `RADAR_GITHUB_TOKEN` : jeton GitHub limité au dépôt de données ;
+- `RADAR_DATA_REPOSITORY` : dépôt cible, idéalement privé et distinct du code ;
+- `RADAR_DATA_BRANCH` : branche cible, `main` par défaut.
+
+`POST /api/extension-ingest?validateOnly=1` permet de valider un lot sans l’enregistrer une fois l’authentification configurée.
+
 ## Tests
 
 ```bash

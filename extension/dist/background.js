@@ -111,7 +111,8 @@ var STATE_KEY = "berryConnectorState";
 var RUN_PREFIX = "run:";
 var ALARM_PREFIX = "search:";
 var QUEUE_ALARM = "delivery-queue";
-var defaultState = () => ({ version: 1, apps: [], searches: [], queue: [], seen: {}, runs: {}, lastEvent: null });
+var RUN_TIMEOUT_PREFIX = "run-timeout:";
+var defaultState = () => ({ version: 1, apps: [], searches: [], queue: [], pendingSearchIds: [], seen: {}, runs: {}, lastEvent: null });
 async function getState() {
   const stored = await chrome.storage.local.get(STATE_KEY);
   return { ...defaultState(), ...stored[STATE_KEY] || {} };
@@ -128,9 +129,10 @@ async function syncAlarms() {
   const state = await getState();
   const existing = await chrome.alarms.getAll();
   await Promise.all(existing.filter((alarm) => alarm.name.startsWith(ALARM_PREFIX)).map((alarm) => chrome.alarms.clear(alarm.name)));
-  for (const search of state.searches.filter((row) => row.enabled)) {
+  const enabledSearches = state.searches.filter((row) => row.enabled);
+  for (const [index, search] of enabledSearches.entries()) {
     await chrome.alarms.create(`${ALARM_PREFIX}${search.id}`, {
-      delayInMinutes: Math.min(5, search.intervalMinutes),
+      delayInMinutes: Math.min(search.intervalMinutes, 2 + index * 2),
       periodInMinutes: Math.max(30, search.intervalMinutes)
     });
   }
@@ -147,8 +149,9 @@ async function registerRun(tabId, search, closeTabAfterCapture, mode) {
       createdAt: Date.now()
     }
   });
+  await chrome.alarms.create(`${RUN_TIMEOUT_PREFIX}${tabId}`, { delayInMinutes: 2 });
 }
-async function runSearch(searchId) {
+async function executeSearch(searchId) {
   const state = await getState();
   const search = state.searches.find((row) => row.id === searchId && row.enabled);
   if (!search) throw new Error("Recherche introuvable ou d\xE9sactiv\xE9e");
@@ -156,6 +159,25 @@ async function runSearch(searchId) {
   await registerRun(tab.id, search, search.closeTabAfterCapture, "scheduled");
   await setLastEvent({ status: "opened", searchId, sourceId: search.sourceId });
   return { ok: true, tabId: tab.id };
+}
+async function activeRunCount() {
+  const session = await chrome.storage.session.get(null);
+  return Object.keys(session).filter((key) => key.startsWith(RUN_PREFIX)).length;
+}
+async function pumpSearchQueue() {
+  if (await activeRunCount()) return { queued: true };
+  const state = await getState();
+  const searchId = state.pendingSearchIds.shift();
+  if (!searchId) return { queued: false };
+  await setState(state);
+  return executeSearch(searchId);
+}
+async function requestSearchRun(searchId) {
+  const state = await getState();
+  if (!state.searches.some((row) => row.id === searchId && row.enabled)) throw new Error("Recherche introuvable ou d\xE9sactiv\xE9e");
+  if (!state.pendingSearchIds.includes(searchId)) state.pendingSearchIds.push(searchId);
+  await setState(state);
+  return pumpSearchQueue();
 }
 function chunks(rows, size = 100) {
   const result = [];
@@ -224,7 +246,9 @@ async function handleExtracted(message, sender) {
     return await dispatchListings(run, message.pageUrl, message.sourceId, message.listings || []);
   } finally {
     await chrome.storage.session.remove(key);
+    await chrome.alarms.clear(`${RUN_TIMEOUT_PREFIX}${tabId}`);
     if (run.closeTabAfterCapture) await chrome.tabs.remove(tabId).catch(() => void 0);
+    else await pumpSearchQueue();
   }
 }
 async function captureActive(searchId) {
@@ -273,15 +297,21 @@ chrome.runtime.onInstalled.addListener(() => syncAlarms());
 chrome.runtime.onStartup.addListener(() => syncAlarms());
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === QUEUE_ALARM) retryQueue();
-  else if (alarm.name.startsWith(ALARM_PREFIX)) runSearch(alarm.name.slice(ALARM_PREFIX.length)).catch((error) => setLastEvent({ status: "error", error: error.message }));
+  else if (alarm.name.startsWith(ALARM_PREFIX)) requestSearchRun(alarm.name.slice(ALARM_PREFIX.length)).catch((error) => setLastEvent({ status: "error", error: error.message }));
+  else if (alarm.name.startsWith(RUN_TIMEOUT_PREFIX)) {
+    const tabId = Number(alarm.name.slice(RUN_TIMEOUT_PREFIX.length));
+    chrome.storage.session.remove(`${RUN_PREFIX}${tabId}`).then(() => chrome.tabs.remove(tabId).catch(() => void 0)).then(() => setLastEvent({ status: "timeout", tabId })).then(() => pumpSearchQueue());
+  }
 });
-chrome.tabs.onRemoved.addListener((tabId) => chrome.storage.session.remove(`${RUN_PREFIX}${tabId}`));
+chrome.tabs.onRemoved.addListener((tabId) => {
+  chrome.storage.session.remove(`${RUN_PREFIX}${tabId}`).then(() => chrome.alarms.clear(`${RUN_TIMEOUT_PREFIX}${tabId}`)).then(() => pumpSearchQueue());
+});
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   const actions = {
     PAGE_EXTRACTED: () => handleExtracted(message, sender),
     GET_STATE: () => getState(),
     SAVE_CONFIG: () => saveConfig(message),
-    RUN_SEARCH: () => runSearch(message.searchId),
+    RUN_SEARCH: () => requestSearchRun(message.searchId),
     CAPTURE_ACTIVE: () => captureActive(message.searchId),
     RETRY_QUEUE: () => retryQueue().then(() => ({ ok: true }))
   };

@@ -92,7 +92,7 @@ document.addEventListener("click", async (event) => {
     }
     if (runId) {
       await message({ type: "RUN_SEARCH", searchId: runId });
-      show("Recherche ouverte dans un onglet en arrière-plan.");
+      show("Recherche ajoutée à la file d’exécution.");
     }
   } catch (error) {
     show(error.message, "error");

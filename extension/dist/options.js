@@ -121,7 +121,7 @@ document.addEventListener("click", async (event) => {
     }
     if (runId) {
       await message({ type: "RUN_SEARCH", searchId: runId });
-      show("Recherche ouverte dans un onglet en arri\xE8re-plan.");
+      show("Recherche ajout\xE9e \xE0 la file d\u2019ex\xE9cution.");
     }
   } catch (error) {
     show(error.message, "error");

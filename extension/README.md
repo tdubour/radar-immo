@@ -30,3 +30,5 @@ Dans `chrome://extensions`, activer le mode développeur puis charger le dossier
 - `sourceId` : portail immobilier.
 
 Les jetons sont enregistrés dans `chrome.storage.local`, jamais dans le dépôt. L'extension demande uniquement la permission du domaine backend lors de l'ajout d'une application.
+
+Les recherches planifiées passent dans une file unique : un seul onglet de collecte est ouvert à la fois. Les passages initiaux sont décalés et un onglet sans réponse est fermé après deux minutes avant de poursuivre la file.

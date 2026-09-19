@@ -30,4 +30,6 @@ test("recognizes listing links and stable external ids", () => {
   const logicUrl = "https://www.logic-immo.com/detail-vente-271905933.htm";
   assert.equal(isListingUrl("logic-immo", logicUrl), true);
   assert.equal(extractExternalId(logicUrl), "271905933");
+  assert.equal(isListingUrl("logic-immo", "https://www.logic-immo.com/detail-annonce/vente/centre-val-de-loire/loir-et-cher-41/chaumont-sur-tharonne-41600/269YI2AE6N73"), true);
+  assert.equal(isListingUrl("logic-immo", "https://www.logic-immo.com/wl-cdp/26EXCK96LWNL"), true);
 });

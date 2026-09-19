@@ -27,7 +27,7 @@ export const SOURCES = Object.freeze({
     id: "logic-immo",
     label: "Logic-Immo",
     hosts: ["logic-immo.com"],
-    listingPaths: [/\/detail-(?:vente|location)(?:-|\/)\S*/i, /\/annonces?\//i]
+    listingPaths: [/\/detail-annonce\//i, /\/detail-(?:vente|location)(?:-|\/)\S*/i, /\/annonces?\//i, /\/wl-cdp\//i]
   }
 });
 

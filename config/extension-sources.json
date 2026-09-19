@@ -30,7 +30,7 @@
       "collector": "browser-extension",
       "homeUrl": "https://www.leboncoin.fr/c/bureaux_commerces",
       "seedUrls": [
-        "https://www.leboncoin.fr/recherche?category=10&locations=Chaumont-sur-Tharonne_41600__47.611_2.183_100000_100000&price=max-750000&sort=time&order=desc"
+        "https://www.leboncoin.fr/recherche?category=10&locations=Chaumont-sur-Tharonne_41600__47.60958_1.90408_100000_100000&price=max-750000&sort=time&order=desc"
       ],
       "listingPathPattern": "\\/ad\\/bureaux_commerces\\/|\\/bureaux_commerces\\/"
     },

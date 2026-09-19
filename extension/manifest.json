@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Berry Multi-Source Connector",
   "description": "Collecteur immobilier multi-application et multi-recherche pour BerryPilot, Radar Immo et les futurs outils.",
-  "version": "0.1.0",
+  "version": "1.1.0",
   "minimum_chrome_version": "120",
   "permissions": ["storage", "alarms", "tabs", "activeTab"],
   "host_permissions": [
@@ -10,7 +10,8 @@
     "*://*.seloger.com/*",
     "*://*.bienici.com/*",
     "*://*.pap.fr/*",
-    "*://*.logic-immo.com/*"
+    "*://*.logic-immo.com/*",
+    "https://berryconciergerie-app.vercel.app/*"
   ],
   "optional_host_permissions": ["https://*/*", "http://localhost/*"],
   "background": {

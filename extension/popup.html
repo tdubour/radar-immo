@@ -1,5 +1,48 @@
 <!doctype html>
 <html lang="fr">
-  <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Berry Connector</title><link rel="stylesheet" href="ui.css"></head>
-  <body class="popup"><main><p class="eyebrow">Berry tools</p><h1>Collecteur</h1><p id="source"></p><label>Recherche<select id="search"></select></label><button id="capture">Analyser cette page</button><p id="queue"></p><p id="status" role="status"></p><button id="options" class="secondary">Configurer</button></main><script type="module" src="dist/popup.js"></script></body>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Berry Connector</title>
+    <link rel="stylesheet" href="ui.css">
+  </head>
+  <body class="popup">
+    <main>
+      <p class="eyebrow">Berry tools</p>
+      <h1>Connecteur immobilier</h1>
+
+      <section class="popup-section">
+        <h2>Multi-source</h2>
+        <p id="source"></p>
+        <label>Recherche<select id="search"></select></label>
+        <button id="capture">Analyser cette page</button>
+        <p id="queue"></p>
+        <p id="status" role="status"></p>
+        <button id="options" class="secondary">Configurer les apps et recherches</button>
+      </section>
+
+      <section class="popup-section berrypilot-panel">
+        <p class="eyebrow">BerryPilot</p>
+        <h2>Prospection LBC Safe</h2>
+        <p id="bp-status" class="pill">Chargement…</p>
+        <div id="bp-pairing" hidden>
+          <label>Code BerryPilot<input id="bp-code" autocomplete="off" maxlength="20" placeholder="ABC-DEF-GHI"></label>
+          <button id="bp-pair">Rattacher ce Chrome</button>
+        </div>
+        <div id="bp-connected" hidden>
+          <dl>
+            <div><dt>Compte LBC</dt><dd id="bp-account">Session détectée</dd></div>
+            <div><dt>Dernière collecte</dt><dd id="bp-last-sync">Jamais</dd></div>
+          </dl>
+          <p id="bp-result" class="result" hidden></p>
+          <button id="bp-sync">Synchroniser BerryPilot</button>
+          <button id="bp-open" class="secondary">Ouvrir BerryPilot</button>
+          <button id="bp-disconnect" class="danger-link">Déconnecter BerryPilot</button>
+        </div>
+        <p id="bp-feedback" role="status"></p>
+      </section>
+      <p class="privacy-note">Aucun mot de passe ni message vendeur n’est lu ou envoyé.</p>
+    </main>
+    <script type="module" src="dist/popup.js"></script>
+  </body>
 </html>

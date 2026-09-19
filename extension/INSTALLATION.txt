@@ -1,0 +1,30 @@
+BERRY MULTI-SOURCE CONNECTOR 1.1.0
+
+INSTALLATION DANS CHROME
+
+1. Décompresser l'archive ZIP dans un dossier permanent.
+2. Ouvrir chrome://extensions dans Chrome.
+3. Activer « Mode développeur » en haut à droite.
+4. Cliquer sur « Charger l'extension non empaquetée ».
+5. Sélectionner le dossier qui contient ce fichier et manifest.json.
+6. Épingler « Berry Multi-Source Connector » dans la barre Chrome.
+
+BERRYPILOT LBC SAFE
+
+1. Ouvrir BerryPilot > Prospection > LBC Safe > Connexion LBC.
+2. Générer un code d'appairage.
+3. Ouvrir l'extension, saisir le code dans « Prospection LBC Safe ».
+4. Cliquer sur « Synchroniser BerryPilot » pour le premier test.
+5. Après validation, désactiver l'ancienne extension BerryPilot LBC autonome
+   afin d'éviter deux synchronisations du même compte.
+
+RADAR IMMO ET AUTRES APPLICATIONS
+
+1. Ouvrir l'extension puis « Configurer les apps et recherches ».
+2. Ajouter chaque application avec son endpoint, son espace et son jeton.
+3. Ajouter autant de recherches Leboncoin, SeLoger, Bien'ici, PAP et
+   Logic-Immo que nécessaire, vers une ou plusieurs applications.
+
+L'extension ne lit jamais les mots de passe, ne résout pas les CAPTCHA et
+n'envoie aucun message aux vendeurs. Chrome doit rester ouvert pour les
+synchronisations planifiées.

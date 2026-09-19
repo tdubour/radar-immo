@@ -9,6 +9,13 @@ test("normalizes an application destination", () => {
   assert.equal(app.workspaceId, "sologne");
 });
 
+test("normalizes the built-in local Radar destination without a secret", () => {
+  const local = normalizeApp({ id: "radar-immo", label: "Radar Immo", workspaceId: "sologne", transport: "local" });
+  assert.equal(local.transport, "local");
+  assert.equal(local.token, undefined);
+  assert.equal(local.ingestUrl, undefined);
+});
+
 test("one search can target several applications", () => {
   const search = normalizeSearch({
     id: "small-flats",

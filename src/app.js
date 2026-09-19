@@ -16,6 +16,7 @@ const SAVED_KEY = "radar-immo:projects:v1";
 const THEME_KEY = "radar-immo:theme";
 const RADAR_CONFIG_KEY = "radar-immo:watch-config:v1";
 const RADAR_LISTINGS_KEY = "radar-immo:listings:v1";
+const RADAR_CONNECTOR_CHANNEL = "berry-radar-connector";
 const app = document.querySelector("#app");
 
 const e = (value = "") => String(value).replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[char]));
@@ -52,12 +53,38 @@ const state = {
   saved: parseStorage(SAVED_KEY, []).map(hydrateProject),
   radarConfig: mergeDefaults(createDefaultRadarConfig(), parseStorage(RADAR_CONFIG_KEY, createDefaultRadarConfig())),
   radarListings: parseStorage(RADAR_LISTINGS_KEY, []),
-  radarStatus: { loading: true, connected: false, lastRun: null, error: "" },
+  radarStatus: { loading: true, connected: false, extensionCount: 0, lastRun: null, error: "" },
   page: "dashboard",
   formTab: "acquisition",
   theme: localStorage.getItem(THEME_KEY) || "dark",
   toast: ""
 };
+let extensionRadarListings = [];
+
+function mergeRadarListings(remoteListings = state.radarListings) {
+  const rows = [...(Array.isArray(remoteListings) ? remoteListings : []), ...extensionRadarListings];
+  state.radarListings = [...new Map(rows.map((listing) => [`${listing.sourceId || "source"}:${listing.externalId || listing.sourceUrl || JSON.stringify(listing)}`, listing])).values()];
+}
+
+window.addEventListener("message", (event) => {
+  if (event.source !== window || event.origin !== location.origin) return;
+  if (event.data?.channel !== RADAR_CONNECTOR_CHANNEL || event.data?.type !== "RADAR_LISTINGS") return;
+  const payload = event.data.payload || {};
+  extensionRadarListings = Array.isArray(payload.listings) ? payload.listings : [];
+  mergeRadarListings(state.radarListings);
+  state.radarStatus = {
+    ...state.radarStatus,
+    loading: false,
+    connected: true,
+    extensionCount: extensionRadarListings.length,
+    lastRun: payload.updatedAt ? { started_at: payload.updatedAt } : state.radarStatus.lastRun,
+    error: ""
+  };
+  persist();
+  if (state.page === "radar") render();
+});
+
+window.postMessage({ channel: RADAR_CONNECTOR_CHANNEL, type: "RADAR_REQUEST_LISTINGS" }, location.origin);
 
 document.documentElement.dataset.theme = state.theme;
 
@@ -365,7 +392,7 @@ function radarHtml() {
       ${kpi("Cash-flow minimum", `${euros(config.minCashflowAfterTaxMonthly)}/mois`, "après charges, dette et IS")}
       ${kpi("Annonces qualifiées", String(qualified.length), `${listings.length} annonce${listings.length > 1 ? "s" : ""} importée${listings.length > 1 ? "s" : ""}`)}
     </section>
-    <section class="panel ${state.radarStatus.connected ? "success-box" : "warning"}"><strong>${state.radarStatus.loading ? "Connexion au radar…" : state.radarStatus.connected ? "Collecte automatique connectée" : "Collecte en attente de configuration"}</strong><p>${state.radarStatus.connected ? `Base distante active${state.radarStatus.lastRun?.started_at ? ` · dernier passage ${new Date(state.radarStatus.lastRun.started_at).toLocaleString("fr-FR")}` : ""}. Les annonces sans loyer fiable restent « à compléter » et ne sont jamais qualifiées artificiellement.` : `Le backend est déployé mais attend sa base et les accès aux collecteurs. ${e(state.radarStatus.error || "Aucun faux résultat n’est affiché entre-temps.")}`}</p></section>
+    <section class="panel ${state.radarStatus.connected ? "success-box" : "warning"}"><strong>${state.radarStatus.loading ? "Connexion au radar…" : state.radarStatus.connected ? "Collecte automatique connectée" : "Collecte en attente de configuration"}</strong><p>${state.radarStatus.connected ? `${state.radarStatus.extensionCount ? `Extension multi-source active · ${state.radarStatus.extensionCount} annonce(s) locale(s)` : "Base distante active"}${state.radarStatus.lastRun?.started_at ? ` · dernier passage ${new Date(state.radarStatus.lastRun.started_at).toLocaleString("fr-FR")}` : ""}. Les annonces sans loyer fiable restent « à compléter » et ne sont jamais qualifiées artificiellement.` : `Le radar attend les données de l’extension ou du collecteur distant. ${e(state.radarStatus.error || "Aucun faux résultat n’est affiché entre-temps.")}`}</p></section>
     <section class="panel"><div class="section-title"><div><span class="eyebrow">Portails</span><h2>Sources retenues</h2></div><p>Les sources « priorité » passent avant les autres. Les annonces de particuliers gagnent des points ; les agences sont pénalisées mais restent visibles si l’opération est forte.</p></div><div class="radar-source-grid">${sources.map((source) => `<article class="radar-source"><div><strong>${e(source.label)}</strong><small>${source.id.includes("pro") || ["geolocaux", "bureauxlocaux", "bpifrance", "eol", "arthur-loyd"].includes(source.id) ? "Professionnel" : "Immobilier"}</small></div><span class="status-badge ${source.priority ? "priority" : ""}">${source.priority ? "Priorité" : "Actif"}</span></article>`).join("")}</div></section>
     <section class="panel"><div class="section-title"><div><span class="eyebrow">Périmètre</span><h2>Biens et budgets de départ</h2></div><p>Ces plafonds réduisent les requêtes ; ils seront affinés à partir des premières opportunités réellement analysées.</p></div><div class="threshold-grid"><article class="threshold-card"><span>Résidentiel</span><strong>${euros(config.residentialBudgetMax)}</strong><small>budget maximal affiché</small></article><article class="threshold-card"><span>Immeubles</span><strong>${euros(config.buildingBudgetMax)}</strong><small>rapport, mixte, divisible</small></article><article class="threshold-card"><span>Locaux professionnels</span><strong>${euros(config.professionalBudgetMax)}</strong><small>hangars, entrepôts, murs, ateliers</small></article><article class="threshold-card"><span>Fréquence cible</span><strong>Chaque jour</strong><small>nouvelles annonces uniquement</small></article></div><h3 class="subheading">Inclus</h3><div class="chip-list">${config.propertyTypes.map((type) => `<span class="chip">${e(type)}</span>`).join("")}</div><h3 class="subheading">Exclus au départ</h3><div class="chip-list">${config.excludedTypes.map((type) => `<span class="chip muted">${e(type)}</span>`).join("")}</div></section>
     <section class="panel"><div class="section-title"><div><span class="eyebrow">Résultats</span><h2>Annonces classées</h2></div><p>Score combinant cash-flow, bancabilité, qualité des données, distance et type de vendeur.</p></div>${listings.length ? `<div class="table-wrap"><table><thead><tr><th>Annonce</th><th>Ville</th><th>Prix</th><th>Distance</th><th>Vendeur</th><th>CF après IS</th><th>Score</th><th>Statut</th></tr></thead><tbody>${listings.map((item) => `<tr><td>${e(item.title || "Sans titre")}</td><td>${e(item.city || "—")}</td><td>${e(euros(item.askingPrice))}</td><td>${e(`${Number(item.distanceKm || 0).toFixed(0)} km`)}</td><td>${e(item.sellerType === "private" ? "Particulier" : item.sellerType === "agency" ? "Agence" : "Inconnu")}</td><td class="${Number(item.cashflowAfterTaxMonthly) >= config.minCashflowAfterTaxMonthly ? "positive-text" : "negative-text"}">${Number.isFinite(Number(item.cashflowAfterTaxMonthly)) ? e(`${euros(item.cashflowAfterTaxMonthly)}/mois`) : "À calculer"}</td><td>${item.score.toFixed(0)}/100</td><td><span class="status-badge ${item.qualified ? "priority" : ""}">${e(statusLabel(item.status))}</span></td></tr>`).join("")}</tbody></table></div>` : `<div class="empty"><div class="brand-mark">◎</div><h3>Aucune annonce importée</h3><p>Le radar est prêt à recevoir un fichier JSON provenant des futurs collecteurs. Les doublons seront supprimés et les biens classés automatiquement.</p><button class="primary" data-action="import-radar-listings">Importer un lot d’annonces</button></div>`}</section>
@@ -718,12 +745,12 @@ async function refreshRemoteRadar() {
     if (!listingsResponse.ok || !healthResponse.ok) throw new Error("fichiers du radar indisponibles");
     const payload = await listingsResponse.json();
     const health = await healthResponse.json();
-    state.radarListings = Array.isArray(payload.listings) ? payload.listings : [];
-    state.radarStatus = { loading: false, connected: Boolean(health.ok), lastRun: health.generatedAt ? { started_at: health.generatedAt } : null, error: health.ok ? "" : health.message };
+    mergeRadarListings(Array.isArray(payload.listings) ? payload.listings : []);
+    state.radarStatus = { loading: false, connected: Boolean(health.ok) || extensionRadarListings.length > 0, extensionCount: extensionRadarListings.length, lastRun: health.generatedAt ? { started_at: health.generatedAt } : null, error: health.ok || extensionRadarListings.length ? "" : health.message };
     persist();
     if (state.page === "radar") render();
   } catch (error) {
-    state.radarStatus = { loading: false, connected: false, lastRun: null, error: error.message };
+    state.radarStatus = { loading: false, connected: extensionRadarListings.length > 0, extensionCount: extensionRadarListings.length, lastRun: null, error: extensionRadarListings.length ? "" : error.message };
     if (state.page === "radar") render();
   }
 }

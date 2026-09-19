@@ -17,6 +17,7 @@ export function createDefaultRadarConfig() {
       { id: "seloger", label: "SeLoger", enabled: true, priority: true },
       { id: "bienici", label: "Bien’ici", enabled: true, priority: true },
       { id: "pap", label: "PAP", enabled: true, priority: true },
+      { id: "logic-immo", label: "Logic-Immo", enabled: true, priority: true },
       { id: "paruvendu", label: "ParuVendu", enabled: true, priority: false },
       { id: "entreparticuliers", label: "Entreparticuliers", enabled: true, priority: false },
       { id: "geolocaux", label: "Geolocaux", enabled: true, priority: true },
@@ -51,7 +52,8 @@ export function evaluateCandidate(candidate, config = createDefaultRadarConfig()
   const distanceScore = Number.isFinite(Number(candidate.distanceKm)) ? clamp((150 - Number(candidate.distanceKm)) / 150, 0, 1) * 10 : 0;
   const cashflowScore = hasCashflow ? clamp((cashflow - config.minCashflowAfterTaxMonthly + 150) / 500, 0, 1) * 42 : 0;
   const score = clamp(cashflowScore + bankability * .25 + confidence * 15 + distanceScore + privateBonus - agencyPenalty, 0, 100);
-  const inArea = isInSearchArea(candidate, config);
+  const hasDistance = candidate.distanceKm !== null && candidate.distanceKm !== undefined && candidate.distanceKm !== "" && Number.isFinite(Number(candidate.distanceKm));
+  const inArea = hasDistance ? isInSearchArea(candidate, config) : true;
   const qualified = inArea && hasCashflow && cashflow >= config.minCashflowAfterTaxMonthly;
   return {
     ...candidate,

@@ -48,13 +48,24 @@ function newId(prefix = "item") {
 function normalizeApp(input) {
   const id = clean(input?.id, 80).toLowerCase();
   const workspaceId = clean(input?.workspaceId, 120);
+  const transport = input?.transport === "local" ? "local" : "remote";
+  if (!id || !workspaceId) throw new Error("Application et espace obligatoires");
+  if (transport === "local") {
+    return {
+      id,
+      label: clean(input?.label || id, 120),
+      workspaceId,
+      transport,
+      enabled: input?.enabled !== false
+    };
+  }
   let ingestUrl;
   try {
     ingestUrl = new URL(input?.ingestUrl).toString();
   } catch {
     throw new Error("URL d\u2019ingestion invalide");
   }
-  if (!id || !workspaceId || !clean(input?.token, 1e3)) throw new Error("Application, espace et jeton obligatoires");
+  if (!clean(input?.token, 1e3)) throw new Error("Jeton obligatoire pour une application distante");
   if (!/^https?:$/.test(new URL(ingestUrl).protocol)) throw new Error("Seuls HTTP et HTTPS sont autoris\xE9s");
   return {
     id,
@@ -62,6 +73,7 @@ function normalizeApp(input) {
     workspaceId,
     ingestUrl,
     token: clean(input.token, 1e3),
+    transport,
     enabled: input?.enabled !== false
   };
 }
@@ -88,15 +100,15 @@ function normalizeSearch(input, knownAppIds = []) {
     closeTabAfterCapture: input?.closeTabAfterCapture !== false
   };
 }
-function makeEnvelope({ app, search, runId, listings, capturedAt = (/* @__PURE__ */ new Date()).toISOString() }) {
+function makeEnvelope({ app, search: search2, runId, listings, capturedAt = (/* @__PURE__ */ new Date()).toISOString() }) {
   return {
     context: {
       appId: app.id,
       workspaceId: app.workspaceId,
-      searchId: search.id,
+      searchId: search2.id,
       runId,
-      sourceId: search.sourceId,
-      searchUrl: search.url,
+      sourceId: search2.sourceId,
+      searchUrl: search2.url,
       capturedAt
     },
     listings
@@ -104,6 +116,63 @@ function makeEnvelope({ app, search, runId, listings, capturedAt = (/* @__PURE__
 }
 function canonicalListingKey(listing) {
   return `${listing.sourceId}:${listing.externalId || listing.sourceUrl}`;
+}
+
+// extension/src/defaults.js
+var RADAR_LOCAL_APP = Object.freeze({
+  id: "radar-immo",
+  label: "Radar Immo",
+  workspaceId: "sologne",
+  transport: "local",
+  enabled: true
+});
+var search = (id, label, sourceId, url) => Object.freeze({
+  id,
+  label,
+  sourceId,
+  url,
+  appIds: [RADAR_LOCAL_APP.id],
+  intervalMinutes: 1440,
+  enabled: true,
+  closeTabAfterCapture: true
+});
+var RADAR_DEFAULT_SEARCHES = Object.freeze([
+  search(
+    "radar-lbc-100km",
+    "Leboncoin \u2014 achats \xE0 100 km",
+    "leboncoin",
+    "https://www.leboncoin.fr/recherche?category=9&locations=Chaumont-sur-Tharonne_41600__47.60958_1.90408_100000_100000&price=max-400000&real_estate_type=1,2,3,4,5&sort=time&order=desc"
+  ),
+  search("radar-seloger-orleans-bannier", "SeLoger \u2014 Orl\xE9ans Bannier", "seloger", "https://www.seloger.com/recherche/achat/appartement/orleans-45000/bannier-coligny-45000/nbh2fr3416"),
+  search("radar-seloger-orleans-beaumont", "SeLoger \u2014 Orl\xE9ans Beaumont", "seloger", "https://www.seloger.com/recherche/achat/appartement/orleans-45000/beaumont-vauquois-45000/nbh2fr3417"),
+  search("radar-seloger-blois", "SeLoger \u2014 Blois", "seloger", "https://www.seloger.com/recherche/achat/appartement/blois-41000/est-41000/nbh2fr3022"),
+  search("radar-seloger-bourges", "SeLoger \u2014 Bourges", "seloger", "https://www.seloger.com/recherche/achat/appartement/bourges-18000/pignoux-18000/nbh2fr1342"),
+  search("radar-seloger-vierzon", "SeLoger \u2014 Vierzon", "seloger", "https://www.seloger.com/recherche/achat/appartement/vierzon-18100/centre-ville-18100/nbh2fr1362"),
+  search("radar-bienici-41", "Bien\u2019ici \u2014 Loir-et-Cher", "bienici", "https://www.bienici.com/recherche/achat/loir-et-cher-41"),
+  search("radar-bienici-45", "Bien\u2019ici \u2014 Loiret", "bienici", "https://www.bienici.com/recherche/achat/loiret-45"),
+  search("radar-bienici-18", "Bien\u2019ici \u2014 Cher", "bienici", "https://www.bienici.com/recherche/achat/cher-18"),
+  search("radar-bienici-36", "Bien\u2019ici \u2014 Indre", "bienici", "https://www.bienici.com/recherche/achat/indre-36"),
+  search("radar-bienici-37", "Bien\u2019ici \u2014 Indre-et-Loire", "bienici", "https://www.bienici.com/recherche/achat/indre-et-loire-37"),
+  search("radar-bienici-28", "Bien\u2019ici \u2014 Eure-et-Loir", "bienici", "https://www.bienici.com/recherche/achat/eure-et-loir-28"),
+  search("radar-pap-centre", "PAP \u2014 ventes entre particuliers", "pap", "https://www.pap.fr/annonce/vente-immobiliere"),
+  search(
+    "radar-logic-chaumont",
+    "Logic-Immo \u2014 Chaumont-sur-Tharonne",
+    "logic-immo",
+    "https://www.logic-immo.com/classified-search?distributionTypes=Buy&estateTypes=House,Apartment&locations=AD08FR16270&m=homepage_new_search_classified_search_result"
+  )
+]);
+function mergeRadarDefaults(state) {
+  const apps = Array.isArray(state?.apps) ? [...state.apps] : [];
+  const searches = Array.isArray(state?.searches) ? [...state.searches] : [];
+  const appIndex = apps.findIndex((app) => app.id === RADAR_LOCAL_APP.id);
+  if (appIndex === -1) apps.push({ ...RADAR_LOCAL_APP });
+  else if (apps[appIndex].transport === "local") apps[appIndex] = { ...apps[appIndex], ...RADAR_LOCAL_APP };
+  const knownSearchIds = new Set(searches.map((item) => item.id));
+  for (const item of RADAR_DEFAULT_SEARCHES) {
+    if (!knownSearchIds.has(item.id)) searches.push({ ...item, appIds: [...item.appIds] });
+  }
+  return { ...state, apps, searches, defaultsVersion: 1 };
 }
 
 // extension/src/background.js
@@ -118,13 +187,19 @@ var BERRYPILOT_ALARM = "berrypilot-lbc-automatic-sync";
 var BERRYPILOT_API_BASE_URL = "https://berryconciergerie-app.vercel.app";
 var EXTENSION_VERSION = chrome.runtime.getManifest().version;
 var activeBerryPilotSync = null;
-var defaultState = () => ({ version: 1, apps: [], searches: [], queue: [], pendingSearchIds: [], seen: {}, runs: {}, lastEvent: null });
+var defaultState = () => ({ version: 2, apps: [], searches: [], queue: [], pendingSearchIds: [], seen: {}, runs: {}, localListings: [], lastEvent: null });
 async function getState() {
   const stored = await chrome.storage.local.get(STATE_KEY);
   return { ...defaultState(), ...stored[STATE_KEY] || {} };
 }
 async function setState(state) {
   await chrome.storage.local.set({ [STATE_KEY]: state });
+}
+async function ensureRadarDefaults() {
+  const state = await getState();
+  const merged = mergeRadarDefaults(state);
+  await setState(merged);
+  return merged;
 }
 async function getBerryPilotState() {
   const stored = await chrome.storage.local.get([
@@ -194,10 +269,10 @@ async function syncAlarms() {
   const existing = await chrome.alarms.getAll();
   await Promise.all(existing.filter((alarm) => alarm.name.startsWith(ALARM_PREFIX)).map((alarm) => chrome.alarms.clear(alarm.name)));
   const enabledSearches = state.searches.filter((row) => row.enabled);
-  for (const [index, search] of enabledSearches.entries()) {
-    await chrome.alarms.create(`${ALARM_PREFIX}${search.id}`, {
-      delayInMinutes: Math.min(search.intervalMinutes, 2 + index * 2),
-      periodInMinutes: Math.max(30, search.intervalMinutes)
+  for (const [index, search2] of enabledSearches.entries()) {
+    await chrome.alarms.create(`${ALARM_PREFIX}${search2.id}`, {
+      delayInMinutes: Math.min(search2.intervalMinutes, 2 + index * 2),
+      periodInMinutes: Math.max(30, search2.intervalMinutes)
     });
   }
   await chrome.alarms.create(QUEUE_ALARM, { delayInMinutes: 1, periodInMinutes: 5 });
@@ -232,12 +307,12 @@ async function closeCollectionContext({ tabId, windowId, discreteWindow }) {
   }
   if (tabId != null) await chrome.tabs.remove(tabId).catch(() => void 0);
 }
-async function registerRun(tabId, search, closeTabAfterCapture, mode, leaseId, collectionContext = {}) {
+async function registerRun(tabId, search2, closeTabAfterCapture, mode, leaseId, collectionContext = {}) {
   const key = `${RUN_PREFIX}${tabId}`;
   await chrome.storage.session.set({
     [key]: {
       runId: newId("run"),
-      searchId: search.id,
+      searchId: search2.id,
       closeTabAfterCapture,
       mode,
       leaseId,
@@ -250,16 +325,16 @@ async function registerRun(tabId, search, closeTabAfterCapture, mode, leaseId, c
 }
 async function executeSearch(searchId) {
   const state = await getState();
-  const search = state.searches.find((row) => row.id === searchId && row.enabled);
-  if (!search) throw new Error("Recherche introuvable ou d\xE9sactiv\xE9e");
+  const search2 = state.searches.find((row) => row.id === searchId && row.enabled);
+  if (!search2) throw new Error("Recherche introuvable ou d\xE9sactiv\xE9e");
   const lease = await acquireBrowserJob("multi-source", searchId);
   if (!lease) return { ok: true, queued: true };
   let context;
   try {
-    context = await createDiscreteTab(search.url);
+    context = await createDiscreteTab(search2.url);
     await updateBrowserJob(lease, { tabId: context.tab.id, windowId: context.windowId, discreteWindow: context.discreteWindow });
-    await registerRun(context.tab.id, search, search.closeTabAfterCapture, "scheduled", lease.id, context);
-    await setLastEvent({ status: "opened", searchId, sourceId: search.sourceId, discreteWindow: context.discreteWindow });
+    await registerRun(context.tab.id, search2, search2.closeTabAfterCapture, "scheduled", lease.id, context);
+    await setLastEvent({ status: "opened", searchId, sourceId: search2.sourceId, discreteWindow: context.discreteWindow });
     return { ok: true, tabId: context.tab.id, discreteWindow: context.discreteWindow };
   } catch (error) {
     if (context) {
@@ -302,28 +377,55 @@ async function postEnvelope(app, envelope) {
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
   return response.json().catch(() => ({ ok: true }));
 }
+function storeLocalListings(state, envelope) {
+  const listings = Array.isArray(state.localListings) ? state.localListings : [];
+  const byKey = new Map(listings.map((listing) => [canonicalListingKey(listing), listing]));
+  for (const listing of envelope.listings) {
+    const key = canonicalListingKey(listing);
+    byKey.set(key, { ...byKey.get(key), ...listing, appId: envelope.context.appId, workspaceId: envelope.context.workspaceId });
+  }
+  state.localListings = [...byKey.values()].slice(-1e4);
+  return envelope.listings.length;
+}
+async function notifyRadarTabs() {
+  const tabs = await chrome.tabs.query({ url: "https://radar-immo-blond.vercel.app/*" });
+  await Promise.all(tabs.filter((tab) => tab.id).map((tab) => chrome.tabs.sendMessage(tab.id, { type: "RADAR_LOCAL_UPDATED" }).catch(() => void 0)));
+}
+async function getLocalRadarPayload() {
+  const state = await getState();
+  return {
+    listings: state.localListings || [],
+    searches: state.searches.filter((search2) => search2.appIds.includes("radar-immo")),
+    runs: state.runs,
+    updatedAt: state.lastEvent?.at || null
+  };
+}
 async function enqueue(state, appId, envelope, reason) {
   state.queue.push({ id: newId("delivery"), appId, envelope, attempts: 0, nextRetryAt: Date.now() + 6e4, reason: String(reason).slice(0, 300) });
   state.queue = state.queue.slice(-500);
 }
 async function dispatchListings(run, pageUrl, sourceId, rows) {
   const state = await getState();
-  const search = state.searches.find((item) => item.id === run.searchId);
-  if (!search || search.sourceId !== sourceId) throw new Error("La page ne correspond pas \xE0 la recherche");
-  const seen = new Set(state.seen[search.id] || []);
+  const search2 = state.searches.find((item) => item.id === run.searchId);
+  if (!search2 || search2.sourceId !== sourceId) throw new Error("La page ne correspond pas \xE0 la recherche");
+  const seen = new Set(state.seen[search2.id] || []);
   const fresh = rows.filter((row) => {
     const key = canonicalListingKey(row);
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
   });
-  state.seen[search.id] = [...seen].slice(-5e3);
+  state.seen[search2.id] = [...seen].slice(-5e3);
   let accepted = 0;
-  for (const appId of search.appIds) {
+  for (const appId of search2.appIds) {
     const app = state.apps.find((item) => item.id === appId && item.enabled);
     if (!app) continue;
     for (const batch of chunks(fresh)) {
-      const envelope = makeEnvelope({ app, search, runId: run.runId, listings: batch });
+      const envelope = makeEnvelope({ app, search: search2, runId: run.runId, listings: batch });
+      if (app.transport === "local") {
+        accepted += storeLocalListings(state, envelope);
+        continue;
+      }
       try {
         await postEnvelope(app, envelope);
         accepted += batch.length;
@@ -332,7 +434,7 @@ async function dispatchListings(run, pageUrl, sourceId, rows) {
       }
     }
   }
-  state.runs[search.id] = {
+  state.runs[search2.id] = {
     at: (/* @__PURE__ */ new Date()).toISOString(),
     pageUrl,
     found: rows.length,
@@ -340,8 +442,9 @@ async function dispatchListings(run, pageUrl, sourceId, rows) {
     delivered: accepted,
     queued: state.queue.length
   };
-  state.lastEvent = { at: (/* @__PURE__ */ new Date()).toISOString(), status: "captured", searchId: search.id, sourceId, found: rows.length, fresh: fresh.length };
+  state.lastEvent = { at: (/* @__PURE__ */ new Date()).toISOString(), status: "captured", searchId: search2.id, sourceId, found: rows.length, fresh: fresh.length };
   await setState(state);
+  if (accepted) await notifyRadarTabs();
   return { found: rows.length, fresh: fresh.length, accepted };
 }
 async function handleExtracted(message, sender) {
@@ -365,15 +468,15 @@ async function handleExtracted(message, sender) {
 }
 async function captureActive(searchId) {
   const state = await getState();
-  const search = state.searches.find((row) => row.id === searchId && row.enabled);
-  if (!search) throw new Error("Recherche introuvable");
+  const search2 = state.searches.find((row) => row.id === searchId && row.enabled);
+  if (!search2) throw new Error("Recherche introuvable");
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (!tab?.id) throw new Error("Aucun onglet actif");
   const lease = await acquireBrowserJob("multi-source-manual", searchId);
   if (!lease) throw new Error("Une autre collecte est d\xE9j\xE0 en cours");
   try {
     await updateBrowserJob(lease, { tabId: tab.id });
-    await registerRun(tab.id, search, false, "manual", lease.id);
+    await registerRun(tab.id, search2, false, "manual", lease.id);
     await chrome.tabs.sendMessage(tab.id, { type: "SCAN_NOW" });
     return { ok: true };
   } catch (error) {
@@ -407,8 +510,8 @@ async function saveConfig(message) {
   const apps = (message.apps || []).map(normalizeApp);
   const appIds = apps.map((app) => app.id);
   if (new Set(appIds).size !== appIds.length) throw new Error("Chaque application doit avoir un identifiant unique");
-  const searches = (message.searches || []).map((search) => normalizeSearch(search, appIds));
-  if (new Set(searches.map((search) => search.id)).size !== searches.length) throw new Error("Chaque recherche doit avoir un identifiant unique");
+  const searches = (message.searches || []).map((search2) => normalizeSearch(search2, appIds));
+  if (new Set(searches.map((search2) => search2.id)).size !== searches.length) throw new Error("Chaque recherche doit avoir un identifiant unique");
   const previous = await getState();
   await setState({ ...previous, apps, searches });
   await syncAlarms();
@@ -456,10 +559,10 @@ async function berryPilotHeartbeat(values) {
     method: "POST"
   });
 }
-function isBerryPilotSearchDue(search, trigger, lastSyncByKind) {
+function isBerryPilotSearchDue(search2, trigger, lastSyncByKind) {
   if (trigger === "manual") return true;
-  const last = Number(lastSyncByKind[search.rentalKind] || 0);
-  return Date.now() - last >= Number(search.intervalHours) * 60 * 6e4;
+  const last = Number(lastSyncByKind[search2.rentalKind] || 0);
+  return Date.now() - last >= Number(search2.intervalHours) * 60 * 6e4;
 }
 async function waitForTab(tabId, timeoutMs = 3e4) {
   return new Promise((resolve, reject) => {
@@ -498,17 +601,17 @@ async function collectBerryPilotSearch(searchUrl, lease) {
   await updateBrowserJob(lease, { tabId: tab.id, windowId: context.windowId, discreteWindow: context.discreteWindow });
   try {
     await waitForTab(tab.id);
-    const search = await messageTab(tab.id, { type: "BERRYPILOT_COLLECT_SEARCH" });
-    if (!search?.loggedIn) throw new Error("La session Leboncoin n\u2019est pas connect\xE9e dans Chrome.");
-    if (search.blocked) throw new Error("Leboncoin demande une v\xE9rification manuelle. Ouvrez le site pour la valider.");
+    const search2 = await messageTab(tab.id, { type: "BERRYPILOT_COLLECT_SEARCH" });
+    if (!search2?.loggedIn) throw new Error("La session Leboncoin n\u2019est pas connect\xE9e dans Chrome.");
+    if (search2.blocked) throw new Error("Leboncoin demande une v\xE9rification manuelle. Ouvrez le site pour la valider.");
     const listings = [];
-    for (const sourceUrl of (search.urls || []).slice(0, 40)) {
+    for (const sourceUrl of (search2.urls || []).slice(0, 40)) {
       await chrome.tabs.update(tab.id, { url: sourceUrl });
       await waitForTab(tab.id);
       const listing = await messageTab(tab.id, { type: "BERRYPILOT_COLLECT_LISTING" });
       if (listing?.sourceUrl && listing?.title) listings.push(listing);
     }
-    return { accountLabel: search.accountLabel || "", listings };
+    return { accountLabel: search2.accountLabel || "", listings };
   } finally {
     await closeCollectionContext({ tabId: tab.id, windowId: context.windowId, discreteWindow: context.discreteWindow });
     await updateBrowserJob(lease, { tabId: null, windowId: null, discreteWindow: null });
@@ -527,7 +630,7 @@ async function performBerryPilotSync(trigger) {
     }
     const state = await getBerryPilotState();
     const lastSyncByKind = state.lastSyncByKind || {};
-    const searches = (config.searches || []).filter((search) => search.enabled && isBerryPilotSearchDue(search, trigger, lastSyncByKind));
+    const searches = (config.searches || []).filter((search2) => search2.enabled && isBerryPilotSearchDue(search2, trigger, lastSyncByKind));
     if (!searches.length) {
       await berryPilotHeartbeat({ status: "connected" });
       await setBerryPilotState({ status: "connected" });
@@ -535,18 +638,18 @@ async function performBerryPilotSync(trigger) {
     }
     const totals = { blocked: 0, discovered: 0, duplicates: 0, imported: 0 };
     let accountLabel = "";
-    for (const search of searches) {
-      const collected = await collectBerryPilotSearch(search.url, lease);
+    for (const search2 of searches) {
+      const collected = await collectBerryPilotSearch(search2.url, lease);
       accountLabel ||= collected.accountLabel || "";
       totals.discovered += collected.listings.length;
       const imported = await berryPilotApiRequest("/api/lbc-connector/import", {
-        body: JSON.stringify({ accountLabel, listings: collected.listings, rentalKind: search.rentalKind, startedAt, trigger }),
+        body: JSON.stringify({ accountLabel, listings: collected.listings, rentalKind: search2.rentalKind, startedAt, trigger }),
         method: "POST"
       });
       totals.blocked += imported.blocked || 0;
       totals.duplicates += imported.duplicates || 0;
       totals.imported += imported.imported || 0;
-      lastSyncByKind[search.rentalKind] = Date.now();
+      lastSyncByKind[search2.rentalKind] = Date.now();
     }
     await setBerryPilotState({
       accountLabel,
@@ -592,6 +695,7 @@ async function disconnectBerryPilot() {
   return { ok: true };
 }
 async function syncAllAlarms() {
+  await ensureRadarDefaults();
   await syncAlarms();
   await chrome.alarms.create(BERRYPILOT_ALARM, { delayInMinutes: 5, periodInMinutes: 60 });
 }
@@ -621,6 +725,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     RUN_SEARCH: () => requestSearchRun(message.searchId),
     CAPTURE_ACTIVE: () => captureActive(message.searchId),
     RETRY_QUEUE: () => retryQueue().then(() => ({ ok: true })),
+    GET_RADAR_LOCAL_LISTINGS: () => getLocalRadarPayload(),
     BERRYPILOT_GET_STATE: () => getBerryPilotState(),
     BERRYPILOT_PAIR: () => pairBerryPilot(message.code),
     BERRYPILOT_RUN_SYNC: () => runBerryPilotSync("manual"),

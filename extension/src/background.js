@@ -1,4 +1,5 @@
 import { canonicalListingKey, makeEnvelope, newId, normalizeApp, normalizeSearch } from "./model.js";
+import { mergeRadarDefaults } from "./defaults.js";
 
 const STATE_KEY = "berryConnectorState";
 const RUN_PREFIX = "run:";
@@ -12,7 +13,7 @@ const BERRYPILOT_API_BASE_URL = "https://berryconciergerie-app.vercel.app";
 const EXTENSION_VERSION = chrome.runtime.getManifest().version;
 let activeBerryPilotSync = null;
 
-const defaultState = () => ({ version: 1, apps: [], searches: [], queue: [], pendingSearchIds: [], seen: {}, runs: {}, lastEvent: null });
+const defaultState = () => ({ version: 2, apps: [], searches: [], queue: [], pendingSearchIds: [], seen: {}, runs: {}, localListings: [], lastEvent: null });
 
 async function getState() {
   const stored = await chrome.storage.local.get(STATE_KEY);
@@ -21,6 +22,13 @@ async function getState() {
 
 async function setState(state) {
   await chrome.storage.local.set({ [STATE_KEY]: state });
+}
+
+async function ensureRadarDefaults() {
+  const state = await getState();
+  const merged = mergeRadarDefaults(state);
+  await setState(merged);
+  return merged;
 }
 
 async function getBerryPilotState() {
@@ -216,6 +224,32 @@ async function postEnvelope(app, envelope) {
   return response.json().catch(() => ({ ok: true }));
 }
 
+function storeLocalListings(state, envelope) {
+  const listings = Array.isArray(state.localListings) ? state.localListings : [];
+  const byKey = new Map(listings.map((listing) => [canonicalListingKey(listing), listing]));
+  for (const listing of envelope.listings) {
+    const key = canonicalListingKey(listing);
+    byKey.set(key, { ...byKey.get(key), ...listing, appId: envelope.context.appId, workspaceId: envelope.context.workspaceId });
+  }
+  state.localListings = [...byKey.values()].slice(-10000);
+  return envelope.listings.length;
+}
+
+async function notifyRadarTabs() {
+  const tabs = await chrome.tabs.query({ url: "https://radar-immo-blond.vercel.app/*" });
+  await Promise.all(tabs.filter((tab) => tab.id).map((tab) => chrome.tabs.sendMessage(tab.id, { type: "RADAR_LOCAL_UPDATED" }).catch(() => undefined)));
+}
+
+async function getLocalRadarPayload() {
+  const state = await getState();
+  return {
+    listings: state.localListings || [],
+    searches: state.searches.filter((search) => search.appIds.includes("radar-immo")),
+    runs: state.runs,
+    updatedAt: state.lastEvent?.at || null
+  };
+}
+
 async function enqueue(state, appId, envelope, reason) {
   state.queue.push({ id: newId("delivery"), appId, envelope, attempts: 0, nextRetryAt: Date.now() + 60_000, reason: String(reason).slice(0, 300) });
   state.queue = state.queue.slice(-500);
@@ -239,6 +273,10 @@ async function dispatchListings(run, pageUrl, sourceId, rows) {
     if (!app) continue;
     for (const batch of chunks(fresh)) {
       const envelope = makeEnvelope({ app, search, runId: run.runId, listings: batch });
+      if (app.transport === "local") {
+        accepted += storeLocalListings(state, envelope);
+        continue;
+      }
       try {
         await postEnvelope(app, envelope);
         accepted += batch.length;
@@ -257,6 +295,7 @@ async function dispatchListings(run, pageUrl, sourceId, rows) {
   };
   state.lastEvent = { at: new Date().toISOString(), status: "captured", searchId: search.id, sourceId, found: rows.length, fresh: fresh.length };
   await setState(state);
+  if (accepted) await notifyRadarTabs();
   return { found: rows.length, fresh: fresh.length, accepted };
 }
 
@@ -527,6 +566,7 @@ async function disconnectBerryPilot() {
 }
 
 async function syncAllAlarms() {
+  await ensureRadarDefaults();
   await syncAlarms();
   await chrome.alarms.create(BERRYPILOT_ALARM, { delayInMinutes: 5, periodInMinutes: 60 });
 }
@@ -566,6 +606,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     RUN_SEARCH: () => requestSearchRun(message.searchId),
     CAPTURE_ACTIVE: () => captureActive(message.searchId),
     RETRY_QUEUE: () => retryQueue().then(() => ({ ok: true })),
+    GET_RADAR_LOCAL_LISTINGS: () => getLocalRadarPayload(),
     BERRYPILOT_GET_STATE: () => getBerryPilotState(),
     BERRYPILOT_PAIR: () => pairBerryPilot(message.code),
     BERRYPILOT_RUN_SYNC: () => runBerryPilotSync("manual"),

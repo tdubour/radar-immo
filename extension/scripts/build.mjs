@@ -7,6 +7,7 @@ await build({
   entryPoints: {
     background: fileURLToPath(new URL("../src/background.js", import.meta.url)),
     content: fileURLToPath(new URL("../src/content.js", import.meta.url)),
+    "radar-bridge": fileURLToPath(new URL("../src/radar-bridge.js", import.meta.url)),
     options: fileURLToPath(new URL("../src/options.js", import.meta.url)),
     popup: fileURLToPath(new URL("../src/popup.js", import.meta.url))
   },

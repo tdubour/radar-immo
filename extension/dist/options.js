@@ -51,7 +51,7 @@ function show(text, kind = "ok") {
   byId("status").dataset.kind = kind;
 }
 function render() {
-  byId("apps").innerHTML = state.apps.map((app) => `<article><strong>${escapeHtml(app.label)}</strong><span>${escapeHtml(app.id)} \xB7 ${escapeHtml(app.workspaceId)}</span><span>${escapeHtml(new URL(app.ingestUrl).origin)}</span><button data-delete-app="${escapeHtml(app.id)}">Supprimer</button></article>`).join("") || "<p>Aucune application.</p>";
+  byId("apps").innerHTML = state.apps.map((app) => `<article><strong>${escapeHtml(app.label)}</strong><span>${escapeHtml(app.id)} \xB7 ${escapeHtml(app.workspaceId)}</span><span>${app.transport === "local" ? "Int\xE9gr\xE9e \xE0 ce Chrome" : escapeHtml(new URL(app.ingestUrl).origin)}</span>${app.transport === "local" ? "" : `<button data-delete-app="${escapeHtml(app.id)}">Supprimer</button>`}</article>`).join("") || "<p>Aucune application.</p>";
   byId("searches").innerHTML = state.searches.map((search) => `<article><strong>${escapeHtml(search.label)}</strong><span>${escapeHtml(SOURCES[search.sourceId]?.label || search.sourceId)} \xB7 toutes les ${search.intervalMinutes} min</span><span>${escapeHtml(search.appIds.join(", "))}</span><button data-run="${escapeHtml(search.id)}">Tester</button><button data-delete-search="${escapeHtml(search.id)}">Supprimer</button></article>`).join("") || "<p>Aucune recherche.</p>";
   byId("searchApps").innerHTML = state.apps.map((app) => `<option value="${escapeHtml(app.id)}">${escapeHtml(app.label)}</option>`).join("");
   byId("searchSource").innerHTML = Object.values(SOURCES).map((source) => `<option value="${escapeHtml(source.id)}">${escapeHtml(source.label)}</option>`).join("");
@@ -74,6 +74,7 @@ byId("appForm").addEventListener("submit", async (event) => {
       workspaceId: byId("workspaceId").value.trim(),
       ingestUrl,
       token: byId("appToken").value,
+      transport: "remote",
       enabled: true
     };
     state.apps = [...state.apps.filter((row) => row.id !== app.id), app];

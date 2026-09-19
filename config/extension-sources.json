@@ -2,10 +2,10 @@
   "version": 1,
   "updatedAt": "2026-09-19",
   "extension": {
-    "version": "1.1.1",
+    "version": "1.2.0",
     "supportedSourceIds": ["leboncoin", "seloger", "bienici", "pap", "logic-immo"]
   },
-  "center": { "name": "Chaumont-sur-Tharonne", "latitude": 47.611, "longitude": 2.183 },
+  "center": { "name": "Chaumont-sur-Tharonne", "latitude": 47.60958, "longitude": 1.90408 },
   "scope": { "primaryRadiusKm": 100, "extendedRadiusKm": 150, "extendedMinPopulation": 10000 },
   "defaults": { "delayMinMs": 2500, "delayMaxMs": 6500, "maxPagesPerRun": 12, "maxListingsPerBatch": 100 },
   "sources": [
@@ -17,7 +17,7 @@
       "collector": "browser-extension",
       "homeUrl": "https://www.leboncoin.fr/c/ventes_immobilieres",
       "seedUrls": [
-        "https://www.leboncoin.fr/recherche?category=9&locations=Chaumont-sur-Tharonne_41600__47.611_2.183_100000_100000&price=max-400000&real_estate_type=1,2,3,4,5&sort=time&order=desc"
+        "https://www.leboncoin.fr/recherche?category=9&locations=Chaumont-sur-Tharonne_41600__47.60958_1.90408_100000_100000&price=max-400000&real_estate_type=1,2,3,4,5&sort=time&order=desc"
       ],
       "listingPathPattern": "\\/ad\\/ventes_immobilieres\\/|\\/ventes_immobilieres\\/",
       "notes": "Session utilisateur normale. Arrêt immédiat si vérification humaine ou CAPTCHA."
@@ -74,7 +74,7 @@
       "priority": 2,
       "collector": "browser-extension",
       "homeUrl": "https://www.pap.fr/annonce/vente-immobiliere",
-      "seedUrls": [],
+      "seedUrls": ["https://www.pap.fr/annonce/vente-immobiliere"],
       "listingPathPattern": "\\/annonces\\/"
     },
     {
@@ -94,7 +94,7 @@
       "priority": 2,
       "collector": "browser-extension",
       "homeUrl": "https://www.logic-immo.com/",
-      "seedUrls": [],
+      "seedUrls": ["https://www.logic-immo.com/classified-search?distributionTypes=Buy&estateTypes=House,Apartment&locations=AD08FR16270&m=homepage_new_search_classified_search_result"],
       "listingPathPattern": "annonce|vente-immobilier"
     },
     {

@@ -57,10 +57,11 @@ async function initMultiSource() {
   const sourceId = sourceFromUrl(tab?.url || "");
   const state = await message({ type: "GET_STATE" });
   const searches = state.searches.filter((row) => row.enabled && row.sourceId === sourceId);
-  byId("source").textContent = sourceId ? `Source d\xE9tect\xE9e : ${sourceId}` : "Ce site n\u2019est pas encore pris en charge.";
+  const sourceCount = new Set(state.searches.filter((row) => row.enabled).map((row) => row.sourceId)).size;
+  byId("source").textContent = sourceId ? `Source d\xE9tect\xE9e : ${sourceId}` : `${sourceCount} portails actifs \xB7 ${state.searches.length} recherches configur\xE9es`;
   byId("search").innerHTML = searches.map((row) => `<option value="${escapeHtml(row.id)}">${escapeHtml(row.label)}</option>`).join("");
   byId("capture").disabled = !searches.length;
-  byId("queue").textContent = `${state.queue.length} envoi(s) en attente`;
+  byId("queue").textContent = `${state.localListings?.length || 0} annonce(s) Radar \xB7 ${state.queue.length} envoi(s) en attente`;
 }
 function berryPilotStatusLabel(status, paired) {
   if (!paired) return "\xC0 appairer avec BerryPilot";

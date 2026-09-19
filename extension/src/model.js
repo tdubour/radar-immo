@@ -9,13 +9,24 @@ export function newId(prefix = "item") {
 export function normalizeApp(input) {
   const id = clean(input?.id, 80).toLowerCase();
   const workspaceId = clean(input?.workspaceId, 120);
+  const transport = input?.transport === "local" ? "local" : "remote";
+  if (!id || !workspaceId) throw new Error("Application et espace obligatoires");
+  if (transport === "local") {
+    return {
+      id,
+      label: clean(input?.label || id, 120),
+      workspaceId,
+      transport,
+      enabled: input?.enabled !== false
+    };
+  }
   let ingestUrl;
   try {
     ingestUrl = new URL(input?.ingestUrl).toString();
   } catch {
     throw new Error("URL d’ingestion invalide");
   }
-  if (!id || !workspaceId || !clean(input?.token, 1000)) throw new Error("Application, espace et jeton obligatoires");
+  if (!clean(input?.token, 1000)) throw new Error("Jeton obligatoire pour une application distante");
   if (!/^https?:$/.test(new URL(ingestUrl).protocol)) throw new Error("Seuls HTTP et HTTPS sont autorisés");
   return {
     id,
@@ -23,6 +34,7 @@ export function normalizeApp(input) {
     workspaceId,
     ingestUrl,
     token: clean(input.token, 1000),
+    transport,
     enabled: input?.enabled !== false
   };
 }

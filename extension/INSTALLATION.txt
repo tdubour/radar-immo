@@ -1,4 +1,4 @@
-BERRY MULTI-SOURCE CONNECTOR 1.1.1
+BERRY MULTI-SOURCE CONNECTOR 1.2.0
 
 INSTALLATION DANS CHROME
 
@@ -20,10 +20,11 @@ BERRYPILOT LBC SAFE
 
 RADAR IMMO ET AUTRES APPLICATIONS
 
-1. Ouvrir l'extension puis « Configurer les apps et recherches ».
-2. Ajouter chaque application avec son endpoint, son espace et son jeton.
-3. Ajouter autant de recherches Leboncoin, SeLoger, Bien'ici, PAP et
-   Logic-Immo que nécessaire, vers une ou plusieurs applications.
+1. Radar Immo est ajouté automatiquement comme application locale.
+2. Les cinq portails et quatorze recherches sont préchargés sans jeton.
+3. Ouvrir « Configurer les apps et recherches » pour les voir ou les adapter.
+4. Les autres applications peuvent être ajoutées avec leur endpoint, leur
+   espace et leur jeton propres.
 
 L'extension ne lit jamais les mots de passe, ne résout pas les CAPTCHA et
 n'envoie aucun message aux vendeurs. Chrome doit rester ouvert pour les

@@ -11,8 +11,8 @@ export default async function handler(request, response) {
       version: EXTENSION_CONTRACT_VERSION,
       ingestUrl: "/api/extension-ingest",
       maxBatchSize: MAX_EXTENSION_BATCH_SIZE,
-      requiredFields: ["sourceId", "sourceUrl", "title", "askingPrice"]
+      requiredFields: ["sourceId", "sourceUrl", "title", "askingPrice"],
+      requiredContext: ["appId", "workspaceId", "searchId", "runId", "sourceId", "searchUrl"]
     }
   });
 }
-

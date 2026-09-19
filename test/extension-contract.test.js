@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { bearerMatches, normalizeExtensionBatch, normalizeExtensionListing } from "../src/extension-contract.js";
+import { bearerMatches, normalizeExtensionBatch, normalizeExtensionEnvelope, normalizeExtensionListing } from "../src/extension-contract.js";
 
 const sample = {
   sourceId: "leboncoin",
@@ -36,3 +36,44 @@ test("compares bearer tokens safely", () => {
   assert.equal(bearerMatches("Bearer wrong", "secret"), false);
 });
 
+test("keeps multi-app routing context separate from listing data", () => {
+  const envelope = normalizeExtensionEnvelope({
+    context: {
+      appId: "radar-immo",
+      workspaceId: "sologne",
+      searchId: "orleans-small-flats",
+      runId: "run-1",
+      sourceId: "leboncoin",
+      searchUrl: "https://www.leboncoin.fr/recherche?category=9"
+    },
+    listings: [sample]
+  }, "2026-09-19T10:00:00.000Z");
+  assert.equal(envelope.context.appId, "radar-immo");
+  assert.equal(envelope.context.workspaceId, "sologne");
+  assert.equal(envelope.listings.length, 1);
+});
+
+test("redacts contact details possibly present in visible text", () => {
+  const listing = normalizeExtensionListing({
+    ...sample,
+    description: "Appelez le 06 12 34 56 78 ou écrivez à vendeur@example.com",
+    rawText: "Contact +33 6 12 34 56 78"
+  });
+  assert.match(listing.description, /email masqué/);
+  assert.match(listing.description, /téléphone masqué/);
+  assert.doesNotMatch(listing.rawText, /12 34 56 78/);
+});
+
+test("rejects a batch routed under a different source", () => {
+  assert.throws(() => normalizeExtensionEnvelope({
+    context: {
+      appId: "radar-immo",
+      workspaceId: "sologne",
+      searchId: "s1",
+      runId: "run-1",
+      sourceId: "seloger",
+      searchUrl: "https://www.seloger.com/recherche/achat"
+    },
+    listings: [sample]
+  }), /sourceId/);
+});

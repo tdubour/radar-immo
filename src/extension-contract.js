@@ -4,6 +4,9 @@ export const EXTENSION_CONTRACT_VERSION = 1;
 export const MAX_EXTENSION_BATCH_SIZE = 100;
 
 const clean = (value, max = 2000) => String(value ?? "").replace(/\s+/g, " ").trim().slice(0, max);
+const redactContacts = (value, max) => clean(value, max)
+  .replace(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi, "[email masqué]")
+  .replace(/(?<!\d)(?:\+33[ .-]?|0)[1-9](?:[ .-]?\d{2}){4}(?!\d)/g, "[téléphone masqué]");
 const numberOrNull = (value) => {
   if (value === null || value === undefined || value === "") return null;
   const parsed = Number(String(value).replace(/\s/g, "").replace(",", ".").replace(/[^0-9.-]/g, ""));
@@ -37,7 +40,7 @@ export function normalizeExtensionListing(input, receivedAt = new Date().toISOSt
     externalId,
     sourceUrl,
     title,
-    description: clean(input?.description, 5000),
+    description: redactContacts(input?.description, 5000),
     askingPrice,
     surfaceM2,
     rooms: numberOrNull(input?.rooms),
@@ -52,7 +55,7 @@ export function normalizeExtensionListing(input, receivedAt = new Date().toISOSt
     capturedAt: input?.capturedAt ? clean(input.capturedAt, 40) : receivedAt,
     receivedAt,
     hasWorksSignal: Boolean(input?.hasWorksSignal),
-    rawText: clean(input?.rawText, 8000)
+    rawText: redactContacts(input?.rawText, 8000)
   };
 }
 
@@ -65,10 +68,43 @@ export function normalizeExtensionBatch(body, receivedAt = new Date().toISOStrin
   return [...new Map(normalized.map((row) => [row.fingerprint, row])).values()];
 }
 
+export function normalizeExtensionContext(input, receivedAt = new Date().toISOString()) {
+  const appId = clean(input?.appId, 80).toLowerCase();
+  const workspaceId = clean(input?.workspaceId, 120);
+  const searchId = clean(input?.searchId, 120);
+  const runId = clean(input?.runId, 160);
+  const sourceId = clean(input?.sourceId, 80).toLowerCase();
+  const searchUrl = safeUrl(input?.searchUrl);
+  if (!appId || !workspaceId || !searchId || !runId || !sourceId || !searchUrl) {
+    throw new Error("Contexte invalide : appId, workspaceId, searchId, runId, sourceId et searchUrl sont obligatoires");
+  }
+  return {
+    appId,
+    workspaceId,
+    searchId,
+    runId,
+    sourceId,
+    searchUrl,
+    capturedAt: input?.capturedAt ? clean(input.capturedAt, 40) : receivedAt
+  };
+}
+
+export function normalizeExtensionEnvelope(body, receivedAt = new Date().toISOString()) {
+  const context = normalizeExtensionContext(body?.context, receivedAt);
+  const listings = normalizeExtensionBatch(body, receivedAt);
+  if (listings.some((listing) => listing.sourceId !== context.sourceId)) {
+    throw new Error("Le sourceId des annonces doit correspondre au contexte de recherche");
+  }
+  return {
+    contractVersion: EXTENSION_CONTRACT_VERSION,
+    context,
+    listings
+  };
+}
+
 export function bearerMatches(header, expected) {
   if (!expected || !header?.startsWith("Bearer ")) return false;
   const actual = Buffer.from(header.slice(7));
   const wanted = Buffer.from(expected);
   return actual.length === wanted.length && timingSafeEqual(actual, wanted);
 }
-

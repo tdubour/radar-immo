@@ -54,12 +54,21 @@ Le registre public `config/extension-sources.json` décrit les portails, leurs l
 
 L’extension enverra des lots de 1 à 100 annonces vers `POST /api/extension-ingest`. Le serveur supprime les champs non autorisés, normalise les nombres, contrôle les URL, calcule une empreinte stable et refuse les lots incomplets. Aucun numéro de téléphone, e-mail, cookie ou donnée de session n’est accepté dans le contrat.
 
+La première version de l’extension se trouve dans `extension/`. Elle prend en charge Leboncoin, SeLoger, Bien’ici, PAP et Logic-Immo. Son modèle `appId` / `workspaceId` / `searchId` permet à une seule installation de servir plusieurs applications et plusieurs recherches indépendantes. Une recherche peut également alimenter plusieurs applications après une seule lecture de la page.
+
+```bash
+npm run build:extension
+npm run check:extension
+```
+
 L’ingestion restera inactive tant que les variables suivantes ne seront pas configurées :
 
 - `EXTENSION_INGEST_TOKEN` : secret partagé avec l’extension ;
+- `EXTENSION_INGEST_TOKENS` : variante JSON par application, par exemple `{\"radar-immo\":\"…\",\"berrypilot\":\"…\"}` ;
 - `EXTENSION_ALLOWED_ORIGINS` : identifiant(s) `chrome-extension://…` autorisé(s) ;
 - `RADAR_GITHUB_TOKEN` : jeton GitHub limité au dépôt de données ;
 - `RADAR_DATA_REPOSITORY` : dépôt cible, idéalement privé et distinct du code ;
+- `RADAR_DATA_REPOSITORIES` : variante JSON permettant de choisir un dépôt différent selon `appId` ;
 - `RADAR_DATA_BRANCH` : branche cible, `main` par défaut.
 
 `POST /api/extension-ingest?validateOnly=1` permet de valider un lot sans l’enregistrer une fois l’authentification configurée.

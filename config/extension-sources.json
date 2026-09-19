@@ -1,6 +1,10 @@
 {
   "version": 1,
-  "updatedAt": "2026-09-18",
+  "updatedAt": "2026-09-19",
+  "extension": {
+    "version": "0.1.0",
+    "supportedSourceIds": ["leboncoin", "seloger", "bienici", "pap", "logic-immo"]
+  },
   "center": { "name": "Chaumont-sur-Tharonne", "latitude": 47.611, "longitude": 2.183 },
   "scope": { "primaryRadiusKm": 100, "extendedRadiusKm": 150, "extendedMinPopulation": 10000 },
   "defaults": { "delayMinMs": 2500, "delayMaxMs": 6500, "maxPagesPerRun": 12, "maxListingsPerBatch": 100 },
@@ -230,4 +234,3 @@
     }
   ]
 }
-

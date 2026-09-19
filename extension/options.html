@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Berry Connector — configuration</title>
+    <link rel="stylesheet" href="ui.css">
+  </head>
+  <body class="options">
+    <main>
+      <header><p class="eyebrow">Berry tools</p><h1>Connecteur multi-source</h1><p>Une extension, plusieurs applications et plusieurs recherches indépendantes.</p></header>
+      <section><h2>Applications destinataires</h2><form id="appForm" class="grid">
+        <label>Identifiant<input id="appId" required placeholder="radar-immo"></label>
+        <label>Nom<input id="appLabel" required placeholder="Radar Immo"></label>
+        <label>Espace<input id="workspaceId" required placeholder="sologne"></label>
+        <label class="wide">Endpoint<input id="appEndpoint" type="url" required placeholder="https://radar-immo-blond.vercel.app/api/extension-ingest"></label>
+        <label class="wide">Jeton<input id="appToken" type="password" required autocomplete="off"></label>
+        <button type="submit">Ajouter l’application</button>
+      </form><div id="apps" class="cards"></div></section>
+      <section><h2>Recherches</h2><form id="searchForm" class="grid">
+        <label>Nom<input id="searchLabel" required placeholder="Orléans T2 travaux"></label>
+        <label>Source<select id="searchSource"></select></label>
+        <label>Fréquence (minutes)<input id="searchInterval" type="number" min="30" value="1440" required></label>
+        <label>Applications<select id="searchApps" multiple required></select></label>
+        <label class="wide">URL complète de recherche<input id="searchUrl" type="url" required></label>
+        <button type="submit">Ajouter la recherche</button>
+      </form><div id="searches" class="cards"></div></section>
+      <p id="status" role="status"></p>
+    </main>
+    <script type="module" src="dist/options.js"></script>
+  </body>
+</html>

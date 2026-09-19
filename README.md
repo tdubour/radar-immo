@@ -56,7 +56,7 @@ L’extension enverra des lots de 1 à 100 annonces vers `POST /api/extension-in
 
 La première version de l’extension se trouve dans `extension/`. Elle prend en charge Leboncoin, SeLoger, Bien’ici, PAP et Logic-Immo. Son modèle `appId` / `workspaceId` / `searchId` permet à une seule installation de servir plusieurs applications et plusieurs recherches indépendantes. Une recherche peut également alimenter plusieurs applications après une seule lecture de la page.
 
-Depuis la version 1.2.0, Radar Immo est une destination locale intégrée : l’extension précharge les cinq portails, conserve les annonces dans `chrome.storage.local` et les expose uniquement à `radar-immo-blond.vercel.app` dans le même profil Chrome. Ce mode fonctionne sans secret Vercel/GitHub et coexiste avec BerryPilot LBC Safe sans mélanger leurs données.
+Depuis la version 1.2.1, Radar Immo est une destination locale intégrée : l’extension précharge cinq portails et vingt-deux recherches géographiques, conserve les annonces dans `chrome.storage.local` et les expose uniquement à `radar-immo-blond.vercel.app` dans le même profil Chrome. Leboncoin utilise un rayon natif de 100 km. SeLoger, Bien’ici et Logic-Immo ratissent les départements traversés par la zone ; le radar conserve toutes les communes jusqu’à 100 km, puis seulement les villes d’au moins 10 000 habitants jusqu’à 150 km. Ce mode fonctionne sans secret Vercel/GitHub et coexiste avec BerryPilot LBC Safe sans mélanger leurs données.
 
 ```bash
 npm run build:extension

@@ -1,4 +1,4 @@
-# Berry Multi-Source Connector 1.2.0
+# Berry Multi-Source Connector 1.2.1
 
 Extension Chrome Manifest V3 commune à plusieurs applications. Une application possède son endpoint, son espace et son jeton. Une recherche peut livrer ses résultats à une ou plusieurs applications sans relancer l'extraction de la page.
 
@@ -14,7 +14,7 @@ Le collecteur lit les données visibles et les balises JSON-LD de la page dans l
 
 La V1 BerryPilot LBC Safe est intégrée sans supprimer le mode multi-source : le popup permet d'appairer BerryPilot avec son code à usage unique, tandis que la page de configuration conserve les destinations Radar Immo et futures applications. Les deux moteurs partagent un verrou de navigation afin de ne jamais parcourir deux portails en parallèle dans le même profil Chrome.
 
-Radar Immo est préconfiguré comme destination locale dès la mise à jour : quatorze recherches couvrant les cinq portails sont créées sans effacer les réglages existants. Les annonces sont conservées dans Chrome et transmises à `radar-immo-blond.vercel.app` par un pont local. Aucun jeton Vercel ou GitHub n'est nécessaire pour cette destination. PAP peut demander une validation humaine au premier passage ; le connecteur s'arrête alors sans essayer de contourner la protection.
+Radar Immo est préconfiguré comme destination locale dès la mise à jour : vingt-deux recherches couvrant les cinq portails sont créées sans effacer les réglages personnalisés. Leboncoin utilise le cercle de 100 km centré sur Chaumont-sur-Tharonne. SeLoger, Bien'ici et Logic-Immo couvrent les six départements traversés par la zone, puis Radar applique son filtre géographique : toutes les communes jusqu'à 100 km, puis les villes d'au moins 10 000 habitants jusqu'à 150 km. PAP couvre en priorité le Loir-et-Cher, le Loiret et le Cher. Les annonces sont conservées dans Chrome et transmises à `radar-immo-blond.vercel.app` par un pont local. Aucun jeton Vercel ou GitHub n'est nécessaire pour cette destination. PAP peut demander une validation humaine au premier passage ; le connecteur s'arrête alors sans essayer de contourner la protection.
 
 ## Installation locale
 

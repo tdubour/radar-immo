@@ -12,7 +12,7 @@ test("detects the five supported portals", () => {
 });
 
 test("parses French real-estate card values", () => {
-  const fields = inferFields("Appartement à rénover 42,5 m² 2 pièces 1 chambre DPE E 89 000 € 45000 particulier");
+  const fields = inferFields("Appartement à rénover 42,5 m² 2 pièces 1 chambre DPE E 89 000 € Orléans (45000) particulier");
   assert.equal(fields.askingPrice, 89000);
   assert.equal(fields.surfaceM2, 42.5);
   assert.equal(fields.rooms, 2);
@@ -20,6 +20,7 @@ test("parses French real-estate card values", () => {
   assert.equal(fields.dpe, "E");
   assert.equal(fields.hasWorksSignal, true);
   assert.equal(fields.sellerType, "private");
+  assert.equal(fields.city, "Orléans");
 });
 
 test("recognizes listing links and stable external ids", () => {

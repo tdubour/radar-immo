@@ -27,6 +27,9 @@ export function inferFields(text) {
   const roomsMatch = value.match(/(\d+)\s*(?:pi[eè]ces?|p\b)/i);
   const bedroomsMatch = value.match(/(\d+)\s*(?:chambres?|ch\b)/i);
   const postalMatch = value.match(/\b((?:0[1-9]|[1-8]\d|9[0-5])\d{3})\b/);
+  const parenthesizedCityMatch = postalMatch
+    ? value.match(new RegExp(`([A-ZÀ-ÖØ-Ý][A-Za-zÀ-ÖØ-öø-ÿ'’ -]{1,80})\\s*\\(\\s*${postalMatch[1]}\\s*\\)`))
+    : null;
   const dpeMatch = value.match(/(?:DPE|classe\s+[ée]nergie)\s*[:\-]?\s*([A-G])\b/i);
   return {
     askingPrice: parseFrenchNumber(priceMatch?.[1]),
@@ -34,6 +37,7 @@ export function inferFields(text) {
     rooms: parseFrenchNumber(roomsMatch?.[1]),
     bedrooms: parseFrenchNumber(bedroomsMatch?.[1]),
     postalCode: postalMatch?.[1] || null,
+    city: clean(parenthesizedCityMatch?.[1], 120) || null,
     dpe: dpeMatch?.[1]?.toUpperCase() || null,
     sellerType: /particulier/i.test(value) ? "private" : /(agence|professionnel|pro\b)/i.test(value) ? "agency" : "unknown",
     hasWorksSignal: /(à\s+rénover|a\s+renover|travaux|dans\s+son\s+jus|rafraîchir|rafraichir)/i.test(value)
@@ -73,7 +77,7 @@ function cardToListing(anchor, pageUrl, sourceId) {
     title,
     description: "",
     ...fields,
-    city: null,
+    city: fields.city || null,
     district: null,
     propertyType: null,
     capturedAt: new Date().toISOString(),

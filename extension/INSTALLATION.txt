@@ -1,4 +1,4 @@
-BERRY MULTI-SOURCE CONNECTOR 1.2.0
+BERRY MULTI-SOURCE CONNECTOR 1.2.1
 
 INSTALLATION DANS CHROME
 
@@ -21,7 +21,9 @@ BERRYPILOT LBC SAFE
 RADAR IMMO ET AUTRES APPLICATIONS
 
 1. Radar Immo est ajouté automatiquement comme application locale.
-2. Les cinq portails et quatorze recherches sont préchargés sans jeton.
+2. Les cinq portails et vingt-deux recherches sont préchargés sans jeton :
+   rayon Leboncoin de 100 km, couverture départementale sur SeLoger,
+   Bien'ici et Logic-Immo, et trois zones PAP entre particuliers.
 3. Ouvrir « Configurer les apps et recherches » pour les voir ou les adapter.
 4. Les autres applications peuvent être ajoutées avec leur endpoint, leur
    espace et leur jeton propres.

@@ -4,6 +4,7 @@ export function createDefaultRadarConfig() {
   return {
     cadence: "daily",
     center: "Chaumont-sur-Tharonne",
+    centerCoordinates: { latitude: 47.60958, longitude: 1.90408 },
     primaryRadiusKm: 100,
     extendedRadiusKm: 150,
     extendedMinPopulation: 10000,

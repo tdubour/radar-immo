@@ -136,6 +136,26 @@ var search = (id, label, sourceId, url) => Object.freeze({
   enabled: true,
   closeTabAfterCapture: true
 });
+var DEPARTMENT_SEARCHES = Object.freeze([
+  ["41", "Loir-et-Cher", "AD06FR42", "loir-et-cher-41"],
+  ["45", "Loiret", "AD06FR46", "loiret-45"],
+  ["18", "Cher", "AD06FR18", "cher-18"],
+  ["36", "Indre", "AD06FR37", "indre-36"],
+  ["37", "Indre-et-Loire", "AD06FR38", "indre-et-loire-37"],
+  ["28", "Eure-et-Loir", "AD06FR27", "eure-et-loir-28"]
+]);
+var avivSearch = (sourceId, host, [department, label, locationId]) => search(
+  `radar-${sourceId}-${department}`,
+  `${sourceId === "seloger" ? "SeLoger" : "Logic-Immo"} \u2014 ${label}`,
+  sourceId,
+  `https://www.${host}/classified-search?distributionTypes=Buy&estateTypes=House,Apartment&locations=${locationId}&priceMax=600000&order=DateDesc`
+);
+var bienIciSearch = ([department, label, _locationId, slug]) => search(
+  `radar-bienici-${department}`,
+  `Bien\u2019ici \u2014 ${label}`,
+  "bienici",
+  `https://www.bienici.com/recherche/achat/${slug}`
+);
 var RADAR_DEFAULT_SEARCHES = Object.freeze([
   search(
     "radar-lbc-100km",
@@ -143,28 +163,25 @@ var RADAR_DEFAULT_SEARCHES = Object.freeze([
     "leboncoin",
     "https://www.leboncoin.fr/recherche?category=9&locations=Chaumont-sur-Tharonne_41600__47.60958_1.90408_100000_100000&price=max-400000&real_estate_type=1,2,3,4,5&sort=time&order=desc"
   ),
-  search("radar-seloger-orleans-bannier", "SeLoger \u2014 Orl\xE9ans Bannier", "seloger", "https://www.seloger.com/recherche/achat/appartement/orleans-45000/bannier-coligny-45000/nbh2fr3416"),
-  search("radar-seloger-orleans-beaumont", "SeLoger \u2014 Orl\xE9ans Beaumont", "seloger", "https://www.seloger.com/recherche/achat/appartement/orleans-45000/beaumont-vauquois-45000/nbh2fr3417"),
-  search("radar-seloger-blois", "SeLoger \u2014 Blois", "seloger", "https://www.seloger.com/recherche/achat/appartement/blois-41000/est-41000/nbh2fr3022"),
-  search("radar-seloger-bourges", "SeLoger \u2014 Bourges", "seloger", "https://www.seloger.com/recherche/achat/appartement/bourges-18000/pignoux-18000/nbh2fr1342"),
-  search("radar-seloger-vierzon", "SeLoger \u2014 Vierzon", "seloger", "https://www.seloger.com/recherche/achat/appartement/vierzon-18100/centre-ville-18100/nbh2fr1362"),
-  search("radar-bienici-41", "Bien\u2019ici \u2014 Loir-et-Cher", "bienici", "https://www.bienici.com/recherche/achat/loir-et-cher-41"),
-  search("radar-bienici-45", "Bien\u2019ici \u2014 Loiret", "bienici", "https://www.bienici.com/recherche/achat/loiret-45"),
-  search("radar-bienici-18", "Bien\u2019ici \u2014 Cher", "bienici", "https://www.bienici.com/recherche/achat/cher-18"),
-  search("radar-bienici-36", "Bien\u2019ici \u2014 Indre", "bienici", "https://www.bienici.com/recherche/achat/indre-36"),
-  search("radar-bienici-37", "Bien\u2019ici \u2014 Indre-et-Loire", "bienici", "https://www.bienici.com/recherche/achat/indre-et-loire-37"),
-  search("radar-bienici-28", "Bien\u2019ici \u2014 Eure-et-Loir", "bienici", "https://www.bienici.com/recherche/achat/eure-et-loir-28"),
-  search("radar-pap-centre", "PAP \u2014 ventes entre particuliers", "pap", "https://www.pap.fr/annonce/vente-immobiliere"),
-  search(
-    "radar-logic-chaumont",
-    "Logic-Immo \u2014 Chaumont-sur-Tharonne",
-    "logic-immo",
-    "https://www.logic-immo.com/classified-search?distributionTypes=Buy&estateTypes=House,Apartment&locations=AD08FR16270&m=homepage_new_search_classified_search_result"
-  )
+  ...DEPARTMENT_SEARCHES.map((department) => avivSearch("seloger", "seloger.com", department)),
+  ...DEPARTMENT_SEARCHES.map(bienIciSearch),
+  search("radar-pap-41", "PAP \u2014 Loir-et-Cher", "pap", "https://www.pap.fr/annonce/vente-immobiliere-loir-et-cher-41-g405"),
+  search("radar-pap-45", "PAP \u2014 Loiret", "pap", "https://www.pap.fr/annonce/vente-immobiliere-loiret-45-g409"),
+  search("radar-pap-18", "PAP \u2014 Cher", "pap", "https://www.pap.fr/annonce/vente-immobiliere-cher-18-g381"),
+  ...DEPARTMENT_SEARCHES.map((department) => avivSearch("logic-immo", "logic-immo.com", department))
+]);
+var LEGACY_RADAR_SEARCH_IDS = /* @__PURE__ */ new Set([
+  "radar-seloger-orleans-bannier",
+  "radar-seloger-orleans-beaumont",
+  "radar-seloger-blois",
+  "radar-seloger-bourges",
+  "radar-seloger-vierzon",
+  "radar-pap-centre",
+  "radar-logic-chaumont"
 ]);
 function mergeRadarDefaults(state) {
   const apps = Array.isArray(state?.apps) ? [...state.apps] : [];
-  const searches = Array.isArray(state?.searches) ? [...state.searches] : [];
+  const searches = (Array.isArray(state?.searches) ? state.searches : []).filter((item) => !LEGACY_RADAR_SEARCH_IDS.has(item.id));
   const appIndex = apps.findIndex((app) => app.id === RADAR_LOCAL_APP.id);
   if (appIndex === -1) apps.push({ ...RADAR_LOCAL_APP });
   else if (apps[appIndex].transport === "local") apps[appIndex] = { ...apps[appIndex], ...RADAR_LOCAL_APP };
@@ -172,7 +189,7 @@ function mergeRadarDefaults(state) {
   for (const item of RADAR_DEFAULT_SEARCHES) {
     if (!knownSearchIds.has(item.id)) searches.push({ ...item, appIds: [...item.appIds] });
   }
-  return { ...state, apps, searches, defaultsVersion: 1 };
+  return { ...state, apps, searches, defaultsVersion: 2 };
 }
 
 // extension/src/background.js

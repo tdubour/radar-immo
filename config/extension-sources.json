@@ -2,7 +2,7 @@
   "version": 1,
   "updatedAt": "2026-09-19",
   "extension": {
-    "version": "1.2.0",
+    "version": "1.2.1",
     "supportedSourceIds": ["leboncoin", "seloger", "bienici", "pap", "logic-immo"]
   },
   "center": { "name": "Chaumont-sur-Tharonne", "latitude": 47.60958, "longitude": 1.90408 },
@@ -42,13 +42,14 @@
       "collector": "browser-extension",
       "homeUrl": "https://www.seloger.com/",
       "seedUrls": [
-        "https://www.seloger.com/recherche/achat/appartement/orleans-45000/bannier-coligny-45000/nbh2fr3416",
-        "https://www.seloger.com/recherche/achat/appartement/orleans-45000/beaumont-vauquois-45000/nbh2fr3417",
-        "https://www.seloger.com/recherche/achat/appartement/blois-41000/est-41000/nbh2fr3022",
-        "https://www.seloger.com/recherche/achat/appartement/bourges-18000/pignoux-18000/nbh2fr1342",
-        "https://www.seloger.com/recherche/achat/appartement/vierzon-18100/centre-ville-18100/nbh2fr1362"
+        "https://www.seloger.com/classified-search?distributionTypes=Buy&estateTypes=House,Apartment&locations=AD06FR42&priceMax=600000&order=DateDesc",
+        "https://www.seloger.com/classified-search?distributionTypes=Buy&estateTypes=House,Apartment&locations=AD06FR46&priceMax=600000&order=DateDesc",
+        "https://www.seloger.com/classified-search?distributionTypes=Buy&estateTypes=House,Apartment&locations=AD06FR18&priceMax=600000&order=DateDesc",
+        "https://www.seloger.com/classified-search?distributionTypes=Buy&estateTypes=House,Apartment&locations=AD06FR37&priceMax=600000&order=DateDesc",
+        "https://www.seloger.com/classified-search?distributionTypes=Buy&estateTypes=House,Apartment&locations=AD06FR38&priceMax=600000&order=DateDesc",
+        "https://www.seloger.com/classified-search?distributionTypes=Buy&estateTypes=House,Apartment&locations=AD06FR27&priceMax=600000&order=DateDesc"
       ],
-      "listingPathPattern": "\\/annonce\\/"
+      "listingPathPattern": "\\/annonces?\\/"
     },
     {
       "id": "bienici",
@@ -74,7 +75,11 @@
       "priority": 2,
       "collector": "browser-extension",
       "homeUrl": "https://www.pap.fr/annonce/vente-immobiliere",
-      "seedUrls": ["https://www.pap.fr/annonce/vente-immobiliere"],
+      "seedUrls": [
+        "https://www.pap.fr/annonce/vente-immobiliere-loir-et-cher-41-g405",
+        "https://www.pap.fr/annonce/vente-immobiliere-loiret-45-g409",
+        "https://www.pap.fr/annonce/vente-immobiliere-cher-18-g381"
+      ],
       "listingPathPattern": "\\/annonces\\/"
     },
     {
@@ -94,8 +99,15 @@
       "priority": 2,
       "collector": "browser-extension",
       "homeUrl": "https://www.logic-immo.com/",
-      "seedUrls": ["https://www.logic-immo.com/classified-search?distributionTypes=Buy&estateTypes=House,Apartment&locations=AD08FR16270&m=homepage_new_search_classified_search_result"],
-      "listingPathPattern": "annonce|vente-immobilier"
+      "seedUrls": [
+        "https://www.logic-immo.com/classified-search?distributionTypes=Buy&estateTypes=House,Apartment&locations=AD06FR42&priceMax=600000&order=DateDesc",
+        "https://www.logic-immo.com/classified-search?distributionTypes=Buy&estateTypes=House,Apartment&locations=AD06FR46&priceMax=600000&order=DateDesc",
+        "https://www.logic-immo.com/classified-search?distributionTypes=Buy&estateTypes=House,Apartment&locations=AD06FR18&priceMax=600000&order=DateDesc",
+        "https://www.logic-immo.com/classified-search?distributionTypes=Buy&estateTypes=House,Apartment&locations=AD06FR37&priceMax=600000&order=DateDesc",
+        "https://www.logic-immo.com/classified-search?distributionTypes=Buy&estateTypes=House,Apartment&locations=AD06FR38&priceMax=600000&order=DateDesc",
+        "https://www.logic-immo.com/classified-search?distributionTypes=Buy&estateTypes=House,Apartment&locations=AD06FR27&priceMax=600000&order=DateDesc"
+      ],
+      "listingPathPattern": "detail-annonce|detail-vente|annonces|wl-cdp"
     },
     {
       "id": "superimmo",

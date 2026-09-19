@@ -60,17 +60,80 @@ const state = {
   toast: ""
 };
 let extensionRadarListings = [];
+const communeCache = new Map();
+
+const comparablePlace = (value) => String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+
+function distanceKmBetween(first, second) {
+  const toRadians = (value) => Number(value) * Math.PI / 180;
+  const latitudeDelta = toRadians(second.latitude - first.latitude);
+  const longitudeDelta = toRadians(second.longitude - first.longitude);
+  const latitude1 = toRadians(first.latitude);
+  const latitude2 = toRadians(second.latitude);
+  const haversine = Math.sin(latitudeDelta / 2) ** 2 + Math.cos(latitude1) * Math.cos(latitude2) * Math.sin(longitudeDelta / 2) ** 2;
+  return 6371 * 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine));
+}
+
+async function communesForPostalCode(postalCode) {
+  if (!communeCache.has(postalCode)) {
+    const lookup = fetch(`https://geo.api.gouv.fr/communes?codePostal=${encodeURIComponent(postalCode)}&fields=nom,centre,population,codesPostaux&format=json&geometry=centre`)
+      .then((response) => response.ok ? response.json() : [])
+      .catch(() => []);
+    communeCache.set(postalCode, lookup);
+  }
+  return communeCache.get(postalCode);
+}
+
+async function enrichRadarLocation(listing) {
+  if (Number.isFinite(Number(listing.distanceKm))) return listing;
+  const postalCode = String(listing.postalCode || `${listing.title || ""} ${listing.rawText || ""}`.match(/\b(?:0[1-9]|[1-8]\d|9[0-5])\d{3}\b/)?.[0] || "");
+  if (!postalCode) return listing;
+  const communes = await communesForPostalCode(postalCode);
+  if (!Array.isArray(communes) || !communes.length) return { ...listing, postalCode };
+  const wanted = comparablePlace(listing.city);
+  const context = comparablePlace(`${listing.title || ""} ${listing.rawText || ""}`);
+  const commune = communes.find((row) => wanted && comparablePlace(row.nom) === wanted)
+    || communes.find((row) => context.includes(comparablePlace(row.nom)))
+    || (communes.length === 1 ? communes[0] : null);
+  if (!commune?.centre?.coordinates) return { ...listing, postalCode };
+  const [longitude, latitude] = commune.centre.coordinates;
+  const distanceKm = distanceKmBetween(state.radarConfig.centerCoordinates, { latitude, longitude });
+  return {
+    ...listing,
+    postalCode,
+    city: commune.nom,
+    cityPopulation: commune.population || 0,
+    latitude,
+    longitude,
+    distanceKm: Math.round(distanceKm * 10) / 10
+  };
+}
+
+async function enrichRadarLocations(listings) {
+  const rows = Array.isArray(listings) ? listings : [];
+  const enriched = new Array(rows.length);
+  let cursor = 0;
+  const worker = async () => {
+    while (cursor < rows.length) {
+      const index = cursor;
+      cursor += 1;
+      enriched[index] = await enrichRadarLocation(rows[index]);
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(6, rows.length) }, worker));
+  return enriched;
+}
 
 function mergeRadarListings(remoteListings = state.radarListings) {
   const rows = [...(Array.isArray(remoteListings) ? remoteListings : []), ...extensionRadarListings];
   state.radarListings = [...new Map(rows.map((listing) => [`${listing.sourceId || "source"}:${listing.externalId || listing.sourceUrl || JSON.stringify(listing)}`, listing])).values()];
 }
 
-window.addEventListener("message", (event) => {
+window.addEventListener("message", async (event) => {
   if (event.source !== window || event.origin !== location.origin) return;
   if (event.data?.channel !== RADAR_CONNECTOR_CHANNEL || event.data?.type !== "RADAR_LISTINGS") return;
   const payload = event.data.payload || {};
-  extensionRadarListings = Array.isArray(payload.listings) ? payload.listings : [];
+  extensionRadarListings = await enrichRadarLocations(payload.listings);
   mergeRadarListings(state.radarListings);
   state.radarStatus = {
     ...state.radarStatus,
@@ -395,7 +458,7 @@ function radarHtml() {
     <section class="panel ${state.radarStatus.connected ? "success-box" : "warning"}"><strong>${state.radarStatus.loading ? "Connexion au radar…" : state.radarStatus.connected ? "Collecte automatique connectée" : "Collecte en attente de configuration"}</strong><p>${state.radarStatus.connected ? `${state.radarStatus.extensionCount ? `Extension multi-source active · ${state.radarStatus.extensionCount} annonce(s) locale(s)` : "Base distante active"}${state.radarStatus.lastRun?.started_at ? ` · dernier passage ${new Date(state.radarStatus.lastRun.started_at).toLocaleString("fr-FR")}` : ""}. Les annonces sans loyer fiable restent « à compléter » et ne sont jamais qualifiées artificiellement.` : `Le radar attend les données de l’extension ou du collecteur distant. ${e(state.radarStatus.error || "Aucun faux résultat n’est affiché entre-temps.")}`}</p></section>
     <section class="panel"><div class="section-title"><div><span class="eyebrow">Portails</span><h2>Sources retenues</h2></div><p>Les sources « priorité » passent avant les autres. Les annonces de particuliers gagnent des points ; les agences sont pénalisées mais restent visibles si l’opération est forte.</p></div><div class="radar-source-grid">${sources.map((source) => `<article class="radar-source"><div><strong>${e(source.label)}</strong><small>${source.id.includes("pro") || ["geolocaux", "bureauxlocaux", "bpifrance", "eol", "arthur-loyd"].includes(source.id) ? "Professionnel" : "Immobilier"}</small></div><span class="status-badge ${source.priority ? "priority" : ""}">${source.priority ? "Priorité" : "Actif"}</span></article>`).join("")}</div></section>
     <section class="panel"><div class="section-title"><div><span class="eyebrow">Périmètre</span><h2>Biens et budgets de départ</h2></div><p>Ces plafonds réduisent les requêtes ; ils seront affinés à partir des premières opportunités réellement analysées.</p></div><div class="threshold-grid"><article class="threshold-card"><span>Résidentiel</span><strong>${euros(config.residentialBudgetMax)}</strong><small>budget maximal affiché</small></article><article class="threshold-card"><span>Immeubles</span><strong>${euros(config.buildingBudgetMax)}</strong><small>rapport, mixte, divisible</small></article><article class="threshold-card"><span>Locaux professionnels</span><strong>${euros(config.professionalBudgetMax)}</strong><small>hangars, entrepôts, murs, ateliers</small></article><article class="threshold-card"><span>Fréquence cible</span><strong>Chaque jour</strong><small>nouvelles annonces uniquement</small></article></div><h3 class="subheading">Inclus</h3><div class="chip-list">${config.propertyTypes.map((type) => `<span class="chip">${e(type)}</span>`).join("")}</div><h3 class="subheading">Exclus au départ</h3><div class="chip-list">${config.excludedTypes.map((type) => `<span class="chip muted">${e(type)}</span>`).join("")}</div></section>
-    <section class="panel"><div class="section-title"><div><span class="eyebrow">Résultats</span><h2>Annonces classées</h2></div><p>Score combinant cash-flow, bancabilité, qualité des données, distance et type de vendeur.</p></div>${listings.length ? `<div class="table-wrap"><table><thead><tr><th>Annonce</th><th>Ville</th><th>Prix</th><th>Distance</th><th>Vendeur</th><th>CF après IS</th><th>Score</th><th>Statut</th></tr></thead><tbody>${listings.map((item) => `<tr><td>${e(item.title || "Sans titre")}</td><td>${e(item.city || "—")}</td><td>${e(euros(item.askingPrice))}</td><td>${e(`${Number(item.distanceKm || 0).toFixed(0)} km`)}</td><td>${e(item.sellerType === "private" ? "Particulier" : item.sellerType === "agency" ? "Agence" : "Inconnu")}</td><td class="${Number(item.cashflowAfterTaxMonthly) >= config.minCashflowAfterTaxMonthly ? "positive-text" : "negative-text"}">${Number.isFinite(Number(item.cashflowAfterTaxMonthly)) ? e(`${euros(item.cashflowAfterTaxMonthly)}/mois`) : "À calculer"}</td><td>${item.score.toFixed(0)}/100</td><td><span class="status-badge ${item.qualified ? "priority" : ""}">${e(statusLabel(item.status))}</span></td></tr>`).join("")}</tbody></table></div>` : `<div class="empty"><div class="brand-mark">◎</div><h3>Aucune annonce importée</h3><p>Le radar est prêt à recevoir un fichier JSON provenant des futurs collecteurs. Les doublons seront supprimés et les biens classés automatiquement.</p><button class="primary" data-action="import-radar-listings">Importer un lot d’annonces</button></div>`}</section>
+    <section class="panel"><div class="section-title"><div><span class="eyebrow">Résultats</span><h2>Annonces classées</h2></div><p>Score combinant cash-flow, bancabilité, qualité des données, distance et type de vendeur.</p></div>${listings.length ? `<div class="table-wrap"><table><thead><tr><th>Annonce</th><th>Ville</th><th>Prix</th><th>Distance</th><th>Vendeur</th><th>CF après IS</th><th>Score</th><th>Statut</th></tr></thead><tbody>${listings.map((item) => `<tr><td>${e(item.title || "Sans titre")}</td><td>${e(item.city || "—")}</td><td>${e(euros(item.askingPrice))}</td><td>${Number.isFinite(Number(item.distanceKm)) ? e(`${Number(item.distanceKm).toFixed(0)} km`) : "À géolocaliser"}</td><td>${e(item.sellerType === "private" ? "Particulier" : item.sellerType === "agency" ? "Agence" : "Inconnu")}</td><td class="${Number(item.cashflowAfterTaxMonthly) >= config.minCashflowAfterTaxMonthly ? "positive-text" : "negative-text"}">${Number.isFinite(Number(item.cashflowAfterTaxMonthly)) ? e(`${euros(item.cashflowAfterTaxMonthly)}/mois`) : "À calculer"}</td><td>${item.score.toFixed(0)}/100</td><td><span class="status-badge ${item.qualified ? "priority" : ""}">${e(statusLabel(item.status))}</span></td></tr>`).join("")}</tbody></table></div>` : `<div class="empty"><div class="brand-mark">◎</div><h3>Aucune annonce importée</h3><p>Le radar est prêt à recevoir un fichier JSON provenant des futurs collecteurs. Les doublons seront supprimés et les biens classés automatiquement.</p><button class="primary" data-action="import-radar-listings">Importer un lot d’annonces</button></div>`}</section>
   </div>`;
 }
 

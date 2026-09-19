@@ -1,7 +1,7 @@
 {
   "ok": true,
-  "generatedAt": "2026-09-18T09:49:24.915Z",
-  "message": "86 annonces actives",
+  "generatedAt": "2026-09-19T09:34:12.375Z",
+  "message": "87 annonces actives",
   "sources": [
     {
       "id": "leboncoin",
@@ -53,7 +53,7 @@
       "id": "paruvendu-41",
       "label": "ParuVendu Loir-et-Cher",
       "ok": true,
-      "count": 2
+      "count": 5
     },
     {
       "id": "geolocaux-41",
@@ -65,7 +65,7 @@
       "id": "geolocaux-45",
       "label": "Geolocaux Loiret",
       "ok": true,
-      "count": 12
+      "count": 13
     },
     {
       "id": "geolocaux-18",

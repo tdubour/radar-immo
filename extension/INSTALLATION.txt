@@ -1,4 +1,4 @@
-BERRY MULTI-SOURCE CONNECTOR 1.1.0
+BERRY MULTI-SOURCE CONNECTOR 1.1.1
 
 INSTALLATION DANS CHROME
 
@@ -28,3 +28,11 @@ RADAR IMMO ET AUTRES APPLICATIONS
 L'extension ne lit jamais les mots de passe, ne résout pas les CAPTCHA et
 n'envoie aucun message aux vendeurs. Chrome doit rester ouvert pour les
 synchronisations planifiées.
+
+MODE DISCRET
+
+Les collectes automatiques utilisent une fenêtre Chrome dédiée, non focalisée
+et minimisée. Un seul onglet y est réutilisé puis la fenêtre est fermée à la
+fin du passage. Si Chrome refuse exceptionnellement cette fenêtre, l'extension
+revient automatiquement à un onglet inactif classique pour ne pas perdre la
+collecte.

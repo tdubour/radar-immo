@@ -107,7 +107,39 @@ async function syncAlarms() {
   await chrome.alarms.create(QUEUE_ALARM, { delayInMinutes: 1, periodInMinutes: 5 });
 }
 
-async function registerRun(tabId, search, closeTabAfterCapture, mode, leaseId) {
+async function createDiscreteTab(url) {
+  let createdWindow;
+  try {
+    createdWindow = await chrome.windows.create({
+      focused: false,
+      state: "minimized",
+      type: "normal",
+      url
+    });
+    const tab = createdWindow.tabs?.[0] || (await chrome.tabs.query({ windowId: createdWindow.id }))[0];
+    if (!tab?.id) throw new Error("Fenêtre de collecte sans onglet");
+    return { tab, windowId: createdWindow.id, discreteWindow: true };
+  } catch (error) {
+    if (createdWindow?.id) await chrome.windows.remove(createdWindow.id).catch(() => undefined);
+    const tab = await chrome.tabs.create({ active: false, url });
+    return {
+      tab,
+      windowId: tab.windowId,
+      discreteWindow: false,
+      fallbackReason: error instanceof Error ? error.message : "Fenêtre minimisée indisponible"
+    };
+  }
+}
+
+async function closeCollectionContext({ tabId, windowId, discreteWindow }) {
+  if (discreteWindow && windowId != null) {
+    await chrome.windows.remove(windowId).catch(() => undefined);
+    return;
+  }
+  if (tabId != null) await chrome.tabs.remove(tabId).catch(() => undefined);
+}
+
+async function registerRun(tabId, search, closeTabAfterCapture, mode, leaseId, collectionContext = {}) {
   const key = `${RUN_PREFIX}${tabId}`;
   await chrome.storage.session.set({
     [key]: {
@@ -116,6 +148,8 @@ async function registerRun(tabId, search, closeTabAfterCapture, mode, leaseId) {
       closeTabAfterCapture,
       mode,
       leaseId,
+      windowId: collectionContext.windowId,
+      discreteWindow: collectionContext.discreteWindow === true,
       createdAt: Date.now()
     }
   });
@@ -128,13 +162,17 @@ async function executeSearch(searchId) {
   if (!search) throw new Error("Recherche introuvable ou désactivée");
   const lease = await acquireBrowserJob("multi-source", searchId);
   if (!lease) return { ok: true, queued: true };
+  let context;
   try {
-    const tab = await chrome.tabs.create({ url: search.url, active: false });
-    await updateBrowserJob(lease, { tabId: tab.id });
-    await registerRun(tab.id, search, search.closeTabAfterCapture, "scheduled", lease.id);
-    await setLastEvent({ status: "opened", searchId, sourceId: search.sourceId });
-    return { ok: true, tabId: tab.id };
+    context = await createDiscreteTab(search.url);
+    await updateBrowserJob(lease, { tabId: context.tab.id, windowId: context.windowId, discreteWindow: context.discreteWindow });
+    await registerRun(context.tab.id, search, search.closeTabAfterCapture, "scheduled", lease.id, context);
+    await setLastEvent({ status: "opened", searchId, sourceId: search.sourceId, discreteWindow: context.discreteWindow });
+    return { ok: true, tabId: context.tab.id, discreteWindow: context.discreteWindow };
   } catch (error) {
+    if (context) {
+      await closeCollectionContext({ tabId: context.tab?.id, windowId: context.windowId, discreteWindow: context.discreteWindow });
+    }
     await releaseBrowserJob(lease.id);
     throw error;
   }
@@ -235,7 +273,9 @@ async function handleExtracted(message, sender) {
     await chrome.storage.session.remove(key);
     await chrome.alarms.clear(`${RUN_TIMEOUT_PREFIX}${tabId}`);
     await releaseBrowserJob(run.leaseId);
-    if (run.closeTabAfterCapture) await chrome.tabs.remove(tabId).catch(() => undefined);
+    if (run.closeTabAfterCapture) {
+      await closeCollectionContext({ tabId, windowId: run.windowId, discreteWindow: run.discreteWindow });
+    }
     await pumpSearchQueue();
   }
 }
@@ -378,9 +418,10 @@ async function messageTab(tabId, message) {
 }
 
 async function collectBerryPilotSearch(searchUrl, lease) {
-  const tab = await chrome.tabs.create({ active: false, url: searchUrl });
+  const context = await createDiscreteTab(searchUrl);
+  const { tab } = context;
   if (!tab.id) throw new Error("Impossible d’ouvrir la recherche Leboncoin.");
-  await updateBrowserJob(lease, { tabId: tab.id });
+  await updateBrowserJob(lease, { tabId: tab.id, windowId: context.windowId, discreteWindow: context.discreteWindow });
   try {
     await waitForTab(tab.id);
     const search = await messageTab(tab.id, { type: "BERRYPILOT_COLLECT_SEARCH" });
@@ -396,8 +437,8 @@ async function collectBerryPilotSearch(searchUrl, lease) {
     }
     return { accountLabel: search.accountLabel || "", listings };
   } finally {
-    await chrome.tabs.remove(tab.id).catch(() => undefined);
-    await updateBrowserJob(lease, { tabId: null });
+    await closeCollectionContext({ tabId: tab.id, windowId: context.windowId, discreteWindow: context.discreteWindow });
+    await updateBrowserJob(lease, { tabId: null, windowId: null, discreteWindow: null });
   }
 }
 
@@ -499,9 +540,12 @@ chrome.alarms.onAlarm.addListener((alarm) => {
   else if (alarm.name.startsWith(RUN_TIMEOUT_PREFIX)) {
     const tabId = Number(alarm.name.slice(RUN_TIMEOUT_PREFIX.length));
     chrome.storage.session.get(`${RUN_PREFIX}${tabId}`)
-      .then((stored) => releaseBrowserJob(stored[`${RUN_PREFIX}${tabId}`]?.leaseId))
+      .then(async (stored) => {
+        const run = stored[`${RUN_PREFIX}${tabId}`];
+        await releaseBrowserJob(run?.leaseId);
+        await closeCollectionContext({ tabId, windowId: run?.windowId, discreteWindow: run?.discreteWindow });
+      })
       .then(() => chrome.storage.session.remove(`${RUN_PREFIX}${tabId}`))
-      .then(() => chrome.tabs.remove(tabId).catch(() => undefined))
       .then(() => setLastEvent({ status: "timeout", tabId }))
       .then(() => pumpSearchQueue());
   }

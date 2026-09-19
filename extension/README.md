@@ -1,4 +1,4 @@
-# Berry Multi-Source Connector 1.1
+# Berry Multi-Source Connector 1.1.1
 
 Extension Chrome Manifest V3 commune à plusieurs applications. Une application possède son endpoint, son espace et son jeton. Une recherche peut livrer ses résultats à une ou plusieurs applications sans relancer l'extraction de la page.
 
@@ -35,6 +35,6 @@ Pour BerryPilot, ouvrir ensuite **Prospection > LBC Safe > Connexion LBC**, gén
 
 Les jetons sont enregistrés dans `chrome.storage.local`, jamais dans le dépôt. L'extension demande uniquement la permission du domaine backend lors de l'ajout d'une application.
 
-Les recherches planifiées passent dans une file unique : un seul onglet de collecte est ouvert à la fois. Les passages initiaux sont décalés et un onglet sans réponse est fermé après deux minutes avant de poursuivre la file.
+Les recherches planifiées passent dans une file unique : un seul onglet de collecte est ouvert à la fois, dans une fenêtre dédiée non focalisée et minimisée. La fenêtre est fermée après le passage. Si Chrome refuse ce mode, le connecteur revient automatiquement à un onglet inactif. Les passages initiaux sont décalés et un onglet sans réponse est fermé après deux minutes avant de poursuivre la file.
 
 Le connecteur BerryPilot conserve sa synchronisation horaire, son filtrage anti-démarchage, ses limites de 40 fiches par recherche et ses endpoints d'appairage/import existants. Les réglages génériques et le jeton BerryPilot sont stockés dans deux espaces séparés de `chrome.storage.local`.

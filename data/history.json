@@ -2270,5 +2270,29 @@
       "observedAt": "2026-09-20T13:10:05.270Z",
       "askingPrice": 239000
     }
+  ],
+  "cf04af5d0838839cb0db2ad97928b25c8b00b0177900788982b9ebea6a6e1a1a": [
+    {
+      "observedAt": "2026-09-20T18:10:38.443Z",
+      "askingPrice": 94500
+    }
+  ],
+  "58a54dbd6a9fa49aff601645f9a1c03c63aa88c7981325f574ea928780318667": [
+    {
+      "observedAt": "2026-09-20T18:10:38.443Z",
+      "askingPrice": 251450
+    }
+  ],
+  "8d11d098b32c2f758cb6e8d316d941b2405e4d1b17d6de5eecadced38639bedf": [
+    {
+      "observedAt": "2026-09-20T18:10:38.443Z",
+      "askingPrice": 59000
+    }
+  ],
+  "8cd6091b1632a04579b9e25e37c4d5bb76a703f7d06e6affb23288f700a4d9d7": [
+    {
+      "observedAt": "2026-09-20T18:10:38.443Z",
+      "askingPrice": 339000
+    }
   ]
 }

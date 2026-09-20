@@ -1,28 +1,28 @@
 {
   "ok": true,
-  "generatedAt": "2026-09-20T13:10:05.270Z",
-  "message": "88 annonces actives",
+  "generatedAt": "2026-09-20T18:10:38.443Z",
+  "message": "89 annonces actives",
   "sources": [
     {
       "id": "leboncoin",
       "label": "Leboncoin résidentiel",
       "ok": false,
       "count": 0,
-      "error": "Aucune page locale accessible"
+      "error": "HTTP 403 — extension Chrome requise"
     },
     {
       "id": "leboncoin-pro",
       "label": "Leboncoin locaux professionnels",
       "ok": false,
       "count": 0,
-      "error": "Aucune page locale accessible"
+      "error": "HTTP 403 — extension Chrome requise"
     },
     {
       "id": "seloger",
       "label": "SeLoger",
       "ok": false,
       "count": 0,
-      "error": "Aucune page locale accessible"
+      "error": "HTTP 403 — extension Chrome requise"
     },
     {
       "id": "bienici-41",
@@ -47,7 +47,7 @@
       "label": "PAP via sitemap officiel",
       "ok": false,
       "count": 0,
-      "error": "Sitemap HTTP 403"
+      "error": "Sitemap HTTP 403 — extension Chrome requise"
     },
     {
       "id": "paruvendu-41",

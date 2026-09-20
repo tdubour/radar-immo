@@ -199,6 +199,7 @@ var ALARM_PREFIX = "search:";
 var QUEUE_ALARM = "delivery-queue";
 var RUN_TIMEOUT_PREFIX = "run-timeout:";
 var BROWSER_JOB_KEY = "berryBrowserJob";
+var COLLECTOR_CONTEXT_KEY = "berryCollectorContext";
 var BERRYPILOT_STATE_KEY = "berryPilotLbcState";
 var BERRYPILOT_ALARM = "berrypilot-lbc-automatic-sync";
 var BERRYPILOT_API_BASE_URL = "https://berryconciergerie-app.vercel.app";
@@ -297,6 +298,23 @@ async function syncAlarms() {
 async function createDiscreteTab(url) {
   let createdWindow;
   try {
+    const stored = await chrome.storage.session.get(COLLECTOR_CONTEXT_KEY);
+    const saved = stored[COLLECTOR_CONTEXT_KEY];
+    if (saved?.windowId != null && saved?.tabId != null) {
+      const [window, tab] = await Promise.all([
+        chrome.windows.get(saved.windowId),
+        chrome.tabs.get(saved.tabId)
+      ]);
+      if (window?.id && tab?.id && tab.windowId === window.id) {
+        await chrome.windows.update(window.id, { focused: false, state: "minimized" });
+        await chrome.tabs.update(tab.id, { active: false, url });
+        return { tab: await chrome.tabs.get(tab.id), windowId: window.id, discreteWindow: true, reusedWindow: true };
+      }
+    }
+  } catch {
+    await chrome.storage.session.remove(COLLECTOR_CONTEXT_KEY);
+  }
+  try {
     createdWindow = await chrome.windows.create({
       focused: false,
       state: "minimized",
@@ -305,6 +323,7 @@ async function createDiscreteTab(url) {
     });
     const tab = createdWindow.tabs?.[0] || (await chrome.tabs.query({ windowId: createdWindow.id }))[0];
     if (!tab?.id) throw new Error("Fen\xEAtre de collecte sans onglet");
+    await chrome.storage.session.set({ [COLLECTOR_CONTEXT_KEY]: { windowId: createdWindow.id, tabId: tab.id } });
     return { tab, windowId: createdWindow.id, discreteWindow: true };
   } catch (error) {
     if (createdWindow?.id) await chrome.windows.remove(createdWindow.id).catch(() => void 0);
@@ -319,7 +338,10 @@ async function createDiscreteTab(url) {
 }
 async function closeCollectionContext({ tabId, windowId, discreteWindow }) {
   if (discreteWindow && windowId != null) {
-    await chrome.windows.remove(windowId).catch(() => void 0);
+    if (tabId != null) await chrome.tabs.update(tabId, { active: false, url: "about:blank" }).catch(() => void 0);
+    await chrome.windows.update(windowId, { focused: false, state: "minimized" }).catch(async () => {
+      await chrome.storage.session.remove(COLLECTOR_CONTEXT_KEY);
+    });
     return;
   }
   if (tabId != null) await chrome.tabs.remove(tabId).catch(() => void 0);

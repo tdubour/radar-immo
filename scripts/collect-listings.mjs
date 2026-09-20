@@ -50,11 +50,14 @@ async function extractSource(page, source) {
   const targets = source.targets || [{ url: source.url }];
   const listings = [];
   let reachableTargets = 0;
+  const failures = [];
   for (const target of targets) {
     try {
       const response = await page.goto(target.url, { waitUntil: "domcontentloaded", timeout: 45000 });
-      if (response?.status() >= 400) continue;
-      reachableTargets += 1;
+      if (response?.status() >= 400) {
+        failures.push(`HTTP ${response.status()}`);
+        continue;
+      }
       await page.waitForTimeout(source.waitMs ?? 3500);
       for (const label of ["Tout accepter", "Accepter", "J’accepte", "Continuer sans accepter"]) {
         const button = page.getByRole("button", { name: label, exact: false }).first();
@@ -63,7 +66,11 @@ async function extractSource(page, source) {
       await page.waitForTimeout(source.waitMs ? 400 : 1500);
       const title = await page.title();
       const body = clean(await page.locator("body").innerText().catch(() => ""));
-      if (/access denied|captcha|vérifier que vous êtes humain|forbidden/i.test(`${title} ${body.slice(0, 500)}`)) continue;
+      if (/access denied|captcha|vérifier que vous êtes humain|forbidden/i.test(`${title} ${body.slice(0, 500)}`)) {
+        failures.push("protection anti-robot");
+        continue;
+      }
+      reachableTargets += 1;
       const cards = await page.locator("a[href]").evaluateAll((anchors, linkPattern) => {
         const matcher = new RegExp(linkPattern, "i"); const seen = new Set(); const output = [];
         for (const anchor of anchors) {
@@ -83,16 +90,30 @@ async function extractSource(page, source) {
       }, source.linkPattern);
       const locationHint = target.postalCode ? ` ${target.postalCode} ${target.city}` : "";
       listings.push(...cards.map((row) => parseCard({ ...row, text: `${row.text}${locationHint}` }, source)).filter(Boolean));
-    } catch { /* une ville vide ou retirée ne doit pas bloquer le département */ }
+    } catch (error) {
+      failures.push(error instanceof Error ? error.message : "navigation impossible");
+    }
   }
-  if (!reachableTargets) throw new Error("Aucune page locale accessible");
+  if (!reachableTargets) {
+    const reason = failures.find((failure) => /HTTP 403|anti-robot/i.test(failure)) || failures[0] || "navigation impossible";
+    throw new Error(`${reason} — extension Chrome requise`);
+  }
   return [...new Map(listings.map((row) => [row.fingerprint, row])).values()].slice(0, config.maxListingsPerPage);
 }
 
 async function extractSitemap(page, source) {
-  const response = await fetch(source.url, { headers: { "User-Agent": "RadarImmo/1.0 (+https://radar-immo-blond.vercel.app)" } });
-  if (!response.ok) throw new Error(`Sitemap HTTP ${response.status}`);
-  const xml = await response.text();
+  const browserHeaders = {
+    Accept: "application/xml,text/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "fr-FR,fr;q=0.9,en;q=0.7",
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140 Safari/537.36"
+  };
+  const response = await fetch(source.url, { headers: browserHeaders });
+  let xml = response.ok ? await response.text() : "";
+  if (!response.ok) {
+    const navigation = await page.goto(source.url, { waitUntil: "domcontentloaded", timeout: 45000 });
+    if (!navigation?.ok()) throw new Error(`Sitemap HTTP ${navigation?.status() || response.status} — extension Chrome requise`);
+    xml = await page.locator("body").innerText().catch(() => "");
+  }
   const urls = [...xml.matchAll(/<loc>([\s\S]*?)<\/loc>/gi)]
     .map((match) => match[1].replace(/&amp;/g, "&").trim())
     .filter((url) => source.targetSlugs.some((slug) => comparable(url).includes(comparable(slug))))

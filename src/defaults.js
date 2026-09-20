@@ -20,8 +20,8 @@ export function createDefaultProject() {
       landSharePct: 15
     },
     financing: {
-      downPayment: 0,
-      durationYears: 20,
+      downPayment: 1500,
+      durationYears: 25,
       annualRatePct: 4.2,
       insuranceRatePct: 0.3,
       deferredMonths: 0
@@ -30,8 +30,8 @@ export function createDefaultProject() {
       monthlyRent: 0,
       monthlyParkingAndAnnexes: 0,
       rentDeferralMonths: 0,
-      vacancyMonths: 0,
-      vacancyPct: 5,
+      vacancyMonths: 1,
+      vacancyPct: 0,
       unpaidPct: 1,
       managementPct: 0,
       gliPct: 0,
@@ -82,7 +82,7 @@ export function createDefaultProject() {
       feesDepYears: 5
     },
     projection: {
-      years: 20,
+      years: 25,
       rentGrowthPct: 1.5,
       chargesInflationPct: 2,
       propertyGrowthPct: 1.5

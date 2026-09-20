@@ -85,7 +85,12 @@ function buildQuickProject(listing, market) {
   project.acquisition.surfaceM2 = surface;
   project.acquisition.works = works;
   project.acquisition.furniture = group === "professional" ? 0 : Math.round(Math.min(12000, Math.max(2500, surface * 100)));
-  project.financing.downPayment = Math.round(project.acquisition.purchasePrice * .1);
+  // Montage cible : SCI à l'IS, apport symbolique et durée longue.
+  // L'apport est fixe afin de ne pas favoriser artificiellement les biens chers.
+  project.financing.downPayment = 1500;
+  project.financing.durationYears = 25;
+  project.longTerm.vacancyMonths = 1;
+  project.longTerm.vacancyPct = 0;
   project.longTerm.monthlyRent = Math.round(estimatedRent);
   project.longTerm.propertyTaxAnnual = Math.round(project.acquisition.purchasePrice * .012);
   project.longTerm.pnoAnnual = group === "professional" ? 450 : 180;
@@ -105,6 +110,7 @@ function buildQuickProject(listing, market) {
     project.shortTerm.occupancyPct = 0;
   }
   project.flip.resalePrice = Math.round(resalePrice);
+  project.projection.years = 25;
   return { project, works, estimatedRent: Math.round(estimatedRent), short };
 }
 

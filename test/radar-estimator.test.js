@@ -16,6 +16,11 @@ test("quick estimator calculates market comparison and three strategies", () => 
   assert.ok(Number.isFinite(result.shortTermCashflowMonthly));
   assert.ok(Number.isFinite(result.estimatedResaleProfit));
   assert.ok(result.quickProject.acquisition.purchasePrice === 80000);
+  assert.equal(result.quickProject.financing.downPayment, 1500);
+  assert.equal(result.quickProject.financing.durationYears, 25);
+  assert.equal(result.quickProject.longTerm.vacancyMonths, 1);
+  assert.equal(result.quickProject.longTerm.vacancyPct, 0);
+  assert.equal(result.quickProject.projection.years, 25);
 });
 
 test("demo listings are removed before analysis", () => {

@@ -19,7 +19,12 @@ test("quick estimator calculates market comparison and three strategies", () => 
 });
 
 test("demo listings are removed before analysis", () => {
-  const result = enrichRadarEstimates([...rows, { ...rows[0], fingerprint: "demo", sourceId: "demo", title: "Bien exemple" }]);
+  const result = enrichRadarEstimates([
+    ...rows,
+    { ...rows[0], fingerprint: "demo", sourceId: "demo", title: "Bien exemple" },
+    { ...rows[0], fingerprint: "source", title: "Appartement Orléans La Source Université" },
+    { ...rows[0], fingerprint: "new", title: "Programme neuf à Bourges" }
+  ]);
   assert.equal(result.length, 3);
 });
 
@@ -28,4 +33,3 @@ test("price history exposes the previous price", () => {
   assert.equal(result.previousPrice, 80000);
   assert.equal(result.priceChange, -5000);
 });
-

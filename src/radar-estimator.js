@@ -152,7 +152,7 @@ export function quickEstimateListing(listing, listings = []) {
 }
 
 export function enrichRadarEstimates(listings = []) {
-  const cleanRows = listings.filter((listing) => !/exemple|démo|demo|sample/i.test(`${listing.sourceId || ""} ${listing.title || ""} ${listing.sourceUrl || ""}`));
+  const excluded = /exemple|démo|demo|sample|viager|résidence\s+(services?|seniors?)|programme\s+neuf|appartements?\s+neufs?|maison\s+neuve|la\s+source(?:\s+université|\s+universite|\b)|promenade\s+des\s+sources/i;
+  const cleanRows = listings.filter((listing) => !excluded.test(`${listing.sourceId || ""} ${listing.title || ""} ${listing.description || ""} ${listing.district || ""} ${listing.sourceUrl || ""}`));
   return cleanRows.map((listing) => quickEstimateListing(listing, cleanRows));
 }
-

@@ -27,7 +27,9 @@ test("amortization schedule finishes close to zero", () => {
 });
 
 test("new project starts without example acquisition data", () => {
-  const acquisition = acquisitionSummary(createDefaultProject());
+  const project = createDefaultProject();
+  const acquisition = acquisitionSummary(project);
+  assert.equal(project.acquisition.guaranteeRatePct, 0);
   assert.equal(acquisition.notaryFees, 0);
   assert.equal(acquisition.worksContingency, 0);
   assert.equal(acquisition.guaranteeFees, 0);

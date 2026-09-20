@@ -15,7 +15,7 @@ export function createDefaultProject() {
       furniture: 0,
       brokerFees: 0,
       bankFees: 0,
-      guaranteeRatePct: 1.5,
+      guaranteeRatePct: 0,
       diagnosticsAndStudies: 0,
       landSharePct: 15
     },

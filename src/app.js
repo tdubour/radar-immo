@@ -194,7 +194,7 @@ const controls = {
     ["acquisition.furniture", "Mobilier et équipement", 0, 200000, 500, "€", "Mobilier, électroménager et équipement initial."],
     ["acquisition.agencyFees", "Frais d’agence non inclus", 0, 150000, 500, "€", "À laisser à zéro lorsqu’ils sont déjà inclus dans le prix affiché."],
     ["acquisition.bankFees", "Frais bancaires", 0, 20000, 100, "€", "Frais de dossier du financeur."],
-    ["acquisition.guaranteeRatePct", "Garantie bancaire (% du prix)", 0, 5, .1, "%", "Caution, hypothèque ou garantie estimée."],
+    ["acquisition.guaranteeRatePct", "Sûreté bancaire éventuelle (% du prix)", 0, 5, .1, "%", "0 % par défaut. À renseigner uniquement si l’offre prévoit des frais d’hypothèque, de caution ou de nantissement."],
     ["acquisition.brokerFees", "Courtier", 0, 20000, 100, "€", "Honoraires de courtage éventuels."],
     ["acquisition.diagnosticsAndStudies", "Diagnostics, études et audits", 0, 50000, 100, "€", "Audits techniques, diagnostics, architecte ou étude préalable."]
   ],
@@ -478,7 +478,7 @@ function radarHtml() {
       ${kpi("Dernière collecte", state.radarStatus.lastRun?.started_at ? formatDate(state.radarStatus.lastRun.started_at) : "En attente", state.radarStatus.extensionCount ? `${state.radarStatus.extensionCount} annonces issues de l’extension` : "collecteur serveur")}
     </section>
     <section class="panel ${state.radarStatus.connected ? "success-box" : "warning"}"><strong>${state.radarStatus.connected ? "Import automatique actif" : "Import automatique incomplet"}</strong><p>${state.radarStatus.connected ? `Les annonces du collecteur quotidien et de l’extension Chrome sont fusionnées automatiquement. ${sourceStats.length ? sourceStats.map((source) => `${source.label || source.id} : ${source.ok ? source.count : "indisponible"}`).join(" · ") : ""}` : e(state.radarStatus.error || "Aucune collecte disponible.")}</p></section>
-    <section class="panel quick-assumptions"><div class="section-title"><div><span class="eyebrow">Hypothèses rapides SCI à l’IS</span><h2>Calcul immédiat, puis validation</h2></div><p>Financement sur 25 ans, apport symbolique de 1 500 €, 4,2 % + 0,3 % d’assurance, notaire 8 %, un mois de vacance locative par an et comptabilité interne à 0 €. Travaux : 600 €/m² si signal de rénovation, sinon réserve de 80 €/m².</p></div></section>
+    <section class="panel quick-assumptions"><div class="section-title"><div><span class="eyebrow">Hypothèses rapides SCI à l’IS</span><h2>Calcul immédiat, puis validation</h2></div><p>Financement sur 25 ans, apport symbolique de 1 500 €, 4,2 % + 0,3 % d’assurance, notaire 8 %, sûreté bancaire à 0 €, un mois de vacance locative par an et comptabilité interne à 0 €. Travaux : 600 €/m² si signal de rénovation, sinon réserve de 80 €/m².</p></div></section>
     ${top.length ? `<section class="analysis-grid">${top.map((item, index) => `<article class="analysis-card ${item.qualified ? "qualified" : ""}">
       <div class="analysis-card-head"><div><span class="eyebrow">${e(item.sourceId || "source")} · ${e(item.city || "ville inconnue")}</span><h3>${e(item.title || "Sans titre")}</h3></div><strong class="radar-score">${item.score.toFixed(0)}</strong></div>
       <div class="analysis-price"><strong>${e(euros(item.askingPrice))}</strong><span>${item.pricePerM2 ? `${e(euros(item.pricePerM2))}/m²` : "surface inconnue"}</span>${priceChangeHtml(item)}</div>

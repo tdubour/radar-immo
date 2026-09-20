@@ -7,12 +7,37 @@ import {
   analyzeProject,
   corporateTax,
   monthlyPayment,
-  scenarioTable
+  scenarioTable,
+  viabilityRange
 } from "../src/finance.js";
 
 test("monthlyPayment calculates a standard amortizing loan", () => {
   const payment = monthlyPayment(100000, 4, 20);
   assert.ok(Math.abs(payment - 605.98) < 0.02);
+});
+
+test("rental results expose a pre-tax break-even below or equal to the after-tax threshold", () => {
+  const project = createDefaultProject();
+  project.acquisition.purchasePrice = 160000;
+  project.longTerm.monthlyRent = 1400;
+  project.shortTerm.adr = 95;
+  project.shortTerm.occupancyPct = 58;
+  const result = analyzeProject(project);
+  assert.ok(result.longTerm.breakEvenBeforeTax <= result.longTerm.breakEven);
+  assert.ok(result.shortTerm.breakEvenBeforeTax <= result.shortTerm.breakEven);
+});
+
+test("viability range orders prudent, central and high pre-tax cash-flow", () => {
+  const project = createDefaultProject();
+  project.acquisition.purchasePrice = 180000;
+  project.longTerm.monthlyRent = 1800;
+  project.shortTerm.adr = 105;
+  project.shortTerm.occupancyPct = 60;
+  const rows = viabilityRange(project);
+  assert.equal(rows.length, 3);
+  assert.ok(rows[0].longTermBeforeTaxMonthly < rows[1].longTermBeforeTaxMonthly);
+  assert.ok(rows[1].longTermBeforeTaxMonthly < rows[2].longTermBeforeTaxMonthly);
+  assert.ok(rows[0].shortTermBeforeTaxMonthly < rows[2].shortTermBeforeTaxMonthly);
 });
 
 test("zero-rate loan divides principal by months", () => {

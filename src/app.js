@@ -6,7 +6,8 @@ import {
   occupancySensitivity,
   priceSensitivity,
   rateSensitivity,
-  scenarioTable
+  scenarioTable,
+  viabilityRange
 } from "./finance.js";
 import { barChart, chartCard, lineChart } from "./charts.js";
 import { createDefaultRadarConfig, rankCandidates } from "./radar.js";
@@ -176,12 +177,12 @@ const navItems = [
 ];
 
 const formTabs = [
-  ["acquisition", "Acquisition"],
-  ["financing", "Financement"],
-  ["longTerm", "Longue durée"],
+  ["acquisition", "Le bien"],
+  ["longTerm", "Revenus & charges"],
+  ["financing", "Le prêt"],
   ["shortTerm", "Courte durée"],
   ["flip", "Achat-revente"],
-  ["sci", "SCI à l’IS"]
+  ["sci", "Fiscalité & projection"]
 ];
 
 const controls = {
@@ -318,14 +319,19 @@ function kpi(label, value, hint) { return `<article class="kpi-card"><span>${e(l
 function strategyCard(result, recommended = false) {
   const rental = Object.hasOwn(result, "cashflowAfterTaxMonthly");
   const positive = rental ? result.cashflowAfterTaxMonthly >= 0 : result.netProfit >= 0;
-  const main = rental ? euros(result.cashflowAfterTaxMonthly) : euros(result.netProfit);
+  const main = rental ? euros(result.cashflowBeforeTaxAnnual / 12) : euros(result.netProfit);
+  const reachable = rental && !positive && (result.strategy === "Longue durée"
+    ? result.breakEvenBeforeTax <= state.project.longTerm.monthlyRent * 1.15
+    : result.breakEvenBeforeTax <= Math.min(100, state.project.shortTerm.occupancyPct + 10));
+  const displayVerdict = reachable ? "Équilibre accessible" : result.verdict;
   const metrics = rental ? [
     ["CA brut annuel", euros(result.grossRevenueAnnual)],
     ["NOI annuel", euros(result.noiAnnual)],
     ["Rentabilité brute", percent(result.grossYield)],
     ["Rentabilité nette", percent(result.netYield)],
     ["DSCR", result.dscr.toFixed(2)],
-    [result.strategy === "Longue durée" ? "Loyer de point mort" : "Occupation de point mort", result.strategy === "Longue durée" ? euros(result.breakEven) : `${result.breakEven.toFixed(1)} %`]
+    ["Cash-flow après IS estimé", `${euros(result.cashflowAfterTaxMonthly)}/mois`],
+    [result.strategy === "Longue durée" ? "Loyer CF positif avant impôt" : "Occupation CF positif avant impôt", result.strategy === "Longue durée" ? euros(result.breakEvenBeforeTax) : `${result.breakEvenBeforeTax.toFixed(1)} %`]
   ] : [
     ["Prix net de revente", euros(result.netResalePrice)],
     ["Marge avant IS", euros(result.profitBeforeTax)],
@@ -335,8 +341,8 @@ function strategyCard(result, recommended = false) {
     ["Revente de point mort", euros(result.breakEvenResalePrice)]
   ];
   return `<article class="strategy-card ${recommended ? "recommended" : ""}">
-    <div class="strategy-title"><div><span class="eyebrow">${recommended ? "Stratégie recommandée" : "Simulation"}</span><h3>${e(result.strategy)}</h3></div><span class="verdict ${positive ? "positive" : "negative"}">${e(result.verdict)}</span></div>
-    <div class="main-result ${positive ? "positive-text" : "negative-text"}">${e(main)}<small>${rental ? "/ mois après IS estimé" : " de marge nette estimée"}</small></div>
+    <div class="strategy-title"><div><span class="eyebrow">${recommended ? "Stratégie recommandée" : "Simulation"}</span><h3>${e(result.strategy)}</h3></div><span class="verdict ${positive || reachable ? "positive" : "negative"}">${e(displayVerdict)}</span></div>
+    <div class="main-result ${(rental ? result.cashflowBeforeTaxAnnual >= 0 : positive) ? "positive-text" : "negative-text"}">${e(main)}<small>${rental ? "/ mois avant impôt" : " de marge nette estimée"}</small></div>
     <dl class="metric-list">${metrics.map(([label, value]) => `<div><dt>${e(label)}</dt><dd>${e(value)}</dd></div>`).join("")}</dl>
     <div class="score-row"><span>Score transparent</span><strong>${result.score.toFixed(0)}/100</strong></div><div class="score-track"><span style="width:${result.score}%"></span></div>
   </article>`;
@@ -520,6 +526,21 @@ function accountingModeHtml() {
   return `<div class="accounting-modes">${modes.map(([key, label, annual, description]) => `<button type="button" data-accounting-mode="${key}" data-accounting-annual="${annual}" class="${state.project.longTerm.accountingMode === key ? "active" : ""}"><strong>${label}</strong><span>${euros(annual)}/an</span><small>${description}</small></button>`).join("")}</div>`;
 }
 
+function viabilityHtml(result) {
+  const rows = viabilityRange(state.project);
+  const longGap = Math.max(0, result.longTerm.breakEvenBeforeTax - state.project.longTerm.monthlyRent);
+  const shortGap = Math.max(0, result.shortTerm.breakEvenBeforeTax - state.project.shortTerm.occupancyPct);
+  return `<section class="panel viability-panel">
+    <div class="section-title"><div><span class="eyebrow">Zone de viabilité</span><h2>À quel point le projet passe en positif ?</h2></div><p>Fourchette automatique : revenus ±10 % et charges ∓10 %. Les montants restent des hypothèses, pas une promesse.</p></div>
+    <div class="break-even-grid">
+      <article><span>LONGUE DURÉE · SEUIL AVANT IMPÔT</span><strong>${e(euros(result.longTerm.breakEvenBeforeTax))}/mois</strong><p>${longGap > 1 ? `Il manque ${e(euros(longGap))} de loyer mensuel.` : "Le projet est déjà positif avant impôt."}</p></article>
+      <article><span>COURTE DURÉE · SEUIL AVANT IMPÔT</span><strong>${result.shortTerm.breakEvenBeforeTax.toFixed(1)} % d’occupation</strong><p>${shortGap > .1 ? `Il manque ${shortGap.toFixed(1)} points d’occupation.` : "Le projet est déjà positif avant impôt."}</p></article>
+      <article><span>DETTE MENSUELLE TOTALE</span><strong>${e(euros(result.loan.monthlyDebtService))}</strong><p>Capital, intérêts et assurance emprunteur.</p></article>
+    </div>
+    <div class="range-table"><div class="range-head"><span>Hypothèse</span><span>Longue durée avant impôt</span><span>Courte durée avant impôt</span></div>${rows.map((row) => `<div class="range-row"><strong>${e(row.name)}</strong><span class="${row.longTermBeforeTaxMonthly >= 0 ? "positive-text" : "negative-text"}">${e(euros(row.longTermBeforeTaxMonthly))}/mois</span><span class="${row.shortTermBeforeTaxMonthly >= 0 ? "positive-text" : "negative-text"}">${e(euros(row.shortTermBeforeTaxMonthly))}/mois</span></div>`).join("")}</div>
+  </section>`;
+}
+
 function analysisHtml() {
   const result = analyzeProject(state.project);
   const activeControls = controls[state.formTab] ?? [];
@@ -537,6 +558,8 @@ function analysisHtml() {
       <div class="section-title"><div><span class="eyebrow">Identification</span><h2>Projet analysé</h2></div><p>Chaque donnée est enregistrée automatiquement dans le navigateur.</p></div>
       ${identityFields()}
     </section>
+
+    ${viabilityHtml(result)}
 
     <section class="panel form-panel">
       <div class="tab-list">${formTabs.map(([key, label]) => `<button data-form-tab="${key}" class="${state.formTab === key ? "active" : ""}">${e(label)}</button>`).join("")}</div>
@@ -559,8 +582,8 @@ function analysisHtml() {
     <section class="panel sticky-results">
       <div><span>Coût total</span><strong data-live="total-cost">${e(euros(result.acquisition.totalProjectCost))}</strong></div>
       <div><span>Dette mensuelle</span><strong data-live="debt">${e(euros(result.loan.monthlyDebtService))}</strong></div>
-      <div><span>Cash-flow longue durée</span><strong data-live="long">${e(euros(result.longTerm.cashflowAfterTaxMonthly))}</strong></div>
-      <div><span>Cash-flow courte durée</span><strong data-live="short">${e(euros(result.shortTerm.cashflowAfterTaxMonthly))}</strong></div>
+      <div><span>CF longue avant / après IS</span><strong data-live="long">${e(euros(result.longTerm.cashflowBeforeTaxAnnual / 12))} / ${e(euros(result.longTerm.cashflowAfterTaxMonthly))}</strong></div>
+      <div><span>CF courte avant / après IS</span><strong data-live="short">${e(euros(result.shortTerm.cashflowBeforeTaxAnnual / 12))} / ${e(euros(result.shortTerm.cashflowAfterTaxMonthly))}</strong></div>
       <div><span>Marge achat-revente</span><strong data-live="flip">${e(euros(result.flip.netProfit))}</strong></div>
     </section>
   </div>`;

@@ -176,6 +176,13 @@ function longTermCore(project, targetRent = project.longTerm.monthlyRent) {
 
 export function longTermResult(project) {
   const core = longTermCore(project);
+  let preTaxLow = 0;
+  let preTaxHigh = Math.max(20000, project.longTerm.monthlyRent * 3);
+  for (let i = 0; i < 60; i += 1) {
+    const mid = (preTaxLow + preTaxHigh) / 2;
+    if (longTermCore(project, mid).cashflowBeforeTaxAnnual >= 0) preTaxHigh = mid;
+    else preTaxLow = mid;
+  }
   let low = 0;
   let high = Math.max(20000, project.longTerm.monthlyRent * 3);
   for (let i = 0; i < 60; i += 1) {
@@ -186,7 +193,7 @@ export function longTermResult(project) {
   const breakEven = high;
   const safetyMargin = project.longTerm.monthlyRent > 0 ? (project.longTerm.monthlyRent - breakEven) / project.longTerm.monthlyRent : 0;
   const score = scoreRental({ monthlyCashflow: core.cashflowAfterTaxMonthly, netYield: core.netYield, dscr: core.dscr, safetyMargin, dpe: project.dpe });
-  return { ...core, breakEven, score, verdict: verdict(score) };
+  return { ...core, breakEven, breakEvenBeforeTax: preTaxHigh, score, verdict: verdict(score) };
 }
 
 function fixedShortTermCharges(project) {
@@ -242,6 +249,13 @@ function shortTermCore(project, targetOccupancyPct = project.shortTerm.occupancy
 
 export function shortTermResult(project) {
   const core = shortTermCore(project);
+  let preTaxLow = 0;
+  let preTaxHigh = 100;
+  for (let i = 0; i < 60; i += 1) {
+    const mid = (preTaxLow + preTaxHigh) / 2;
+    if (shortTermCore(project, mid).cashflowBeforeTaxAnnual >= 0) preTaxHigh = mid;
+    else preTaxLow = mid;
+  }
   let low = 0;
   let high = 100;
   for (let i = 0; i < 60; i += 1) {
@@ -252,7 +266,40 @@ export function shortTermResult(project) {
   const breakEven = high;
   const safetyMargin = project.shortTerm.occupancyPct > 0 ? (project.shortTerm.occupancyPct - breakEven) / project.shortTerm.occupancyPct : 0;
   const score = scoreRental({ monthlyCashflow: core.cashflowAfterTaxMonthly, netYield: core.netYield, dscr: core.dscr, safetyMargin, dpe: project.dpe });
-  return { ...core, breakEven, score, verdict: verdict(score) };
+  return { ...core, breakEven, breakEvenBeforeTax: preTaxHigh, score, verdict: verdict(score) };
+}
+
+export function viabilityRange(project) {
+  const variants = [
+    ["Prudent", 0.9, 1.1],
+    ["Central", 1, 1],
+    ["Haut", 1.1, 0.9]
+  ];
+  return variants.map(([name, revenueFactor, chargeFactor]) => {
+    const copy = structuredClone(project);
+    copy.longTerm.monthlyRent *= revenueFactor;
+    copy.longTerm.monthlyParkingAndAnnexes *= revenueFactor;
+    copy.longTerm.propertyTaxAnnual *= chargeFactor;
+    copy.longTerm.coproNonRecoverableAnnual *= chargeFactor;
+    copy.longTerm.pnoAnnual *= chargeFactor;
+    copy.longTerm.accountingAnnual *= chargeFactor;
+    copy.longTerm.cfeAnnual *= chargeFactor;
+    copy.longTerm.ownerUtilitiesAnnual *= chargeFactor;
+    copy.longTerm.otherAnnual *= chargeFactor;
+    copy.shortTerm.adr *= revenueFactor;
+    copy.shortTerm.occupancyPct = clamp(copy.shortTerm.occupancyPct * revenueFactor, 0, 100);
+    copy.shortTerm.utilitiesAnnual *= chargeFactor;
+    copy.shortTerm.softwareAnnual *= chargeFactor;
+    copy.shortTerm.otherAnnual *= chargeFactor;
+    const result = analyzeProject(copy);
+    return {
+      name,
+      longTermBeforeTaxMonthly: result.longTerm.cashflowBeforeTaxAnnual / 12,
+      longTermAfterTaxMonthly: result.longTerm.cashflowAfterTaxMonthly,
+      shortTermBeforeTaxMonthly: result.shortTerm.cashflowBeforeTaxAnnual / 12,
+      shortTermAfterTaxMonthly: result.shortTerm.cashflowAfterTaxMonthly
+    };
+  });
 }
 
 export function flipResult(project) {

@@ -13,3 +13,4 @@ chrome.runtime.onMessage.addListener((message) => {
   if (message?.type === "RADAR_LOCAL_UPDATED") publish();
 });
 publish();
+setInterval(publish, 6e4);

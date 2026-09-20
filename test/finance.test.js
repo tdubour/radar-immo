@@ -26,13 +26,13 @@ test("amortization schedule finishes close to zero", () => {
   assert.ok(schedule[0].interest > schedule.at(-1).interest);
 });
 
-test("default acquisition includes all configured costs", () => {
+test("new project starts without example acquisition data", () => {
   const acquisition = acquisitionSummary(createDefaultProject());
-  assert.equal(acquisition.notaryFees, 14400);
-  assert.equal(acquisition.worksContingency, 3500);
-  assert.equal(acquisition.guaranteeFees, 2700);
-  assert.equal(acquisition.totalProjectCost, 245500);
-  assert.equal(acquisition.loanAmount, 225500);
+  assert.equal(acquisition.notaryFees, 0);
+  assert.equal(acquisition.worksContingency, 0);
+  assert.equal(acquisition.guaranteeFees, 0);
+  assert.equal(acquisition.totalProjectCost, 0);
+  assert.equal(acquisition.loanAmount, 0);
 });
 
 test("corporateTax applies reduced and normal bands", () => {
@@ -53,8 +53,16 @@ test("analysis returns finite values for all three strategies", () => {
   assert.ok(result.shortTerm.breakEven >= 0 && result.shortTerm.breakEven <= 100);
 });
 
-test("prudent scenario is less favorable than central on default project", () => {
-  const scenarios = scenarioTable(createDefaultProject());
+test("prudent scenario is less favorable than central on a populated project", () => {
+  const project = createDefaultProject();
+  project.acquisition.purchasePrice = 180000;
+  project.acquisition.works = 35000;
+  project.financing.downPayment = 20000;
+  project.longTerm.monthlyRent = 2200;
+  project.shortTerm.adr = 70;
+  project.shortTerm.occupancyPct = 55;
+  project.flip.resalePrice = 290000;
+  const scenarios = scenarioTable(project);
   const prudent = scenarios.find((row) => row.name === "Prudent");
   const central = scenarios.find((row) => row.name === "Central");
   assert.ok(prudent.longTermMonthly < central.longTermMonthly);

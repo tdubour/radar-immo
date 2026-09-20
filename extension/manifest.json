@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Berry Multi-Source Connector",
   "description": "Collecteur immobilier multi-application et multi-recherche pour BerryPilot, Radar Immo et les futurs outils.",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "minimum_chrome_version": "120",
   "permissions": ["storage", "alarms", "tabs", "activeTab"],
   "host_permissions": [

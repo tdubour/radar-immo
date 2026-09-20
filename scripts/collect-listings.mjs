@@ -148,6 +148,12 @@ for (const row of inArea) {
   const points = history[row.fingerprint] || [];
   if (!points.some((point) => point.askingPrice === row.askingPrice)) points.push({ observedAt: now, askingPrice: row.askingPrice });
   history[row.fingerprint] = points;
+  const previousPoint = points.length > 1 ? points.at(-2) : null;
+  const latestPoint = points.at(-1);
+  row.priceHistory = points;
+  row.previousPrice = previousPoint?.askingPrice || null;
+  row.priceChangedAt = previousPoint && latestPoint.askingPrice !== previousPoint.askingPrice ? latestPoint.observedAt : null;
+  row.updatedAt = row.priceChangedAt || row.lastSeenAt;
 }
 inArea.sort((a, b) => new Date(b.firstSeenAt) - new Date(a.firstSeenAt));
 const successfulSources = statuses.filter((source) => source.ok).length;

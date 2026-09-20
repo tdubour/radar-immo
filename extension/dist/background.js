@@ -399,7 +399,26 @@ function storeLocalListings(state, envelope) {
   const byKey = new Map(listings.map((listing) => [canonicalListingKey(listing), listing]));
   for (const listing of envelope.listings) {
     const key = canonicalListingKey(listing);
-    byKey.set(key, { ...byKey.get(key), ...listing, appId: envelope.context.appId, workspaceId: envelope.context.workspaceId });
+    const previous = byKey.get(key);
+    const observedAt = listing.capturedAt || envelope.context.capturedAt || (/* @__PURE__ */ new Date()).toISOString();
+    const priceChanged = previous && Number(previous.askingPrice) !== Number(listing.askingPrice);
+    const priceHistory = Array.isArray(previous?.priceHistory) ? [...previous.priceHistory] : [];
+    if (previous?.askingPrice && !priceHistory.length) priceHistory.push({ observedAt: previous.firstSeenAt || previous.capturedAt || observedAt, askingPrice: previous.askingPrice });
+    if (!priceHistory.some((point) => Number(point.askingPrice) === Number(listing.askingPrice))) {
+      priceHistory.push({ observedAt, askingPrice: listing.askingPrice });
+    }
+    byKey.set(key, {
+      ...previous,
+      ...listing,
+      appId: envelope.context.appId,
+      workspaceId: envelope.context.workspaceId,
+      firstSeenAt: previous?.firstSeenAt || previous?.capturedAt || observedAt,
+      lastSeenAt: observedAt,
+      updatedAt: priceChanged ? observedAt : previous?.updatedAt || observedAt,
+      priceChangedAt: priceChanged ? observedAt : previous?.priceChangedAt || null,
+      previousPrice: priceChanged ? previous.askingPrice : previous?.previousPrice || null,
+      priceHistory: priceHistory.slice(-25)
+    });
   }
   state.localListings = [...byKey.values()].slice(-1e4);
   return envelope.listings.length;
@@ -437,7 +456,8 @@ async function dispatchListings(run, pageUrl, sourceId, rows) {
   for (const appId of search2.appIds) {
     const app = state.apps.find((item) => item.id === appId && item.enabled);
     if (!app) continue;
-    for (const batch of chunks(fresh)) {
+    const rowsForApp = app.transport === "local" ? rows : fresh;
+    for (const batch of chunks(rowsForApp)) {
       const envelope = makeEnvelope({ app, search: search2, runId: run.runId, listings: batch });
       if (app.transport === "local") {
         accepted += storeLocalListings(state, envelope);
@@ -461,7 +481,7 @@ async function dispatchListings(run, pageUrl, sourceId, rows) {
   };
   state.lastEvent = { at: (/* @__PURE__ */ new Date()).toISOString(), status: "captured", searchId: search2.id, sourceId, found: rows.length, fresh: fresh.length };
   await setState(state);
-  if (accepted) await notifyRadarTabs();
+  if (rows.length) await notifyRadarTabs();
   return { found: rows.length, fresh: fresh.length, accepted };
 }
 async function handleExtracted(message, sender) {

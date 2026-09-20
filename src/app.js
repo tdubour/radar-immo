@@ -10,12 +10,14 @@ import {
 } from "./finance.js";
 import { barChart, chartCard, lineChart } from "./charts.js";
 import { createDefaultRadarConfig, rankCandidates } from "./radar.js";
+import { enrichRadarEstimates } from "./radar-estimator.js";
 
 const DRAFT_KEY = "radar-immo:draft:v1";
 const SAVED_KEY = "radar-immo:projects:v1";
 const THEME_KEY = "radar-immo:theme";
 const RADAR_CONFIG_KEY = "radar-immo:watch-config:v1";
 const RADAR_LISTINGS_KEY = "radar-immo:listings:v1";
+const RADAR_DATA_VERSION_KEY = "radar-immo:data-version";
 const RADAR_CONNECTOR_CHANNEL = "berry-radar-connector";
 const app = document.querySelector("#app");
 
@@ -48,11 +50,20 @@ function hydrateProject(value) {
   return project;
 }
 
+const storedRadarListings = parseStorage(RADAR_LISTINGS_KEY, []).filter((listing) => !/exemple|démo|demo|sample/i.test(`${listing?.sourceId || ""} ${listing?.title || ""} ${listing?.sourceUrl || ""}`));
+const storedDraft = parseStorage(DRAFT_KEY, createDefaultProject());
+const migratedDraft = /exemple|démo|demo|sample/i.test(storedDraft?.name || "") ? createDefaultProject() : storedDraft;
+if (localStorage.getItem(RADAR_DATA_VERSION_KEY) !== "2") {
+  localStorage.setItem(RADAR_DATA_VERSION_KEY, "2");
+  localStorage.setItem(RADAR_LISTINGS_KEY, JSON.stringify(storedRadarListings));
+}
+
 const state = {
-  project: hydrateProject(parseStorage(DRAFT_KEY, createDefaultProject())),
+  project: hydrateProject(migratedDraft),
   saved: parseStorage(SAVED_KEY, []).map(hydrateProject),
   radarConfig: mergeDefaults(createDefaultRadarConfig(), parseStorage(RADAR_CONFIG_KEY, createDefaultRadarConfig())),
-  radarListings: parseStorage(RADAR_LISTINGS_KEY, []),
+  radarListings: storedRadarListings,
+  radarHistory: {},
   radarStatus: { loading: true, connected: false, extensionCount: 0, lastRun: null, error: "" },
   page: "dashboard",
   formTab: "acquisition",
@@ -85,6 +96,10 @@ async function communesForPostalCode(postalCode) {
 }
 
 async function enrichRadarLocation(listing) {
+  if (Number.isFinite(Number(listing.latitude)) && Number.isFinite(Number(listing.longitude))) {
+    const correctedDistance = distanceKmBetween(state.radarConfig.centerCoordinates, { latitude: Number(listing.latitude), longitude: Number(listing.longitude) });
+    return { ...listing, distanceKm: Math.round(correctedDistance * 10) / 10 };
+  }
   if (Number.isFinite(Number(listing.distanceKm))) return listing;
   const postalCode = String(listing.postalCode || `${listing.title || ""} ${listing.rawText || ""}`.match(/\b(?:0[1-9]|[1-8]\d|9[0-5])\d{3}\b/)?.[0] || "");
   if (!postalCode) return listing;
@@ -126,7 +141,7 @@ async function enrichRadarLocations(listings) {
 
 function mergeRadarListings(remoteListings = state.radarListings) {
   const rows = [...(Array.isArray(remoteListings) ? remoteListings : []), ...extensionRadarListings];
-  state.radarListings = [...new Map(rows.map((listing) => [`${listing.sourceId || "source"}:${listing.externalId || listing.sourceUrl || JSON.stringify(listing)}`, listing])).values()];
+  state.radarListings = [...new Map(rows.filter((listing) => !/exemple|démo|demo|sample/i.test(`${listing?.sourceId || ""} ${listing?.title || ""} ${listing?.sourceUrl || ""}`)).map((listing) => [`${listing.sourceId || "source"}:${listing.externalId || listing.sourceUrl || JSON.stringify(listing)}`, listing])).values()];
 }
 
 window.addEventListener("message", async (event) => {
@@ -443,22 +458,35 @@ function dashboardHtml() {
 
 function radarHtml() {
   const config = state.radarConfig;
-  const sources = config.sources.filter((source) => source.enabled);
-  const listings = rankCandidates(state.radarListings, config);
+  const estimated = enrichRadarEstimates(state.radarListings);
+  const listings = rankCandidates(estimated, config);
   const qualified = listings.filter((listing) => listing.qualified);
-  const statusLabel = (status) => ({ qualified: "À étudier", "below-cashflow": "CF insuffisant", "outside-area": "Hors zone", "needs-analysis": "À compléter" }[status] || status);
-  return `<div class="page-stack">
-    <section class="hero-panel"><div><span class="eyebrow">Veille quotidienne préparée</span><h2>Radar cash-flow SCI à l’IS</h2><p>Recherche centrée sur Chaumont-sur-Tharonne, particuliers prioritaires, logements et locaux professionnels inclus. Le moteur ne retient qu’un bien estimé à au moins ${euros(config.minCashflowAfterTaxMonthly)}/mois après charges et IS.</p></div><div class="hero-actions"><button class="secondary" data-action="import-radar-listings">Importer des annonces</button><button class="primary" data-action="export-radar-config">Exporter la configuration</button></div></section>
+  const drops = listings.filter((listing) => Number(listing.priceChange) < 0);
+  const formatDate = (value) => value ? new Date(value).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" }) : "—";
+  const compactMoney = (value) => Number.isFinite(Number(value)) ? euros(value) : "—";
+  const priceChangeHtml = (item) => Number(item.priceChange)
+    ? `<span class="price-change ${Number(item.priceChange) < 0 ? "down" : "up"}">${Number(item.priceChange) < 0 ? "↓" : "↑"} ${e(euros(Math.abs(item.priceChange)))}</span>`
+    : `<span class="price-stable">Stable</span>`;
+  const sourceStats = state.radarStatus.sources || [];
+  const top = listings.filter((item) => item.inArea).slice(0, 6);
+  return `<div class="page-stack radar-page">
+    <section class="hero-panel"><div><span class="eyebrow">Analyse automatique · SCI à l’IS</span><h2>Biens analysés en priorité</h2><p>Chaque annonce est comparée au prix au m² du lot, puis simulée en location longue durée, courte durée et revente. Les chiffres marqués « estimation » servent au tri rapide avant vérification des charges, loyers et travaux.</p></div><div class="hero-actions"><button class="secondary" data-action="import-radar-listings">Importer un JSON</button><button class="primary" data-action="refresh-radar">Actualiser maintenant</button></div></section>
     <section class="kpi-grid">
-      ${kpi("Sources configurées", String(sources.length), "résidentiel et professionnel")}
-      ${kpi("Zone principale", `${config.primaryRadiusKm} km`, `puis ${config.extendedRadiusKm} km pour villes ≥ ${new Intl.NumberFormat("fr-FR").format(config.extendedMinPopulation)} hab.`)}
-      ${kpi("Cash-flow minimum", `${euros(config.minCashflowAfterTaxMonthly)}/mois`, "après charges, dette et IS")}
-      ${kpi("Annonces qualifiées", String(qualified.length), `${listings.length} annonce${listings.length > 1 ? "s" : ""} importée${listings.length > 1 ? "s" : ""}`)}
+      ${kpi("Biens analysés", String(listings.length), "aucune donnée de démonstration")}
+      ${kpi("CF ≥ 100 €", String(qualified.length), "meilleure stratégie locative estimée")}
+      ${kpi("Baisses de prix", String(drops.length), "depuis la première collecte")}
+      ${kpi("Dernière collecte", state.radarStatus.lastRun?.started_at ? formatDate(state.radarStatus.lastRun.started_at) : "En attente", state.radarStatus.extensionCount ? `${state.radarStatus.extensionCount} annonces issues de l’extension` : "collecteur serveur")}
     </section>
-    <section class="panel ${state.radarStatus.connected ? "success-box" : "warning"}"><strong>${state.radarStatus.loading ? "Connexion au radar…" : state.radarStatus.connected ? "Collecte automatique connectée" : "Collecte en attente de configuration"}</strong><p>${state.radarStatus.connected ? `${state.radarStatus.extensionCount ? `Extension multi-source active · ${state.radarStatus.extensionCount} annonce(s) locale(s)` : "Base distante active"}${state.radarStatus.lastRun?.started_at ? ` · dernier passage ${new Date(state.radarStatus.lastRun.started_at).toLocaleString("fr-FR")}` : ""}. Les annonces sans loyer fiable restent « à compléter » et ne sont jamais qualifiées artificiellement.` : `Le radar attend les données de l’extension ou du collecteur distant. ${e(state.radarStatus.error || "Aucun faux résultat n’est affiché entre-temps.")}`}</p></section>
-    <section class="panel"><div class="section-title"><div><span class="eyebrow">Portails</span><h2>Sources retenues</h2></div><p>Les sources « priorité » passent avant les autres. Les annonces de particuliers gagnent des points ; les agences sont pénalisées mais restent visibles si l’opération est forte.</p></div><div class="radar-source-grid">${sources.map((source) => `<article class="radar-source"><div><strong>${e(source.label)}</strong><small>${source.id.includes("pro") || ["geolocaux", "bureauxlocaux", "bpifrance", "eol", "arthur-loyd"].includes(source.id) ? "Professionnel" : "Immobilier"}</small></div><span class="status-badge ${source.priority ? "priority" : ""}">${source.priority ? "Priorité" : "Actif"}</span></article>`).join("")}</div></section>
-    <section class="panel"><div class="section-title"><div><span class="eyebrow">Périmètre</span><h2>Biens et budgets de départ</h2></div><p>Ces plafonds réduisent les requêtes ; ils seront affinés à partir des premières opportunités réellement analysées.</p></div><div class="threshold-grid"><article class="threshold-card"><span>Résidentiel</span><strong>${euros(config.residentialBudgetMax)}</strong><small>budget maximal affiché</small></article><article class="threshold-card"><span>Immeubles</span><strong>${euros(config.buildingBudgetMax)}</strong><small>rapport, mixte, divisible</small></article><article class="threshold-card"><span>Locaux professionnels</span><strong>${euros(config.professionalBudgetMax)}</strong><small>hangars, entrepôts, murs, ateliers</small></article><article class="threshold-card"><span>Fréquence cible</span><strong>Chaque jour</strong><small>nouvelles annonces uniquement</small></article></div><h3 class="subheading">Inclus</h3><div class="chip-list">${config.propertyTypes.map((type) => `<span class="chip">${e(type)}</span>`).join("")}</div><h3 class="subheading">Exclus au départ</h3><div class="chip-list">${config.excludedTypes.map((type) => `<span class="chip muted">${e(type)}</span>`).join("")}</div></section>
-    <section class="panel"><div class="section-title"><div><span class="eyebrow">Résultats</span><h2>Annonces classées</h2></div><p>Score combinant cash-flow, bancabilité, qualité des données, distance et type de vendeur.</p></div>${listings.length ? `<div class="table-wrap"><table><thead><tr><th>Annonce</th><th>Ville</th><th>Prix</th><th>Distance</th><th>Vendeur</th><th>CF après IS</th><th>Score</th><th>Statut</th></tr></thead><tbody>${listings.map((item) => `<tr><td>${e(item.title || "Sans titre")}</td><td>${e(item.city || "—")}</td><td>${e(euros(item.askingPrice))}</td><td>${Number.isFinite(Number(item.distanceKm)) ? e(`${Number(item.distanceKm).toFixed(0)} km`) : "À géolocaliser"}</td><td>${e(item.sellerType === "private" ? "Particulier" : item.sellerType === "agency" ? "Agence" : "Inconnu")}</td><td class="${Number(item.cashflowAfterTaxMonthly) >= config.minCashflowAfterTaxMonthly ? "positive-text" : "negative-text"}">${Number.isFinite(Number(item.cashflowAfterTaxMonthly)) ? e(`${euros(item.cashflowAfterTaxMonthly)}/mois`) : "À calculer"}</td><td>${item.score.toFixed(0)}/100</td><td><span class="status-badge ${item.qualified ? "priority" : ""}">${e(statusLabel(item.status))}</span></td></tr>`).join("")}</tbody></table></div>` : `<div class="empty"><div class="brand-mark">◎</div><h3>Aucune annonce importée</h3><p>Le radar est prêt à recevoir un fichier JSON provenant des futurs collecteurs. Les doublons seront supprimés et les biens classés automatiquement.</p><button class="primary" data-action="import-radar-listings">Importer un lot d’annonces</button></div>`}</section>
+    <section class="panel ${state.radarStatus.connected ? "success-box" : "warning"}"><strong>${state.radarStatus.connected ? "Import automatique actif" : "Import automatique incomplet"}</strong><p>${state.radarStatus.connected ? `Les annonces du collecteur quotidien et de l’extension Chrome sont fusionnées automatiquement. ${sourceStats.length ? sourceStats.map((source) => `${source.label || source.id} : ${source.ok ? source.count : "indisponible"}`).join(" · ") : ""}` : e(state.radarStatus.error || "Aucune collecte disponible.")}</p></section>
+    <section class="panel quick-assumptions"><div class="section-title"><div><span class="eyebrow">Hypothèses rapides</span><h2>Calcul immédiat, puis validation</h2></div><p>Financement sur 20 ans, 10 % d’apport, 4,2 % + 0,3 % d’assurance, notaire 8 %, vacance 5 %, comptabilité interne 0 €. Travaux : 600 €/m² si signal de rénovation, sinon réserve de 80 €/m².</p></div></section>
+    ${top.length ? `<section class="analysis-grid">${top.map((item, index) => `<article class="analysis-card ${item.qualified ? "qualified" : ""}">
+      <div class="analysis-card-head"><div><span class="eyebrow">${e(item.sourceId || "source")} · ${e(item.city || "ville inconnue")}</span><h3>${e(item.title || "Sans titre")}</h3></div><strong class="radar-score">${item.score.toFixed(0)}</strong></div>
+      <div class="analysis-price"><strong>${e(euros(item.askingPrice))}</strong><span>${item.pricePerM2 ? `${e(euros(item.pricePerM2))}/m²` : "surface inconnue"}</span>${priceChangeHtml(item)}</div>
+      <div class="analysis-metrics"><span>Marché estimé<strong>${item.averagePriceM2 ? `${e(euros(item.averagePriceM2))}/m²` : "—"}</strong></span><span>Location longue<strong class="${item.longTermCashflowMonthly >= 100 ? "positive-text" : "negative-text"}">${e(compactMoney(item.longTermCashflowMonthly))}/mois</strong></span><span>Courte durée<strong class="${item.shortTermCashflowMonthly >= 100 ? "positive-text" : "negative-text"}">${item.shortTermCashflowMonthly === null ? "Non adaptée" : `${e(compactMoney(item.shortTermCashflowMonthly))}/mois`}</strong></span><span>Revente estimée<strong class="${item.estimatedResaleProfit >= 0 ? "positive-text" : "negative-text"}">${e(compactMoney(item.estimatedResaleProfit))}</strong></span></div>
+      <div class="analysis-dates"><span>Collectée ${formatDate(item.firstSeenAt || item.capturedAt || item.receivedAt)}</span><span>Mise à jour ${formatDate(item.priceChangedAt || item.updatedAt || item.lastSeenAt || item.capturedAt)}</span></div>
+      <div class="analysis-actions"><a class="secondary" href="${e(item.sourceUrl)}" target="_blank" rel="noopener noreferrer">Voir l’annonce</a><button class="primary" data-action="analyze-listing" data-key="${e(item.fingerprint || item.sourceUrl)}">Simulation complète</button></div>
+    </article>`).join("")}</section>` : ""}
+    <section class="panel"><div class="section-title"><div><span class="eyebrow">Base collectée</span><h2>Toutes les annonces réelles</h2></div><p>${listings.length} annonces dédupliquées. Les prix au m² sont calculés sur les annonces comparables actuellement disponibles : ${new Set(listings.map((item) => item.city).filter(Boolean)).size} communes couvertes.</p></div>${listings.length ? `<div class="table-wrap radar-table"><table><thead><tr><th>Annonce</th><th>Prix / évolution</th><th>€/m² vs marché</th><th>CF longue</th><th>CF courte</th><th>Revente</th><th>Collecte</th><th>Mise à jour</th><th></th></tr></thead><tbody>${listings.map((item) => `<tr><td><a href="${e(item.sourceUrl)}" target="_blank" rel="noopener noreferrer"><strong>${e(item.title || "Sans titre")}</strong><small>${e(item.city || "—")} · ${Number.isFinite(Number(item.distanceKm)) ? `${Number(item.distanceKm).toFixed(0)} km` : "distance inconnue"} · ${e(item.sourceId || "source")}</small></a></td><td><strong>${e(euros(item.askingPrice))}</strong>${priceChangeHtml(item)}</td><td>${item.pricePerM2 ? `<strong>${e(euros(item.pricePerM2))}</strong><small>${item.averagePriceM2 ? `marché ${e(euros(item.averagePriceM2))} · ${item.marketDiscountPct >= 0 ? "décote" : "surcote"} ${Math.abs(item.marketDiscountPct).toFixed(0)} %` : "comparables insuffisants"}</small>` : "—"}</td><td class="${item.longTermCashflowMonthly >= 100 ? "positive-text" : "negative-text"}"><strong>${e(compactMoney(item.longTermCashflowMonthly))}</strong><small>${e(euros(item.estimatedMonthlyRent))} de loyer estimé</small></td><td class="${item.shortTermCashflowMonthly >= 100 ? "positive-text" : "negative-text"}"><strong>${item.shortTermCashflowMonthly === null ? "—" : e(compactMoney(item.shortTermCashflowMonthly))}</strong><small>${item.estimatedAdr ? `${e(euros(item.estimatedAdr))}/nuit · ${item.estimatedOccupancyPct} %` : "non résidentiel"}</small></td><td class="${item.estimatedResaleProfit >= 0 ? "positive-text" : "negative-text"}"><strong>${e(compactMoney(item.estimatedResaleProfit))}</strong><small>sortie ${e(compactMoney(item.estimatedResalePrice))}</small></td><td>${formatDate(item.firstSeenAt || item.capturedAt || item.receivedAt)}</td><td>${formatDate(item.priceChangedAt || item.updatedAt || item.lastSeenAt || item.capturedAt)}</td><td><button class="secondary compact-button" data-action="analyze-listing" data-key="${e(item.fingerprint || item.sourceUrl)}">Ouvrir</button></td></tr>`).join("")}</tbody></table></div>` : `<div class="empty"><div class="brand-mark">◎</div><h3>Aucune annonce réelle</h3><p>L’extension et le collecteur quotidien alimenteront automatiquement cette page. Aucun exemple n’est injecté.</p></div>`}</section>
   </div>`;
 }
 
@@ -715,6 +743,23 @@ app.addEventListener("click", (event) => {
   if (action === "export-all") downloadJson({ version: 1, projects: state.saved, draft: state.project }, "radar-immo-portefeuille.json");
   if (action === "import") app.querySelector("#import-json")?.click();
   if (action === "import-radar-listings") app.querySelector("#import-radar-json")?.click();
+  if (action === "refresh-radar") {
+    state.radarStatus.loading = true;
+    render();
+    window.postMessage({ channel: RADAR_CONNECTOR_CHANNEL, type: "RADAR_REQUEST_LISTINGS" }, location.origin);
+    refreshRemoteRadar();
+  }
+  if (action === "analyze-listing") {
+    const listing = enrichRadarEstimates(state.radarListings).find((item) => (item.fingerprint || item.sourceUrl) === actionButton.dataset.key);
+    if (listing?.quickProject) {
+      state.project = hydrateProject(listing.quickProject);
+      state.page = "analysis";
+      state.formTab = "acquisition";
+      persist();
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }
   if (action === "export-radar-config") downloadJson({ version: 1, generatedAt: new Date().toISOString(), config: state.radarConfig }, "radar-immo-configuration.json");
   if (action === "new") {
     const project = createDefaultProject();
@@ -804,12 +849,28 @@ render();
 
 async function refreshRemoteRadar() {
   try {
-    const [listingsResponse, healthResponse] = await Promise.all([fetch("/data/listings.json", { cache: "no-store" }), fetch("/data/status.json", { cache: "no-store" })]);
-    if (!listingsResponse.ok || !healthResponse.ok) throw new Error("fichiers du radar indisponibles");
+    const [listingsResponse, historyResponse, healthResponse] = await Promise.all([fetch("/data/listings.json", { cache: "no-store" }), fetch("/data/history.json", { cache: "no-store" }), fetch("/data/status.json", { cache: "no-store" })]);
+    if (!listingsResponse.ok || !historyResponse.ok || !healthResponse.ok) throw new Error("fichiers du radar indisponibles");
     const payload = await listingsResponse.json();
+    const history = await historyResponse.json();
     const health = await healthResponse.json();
-    mergeRadarListings(Array.isArray(payload.listings) ? payload.listings : []);
-    state.radarStatus = { loading: false, connected: Boolean(health.ok) || extensionRadarListings.length > 0, extensionCount: extensionRadarListings.length, lastRun: health.generatedAt ? { started_at: health.generatedAt } : null, error: health.ok || extensionRadarListings.length ? "" : health.message };
+    state.radarHistory = history && typeof history === "object" ? history : {};
+    const remoteListings = (Array.isArray(payload.listings) ? payload.listings : []).map((listing) => {
+      const points = Array.isArray(state.radarHistory[listing.fingerprint]) ? state.radarHistory[listing.fingerprint] : [];
+      const previous = points.length > 1 ? points.at(-2) : null;
+      const latest = points.at(-1);
+      return {
+        ...listing,
+        distanceKm: Number.isFinite(Number(listing.latitude)) && Number.isFinite(Number(listing.longitude))
+          ? Math.round(distanceKmBetween(state.radarConfig.centerCoordinates, { latitude: Number(listing.latitude), longitude: Number(listing.longitude) }) * 10) / 10
+          : listing.distanceKm,
+        priceHistory: points,
+        previousPrice: previous?.askingPrice || null,
+        priceChangedAt: previous && latest?.askingPrice !== previous.askingPrice ? latest.observedAt : listing.priceChangedAt || null
+      };
+    });
+    mergeRadarListings(remoteListings);
+    state.radarStatus = { loading: false, connected: Boolean(health.ok) || extensionRadarListings.length > 0, extensionCount: extensionRadarListings.length, lastRun: health.generatedAt ? { started_at: health.generatedAt } : null, sources: health.sources || [], error: health.ok || extensionRadarListings.length ? "" : health.message };
     persist();
     if (state.page === "radar") render();
   } catch (error) {

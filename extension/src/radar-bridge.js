@@ -16,3 +16,4 @@ chrome.runtime.onMessage.addListener((message) => {
 });
 
 publish();
+setInterval(publish, 60_000);

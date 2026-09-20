@@ -1,4 +1,4 @@
-# Berry Multi-Source Connector 1.2.1
+# Berry Multi-Source Connector 1.2.2
 
 Extension Chrome Manifest V3 commune à plusieurs applications. Une application possède son endpoint, son espace et son jeton. Une recherche peut livrer ses résultats à une ou plusieurs applications sans relancer l'extraction de la page.
 

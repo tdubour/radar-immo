@@ -2,7 +2,7 @@
   "version": 1,
   "updatedAt": "2026-09-19",
   "extension": {
-    "version": "1.2.1",
+    "version": "1.2.2",
     "supportedSourceIds": ["leboncoin", "seloger", "bienici", "pap", "logic-immo"]
   },
   "center": { "name": "Chaumont-sur-Tharonne", "latitude": 47.60958, "longitude": 1.90408 },

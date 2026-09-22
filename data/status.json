@@ -1,7 +1,7 @@
 {
   "ok": true,
-  "generatedAt": "2026-09-21T10:46:52.934Z",
-  "message": "88 annonces actives",
+  "generatedAt": "2026-09-22T10:00:48.638Z",
+  "message": "87 annonces actives",
   "sources": [
     {
       "id": "leboncoin",
@@ -34,13 +34,13 @@
       "id": "bienici-45",
       "label": "Bien'ici Loiret",
       "ok": true,
-      "count": 21
+      "count": 22
     },
     {
       "id": "bienici-18",
       "label": "Bien'ici Cher",
       "ok": true,
-      "count": 26
+      "count": 25
     },
     {
       "id": "pap",
@@ -53,19 +53,19 @@
       "id": "paruvendu-41",
       "label": "ParuVendu Loir-et-Cher",
       "ok": true,
-      "count": 2
+      "count": 0
     },
     {
       "id": "geolocaux-41",
       "label": "Geolocaux Loir-et-Cher",
       "ok": true,
-      "count": 3
+      "count": 2
     },
     {
       "id": "geolocaux-45",
       "label": "Geolocaux Loiret",
       "ok": true,
-      "count": 13
+      "count": 12
     },
     {
       "id": "geolocaux-18",

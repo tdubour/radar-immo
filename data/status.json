@@ -1,7 +1,7 @@
 {
   "ok": true,
-  "generatedAt": "2026-09-22T10:00:48.638Z",
-  "message": "87 annonces actives",
+  "generatedAt": "2026-09-23T10:01:46.416Z",
+  "message": "88 annonces actives",
   "sources": [
     {
       "id": "leboncoin",
@@ -40,7 +40,7 @@
       "id": "bienici-18",
       "label": "Bien'ici Cher",
       "ok": true,
-      "count": 25
+      "count": 26
     },
     {
       "id": "pap",

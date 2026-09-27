@@ -400,7 +400,7 @@ function shell(content) {
 
 function chatbotHtml() {
   return `<aside class="radar-chat ${state.chatOpen ? "open" : ""}" aria-label="Assistant d’analyse des annonces">
-    ${state.chatOpen ? `<section class="radar-chat-panel"><header><div><strong>Analyste RadarImmo</strong><small>GPT léger · annonces du radar</small></div><button data-chat-action="close" aria-label="Fermer">×</button></header>
+    ${state.chatOpen ? `<section class="radar-chat-panel"><header><div><strong>Analyste RadarImmo</strong><small>IA légère · annonces du radar</small></div><button data-chat-action="close" aria-label="Fermer">×</button></header>
       <div class="radar-chat-messages" aria-live="polite">${state.chatMessages.map((message) => `<p class="${message.role}">${e(message.content)}</p>`).join("")}${state.chatPending ? `<p class="assistant pending">Analyse en cours…</p>` : ""}</div>
       <form id="radar-chat-form"><input id="radar-chat-input" maxlength="1500" autocomplete="off" placeholder="Ex. Quelles annonces prioriser ?" value="${e(state.chatDraft)}" ${state.chatPending ? "disabled" : ""}><button class="primary" ${state.chatPending ? "disabled" : ""}>Envoyer</button></form>
       <small class="radar-chat-note">Analyse indicative : vérifie les données avant toute décision.</small></section>` : ""}

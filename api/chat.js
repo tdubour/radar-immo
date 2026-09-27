@@ -2,6 +2,7 @@ import { generateText } from "ai";
 
 const MODEL = "openai/gpt-5.6-luna";
 const FALLBACK_MODEL = "openai/gpt-5.4-mini";
+const FREE_MODEL = "inclusionai/ling-3.0-flash-vl-free";
 const safeText = (value, max = 2000) => String(value || "").trim().slice(0, max);
 
 function normalizeListing(value) {
@@ -31,7 +32,13 @@ export default async function handler(request, response) {
     } catch (primaryError) {
       console.warn("radar_chat_primary_model_unavailable", primaryError?.statusCode || primaryError?.name);
       usedModel = FALLBACK_MODEL;
-      result = await generateText({ ...requestOptions, model: FALLBACK_MODEL });
+      try {
+        result = await generateText({ ...requestOptions, model: FALLBACK_MODEL });
+      } catch (fallbackError) {
+        console.warn("radar_chat_fallback_model_unavailable", fallbackError?.statusCode || fallbackError?.name);
+        usedModel = FREE_MODEL;
+        result = await generateText({ ...requestOptions, model: FREE_MODEL });
+      }
     }
     return response.status(200).json({ answer: result.text, model: usedModel.replace("openai/", ""), listingCount: listings.length });
   } catch (error) {

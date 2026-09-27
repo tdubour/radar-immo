@@ -70,7 +70,11 @@ const state = {
   page: "dashboard",
   formTab: "acquisition",
   theme: localStorage.getItem(THEME_KEY) || "dark",
-  toast: ""
+  toast: "",
+  chatOpen: false,
+  chatPending: false,
+  chatDraft: "",
+  chatMessages: [{ role: "assistant", content: "Bonjour ! Je peux comparer les annonces du radar, expliquer les estimations et faire ressortir les opportunités ou les points à vérifier." }]
 };
 let extensionRadarListings = [];
 let extensionRadarPayload = {};
@@ -391,7 +395,46 @@ function shell(content) {
       <header class="topbar"><div><span class="eyebrow">${e(state.project.city || "Projet sans ville")}</span><h1>${e(pageLabel(state.page))} — ${e(state.project.name || "Sans titre")}</h1></div>${headerActions()}</header>
       <main class="content">${content}</main>
     </div>
-  </div>${state.toast ? `<div class="toast">${e(state.toast)}</div>` : ""}<input id="import-json" class="hidden" type="file" accept="application/json,.json"><input id="import-radar-json" class="hidden" type="file" accept="application/json,.json">`;
+  </div>${chatbotHtml()}${state.toast ? `<div class="toast">${e(state.toast)}</div>` : ""}<input id="import-json" class="hidden" type="file" accept="application/json,.json"><input id="import-radar-json" class="hidden" type="file" accept="application/json,.json">`;
+}
+
+function chatbotHtml() {
+  return `<aside class="radar-chat ${state.chatOpen ? "open" : ""}" aria-label="Assistant d’analyse des annonces">
+    ${state.chatOpen ? `<section class="radar-chat-panel"><header><div><strong>Analyste RadarImmo</strong><small>GPT-5.6 Luna · annonces du radar</small></div><button data-chat-action="close" aria-label="Fermer">×</button></header>
+      <div class="radar-chat-messages" aria-live="polite">${state.chatMessages.map((message) => `<p class="${message.role}">${e(message.content)}</p>`).join("")}${state.chatPending ? `<p class="assistant pending">Analyse en cours…</p>` : ""}</div>
+      <form id="radar-chat-form"><input id="radar-chat-input" maxlength="1500" autocomplete="off" placeholder="Ex. Quelles annonces prioriser ?" value="${e(state.chatDraft)}" ${state.chatPending ? "disabled" : ""}><button class="primary" ${state.chatPending ? "disabled" : ""}>Envoyer</button></form>
+      <small class="radar-chat-note">Analyse indicative : vérifie les données avant toute décision.</small></section>` : ""}
+    <button class="radar-chat-toggle" data-chat-action="toggle">${state.chatOpen ? "Fermer" : "✦ Analyser les annonces"}</button>
+  </aside>`;
+}
+
+function chatbotListings() {
+  return rankCandidates(enrichRadarEstimates(state.radarListings, extensionRadarPayload.marketReferences), state.radarConfig).slice(0, 50).map((listing) => ({
+    title: listing.title, city: listing.city, postalCode: listing.postalCode, sourceId: listing.sourceId, askingPrice: listing.askingPrice,
+    surfaceM2: listing.surfaceM2, pricePerM2: listing.pricePerM2, averagePriceM2: listing.averagePriceM2, marketSource: listing.marketSource,
+    marketDiscountPct: listing.marketDiscountPct, estimatedMonthlyRent: listing.estimatedMonthlyRent, longTermCashflowMonthly: listing.longTermCashflowMonthly,
+    shortTermCashflowMonthly: listing.shortTermCashflowMonthly, estimatedResaleProfit: listing.estimatedResaleProfit, score: listing.score,
+    qualified: listing.qualified, sourceUrl: listing.sourceUrl
+  }));
+}
+
+async function submitChat() {
+  const content = state.chatDraft.trim();
+  if (!content || state.chatPending) return;
+  state.chatMessages.push({ role: "user", content });
+  state.chatDraft = "";
+  state.chatPending = true;
+  render();
+  try {
+    const response = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: content, history: state.chatMessages.slice(-8), listings: chatbotListings() }) });
+    const result = await response.json();
+    state.chatMessages.push({ role: "assistant", content: result.answer || result.error || "L’analyse est indisponible." });
+  } catch {
+    state.chatMessages.push({ role: "assistant", content: "Connexion impossible. Réessaie dans quelques instants." });
+  } finally {
+    state.chatPending = false;
+    render();
+  }
 }
 
 function dashboardHtml() {
@@ -735,6 +778,13 @@ function updateLiveResults() {
 }
 
 app.addEventListener("click", (event) => {
+  const chatAction = event.target.closest("[data-chat-action]")?.dataset.chatAction;
+  if (chatAction) {
+    state.chatOpen = chatAction === "toggle" ? !state.chatOpen : false;
+    render();
+    if (state.chatOpen) setTimeout(() => app.querySelector("#radar-chat-input")?.focus(), 0);
+    return;
+  }
   const pageButton = event.target.closest("[data-page]");
   if (pageButton) {
     state.page = pageButton.dataset.page;
@@ -821,6 +871,7 @@ app.addEventListener("click", (event) => {
 
 app.addEventListener("input", (event) => {
   const target = event.target;
+  if (target.id === "radar-chat-input") state.chatDraft = target.value;
   if (target.matches(".range-control, .number-control")) {
     setNumericControl(target.dataset.path, target.value);
     syncControlElement(target);
@@ -830,6 +881,12 @@ app.addEventListener("input", (event) => {
     state.project = setPath(state.project, target.dataset.textPath, target.value);
     persist();
   }
+});
+
+app.addEventListener("submit", (event) => {
+  if (event.target.id !== "radar-chat-form") return;
+  event.preventDefault();
+  submitChat();
 });
 
 app.addEventListener("change", (event) => {

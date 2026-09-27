@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "node --test",
-    "check": "node --check src/app.js && node --check src/finance.js && node --check src/charts.js && node --check src/radar.js && node --check src/radar-estimator.js && node --check src/radar-status.js && node --check src/extension-contract.js && node --check api/extension-config.js && node --check api/extension-ingest.js && node --check scripts/collect-listings.mjs && node --check extension/src/background.js && node --check extension/src/content.js && node --check extension/src/radar-bridge.js && node --check extension/src/defaults.js && node --check extension/src/options.js && node --check extension/src/popup.js",
+    "check": "node --check src/app.js && node --check api/chat.js && node --check src/finance.js && node --check src/charts.js && node --check src/radar.js && node --check src/radar-estimator.js && node --check src/radar-status.js && node --check src/extension-contract.js && node --check api/extension-config.js && node --check api/extension-ingest.js && node --check scripts/collect-listings.mjs && node --check extension/src/background.js && node --check extension/src/content.js && node --check extension/src/radar-bridge.js && node --check extension/src/defaults.js && node --check extension/src/options.js && node --check extension/src/popup.js",
     "collect": "node scripts/collect-listings.mjs",
     "build:extension": "node extension/scripts/build.mjs",
     "check:extension": "npm run build:extension && node extension/scripts/validate.mjs"
@@ -13,5 +13,9 @@
   "devDependencies": {
     "esbuild": "^0.25.10",
     "playwright": "^1.62.1"
+  },
+  "dependencies": {
+    "@vercel/oidc": "^3.2.0",
+    "ai": "^7.0.58"
   }
 }

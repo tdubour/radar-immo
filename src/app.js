@@ -11,7 +11,7 @@ import {
 } from "./finance.js";
 import { barChart, chartCard, lineChart } from "./charts.js";
 import { createDefaultRadarConfig, rankCandidates, sortRadarListings } from "./radar.js";
-import { enrichRadarEstimates } from "./radar-estimator.js";
+import { enrichRadarEstimates, isLandListing, isProfessionalListing } from "./radar-estimator.js";
 import { mergeExtensionSourceStatuses, sourceStatusText } from "./radar-status.js";
 
 const DRAFT_KEY = "radar-immo:draft:v1";
@@ -526,6 +526,8 @@ function dashboardHtml() {
 
 function radarHtml() {
   const config = state.radarConfig;
+  const excludedLandCount = state.radarListings.filter(isLandListing).length;
+  const excludedProfessionalCount = state.radarListings.filter((listing) => !isLandListing(listing) && isProfessionalListing(listing)).length;
   const estimated = enrichRadarEstimates(state.radarListings, currentMarketReferences());
   const listings = rankCandidates(estimated, config);
   const sortedListings = sortRadarListings(listings, state.radarSort);
@@ -553,7 +555,7 @@ function radarHtml() {
       ${kpi("Dernière collecte", state.radarStatus.lastRun?.started_at ? formatDate(state.radarStatus.lastRun.started_at) : "En attente", state.radarStatus.extensionCount ? `${state.radarStatus.extensionCount} annonces issues de l’extension` : "collecteur serveur")}
     </section>
     <section class="panel ${state.radarStatus.connected ? "success-box" : "warning"}"><strong>${state.radarStatus.connected ? "Import automatique actif" : "Import automatique incomplet"}</strong><p>${state.radarStatus.connected ? `Les annonces du collecteur quotidien et de l’extension Chrome sont fusionnées automatiquement. ${sourceStats.length ? sourceStats.map((source) => `${source.label || source.id} : ${e(sourceStatusText(source))}${source.collector === "extension" ? " (Chrome)" : ""}`).join(" · ") : ""}` : e(state.radarStatus.error || "Aucune collecte disponible.")}</p></section>
-    <section class="panel quick-assumptions"><div class="section-title"><div><span class="eyebrow">Hypothèses rapides SCI à l’IS</span><h2>Calcul immédiat, puis validation</h2></div><p>Financement sur 25 ans, apport symbolique de 1 500 €, 4,2 % + 0,3 % d’assurance, notaire 8 %, sûreté bancaire à 0 €, un mois de vacance locative par an et comptabilité interne à 0 €. Travaux : 600 €/m² si signal de rénovation, sinon réserve de 80 €/m². En courte durée, le prix/nuit et l’occupation sont des hypothèses internes de présélection, pas des données Airbnb ou AirDNA.</p></div></section>
+    <section class="panel quick-assumptions"><div class="section-title"><div><span class="eyebrow">Hypothèses rapides SCI à l’IS</span><h2>Calcul immédiat, puis validation</h2></div><p>Financement sur 25 ans, apport symbolique de 1 500 €, 4,2 % + 0,3 % d’assurance, notaire 8 %, sûreté bancaire à 0 €, un mois de vacance locative par an et comptabilité interne à 0 €. Travaux : 600 €/m² si signal de rénovation, sinon réserve de 80 €/m². En courte durée, le prix/nuit et l’occupation sont des hypothèses internes de présélection, pas des données Airbnb ou AirDNA. Terrains et immobilier professionnel sont exclus des valorisations résidentielles faute de références dédiées${excludedLandCount || excludedProfessionalCount ? ` (${excludedLandCount} terrain${excludedLandCount > 1 ? "s" : ""}, ${excludedProfessionalCount} bien${excludedProfessionalCount > 1 ? "s" : ""} professionnel${excludedProfessionalCount > 1 ? "s" : ""} retirés actuellement)` : ""}.</p></div></section>
     ${top.length ? `<section class="analysis-grid">${top.map((item, index) => `<article class="analysis-card ${item.qualified ? "qualified" : ""}">
       <div class="analysis-card-head"><div><span class="eyebrow">${e(item.sourceId || "source")} · ${e(item.city || "ville inconnue")}</span><h3>${e(item.title || "Sans titre")}</h3></div><strong class="radar-score">${item.score.toFixed(0)}</strong></div>
       <div class="analysis-price"><strong>${e(euros(item.askingPrice))}</strong><span>${item.pricePerM2 ? `${e(euros(item.pricePerM2))}/m²` : "surface inconnue"}</span>${priceChangeHtml(item)}</div>

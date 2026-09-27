@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { enrichRadarEstimates, quickEstimateListing } from "../src/radar-estimator.js";
+import { enrichRadarEstimates, isLandListing, isProfessionalListing, quickEstimateListing } from "../src/radar-estimator.js";
 
 const rows = [
   { fingerprint: "a", sourceId: "bienici", sourceUrl: "https://www.bienici.com/annonce/a", title: "Appartement 2 pièces 40 m²", city: "Blois", postalCode: "41000", askingPrice: 80000, surfaceM2: 40, rooms: 2 },
@@ -31,6 +31,28 @@ test("demo listings are removed before analysis", () => {
     { ...rows[0], fingerprint: "new", title: "Programme neuf à Bourges" }
   ]);
   assert.equal(result.length, 3);
+});
+
+test("land listings are excluded without rejecting homes that mention their plot", () => {
+  const land = { ...rows[0], fingerprint: "land", propertyType: "Terrain", title: "Terrain constructible 6233 m²" };
+  const activityLand = { ...rows[0], fingerprint: "activity-land", propertyType: null, title: "Terrain d'activité à vendre Jargeau" };
+  const house = { ...rows[0], fingerprint: "house", propertyType: "Maison", title: "Maison sur terrain de 900 m²" };
+  assert.equal(isLandListing(land), true);
+  assert.equal(isLandListing(activityLand), true);
+  assert.equal(isLandListing(house), false);
+  const result = enrichRadarEstimates([land, activityLand, house]);
+  assert.deepEqual(result.map((item) => item.fingerprint), ["house"]);
+});
+
+test("warehouses and professional premises are excluded from residential valuations", () => {
+  const warehouse = { ...rows[0], fingerprint: "warehouse", propertyType: "Entrepôt", title: "Entrepôt 800 m²" };
+  const commercial = { ...rows[0], fingerprint: "commercial", propertyType: null, title: "Vente local commercial 120 m²" };
+  const homeOffice = { ...rows[0], fingerprint: "home-office", propertyType: "Maison", title: "Maison avec bureau et jardin" };
+  assert.equal(isProfessionalListing(warehouse), true);
+  assert.equal(isProfessionalListing(commercial), true);
+  assert.equal(isProfessionalListing(homeOffice), false);
+  const result = enrichRadarEstimates([warehouse, commercial, homeOffice]);
+  assert.deepEqual(result.map((item) => item.fingerprint), ["home-office"]);
 });
 
 test("price history exposes the previous price", () => {

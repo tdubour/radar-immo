@@ -10,6 +10,26 @@ const median = (values) => {
 };
 const normalize = (value) => String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 
+export function isLandListing(listing) {
+  const type = normalize(listing.propertyType);
+  const title = normalize(listing.title);
+  if (/\bterrain\b|\bparcelle\b/.test(type)) return true;
+  return /^(terrain|parcelle)\b/.test(title)
+    || /\bterrain (constructible|agricole|industriel|commercial|professionnel|d activite|a batir)\b/.test(title);
+}
+
+export function isProfessionalListing(listing) {
+  const type = normalize(listing.propertyType);
+  const title = normalize(listing.title);
+  const professional = /\b(local commercial|murs commerciaux|bureau|entrepot|hangar|atelier|local d activite|batiment industriel|immobilier d entreprise)\b/;
+  if (professional.test(type)) return true;
+  return /^(vente |location )?(local commercial|murs commerciaux|bureau|entrepot|hangar|atelier|local d activite|batiment industriel)\b/.test(title);
+}
+
+export function isUnsupportedValuationListing(listing) {
+  return isLandListing(listing) || isProfessionalListing(listing);
+}
+
 function propertyGroup(listing) {
   const text = normalize(`${listing.propertyType || ""} ${listing.title || ""}`);
   if (/local|entrepot|hangar|activite|commerce|bureau|industriel|terrain/.test(text)) return "professional";
@@ -216,6 +236,6 @@ export function quickEstimateListing(listing, listings = [], marketReferences = 
 
 export function enrichRadarEstimates(listings = [], marketReferences = {}) {
   const excluded = /exemple|démo|demo|sample|viager|résidence\s+(services?|seniors?)|programme\s+neuf|appartements?\s+neufs?|maison\s+neuve|la\s+source(?:\s+université|\s+universite|\b)|promenade\s+des\s+sources/i;
-  const cleanRows = listings.filter((listing) => !excluded.test(`${listing.sourceId || ""} ${listing.title || ""} ${listing.description || ""} ${listing.district || ""} ${listing.sourceUrl || ""}`));
+  const cleanRows = listings.filter((listing) => !isUnsupportedValuationListing(listing) && !excluded.test(`${listing.sourceId || ""} ${listing.title || ""} ${listing.description || ""} ${listing.district || ""} ${listing.sourceUrl || ""}`));
   return cleanRows.map((listing) => quickEstimateListing(listing, cleanRows, marketReferences));
 }

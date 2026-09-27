@@ -30,9 +30,9 @@ export function createDefaultRadarConfig() {
     ],
     propertyTypes: [
       "Appartement", "Maison", "Immeuble de rapport", "Immeuble mixte", "Maison divisible",
-      "Local commercial", "Murs commerciaux", "Bureau", "Entrepôt", "Hangar", "Local d’activité", "Atelier", "Terrain professionnel"
+      "Local commercial", "Murs commerciaux", "Bureau", "Entrepôt", "Hangar", "Local d’activité", "Atelier"
     ],
-    excludedTypes: ["Viager", "Résidence services", "Programme neuf", "Terrain non constructible", "Parking seul"]
+    excludedTypes: ["Viager", "Résidence services", "Programme neuf", "Terrain", "Parking seul"]
   };
 }
 

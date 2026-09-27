@@ -65,7 +65,7 @@ export function createDefaultProject() {
     flip: {
       resalePrice: 0,
       resaleNegotiationPct: 3,
-      sellingAgencyPct: 5,
+      sellingAgencyPct: 0,
       holdingMonths: 10,
       carryingCostMonthly: 350,
       divisionAndLegalFees: 3000,

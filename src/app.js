@@ -54,15 +54,25 @@ function hydrateProject(value) {
 
 const storedRadarListings = parseStorage(RADAR_LISTINGS_KEY, []).filter((listing) => !/exemple|démo|demo|sample/i.test(`${listing?.sourceId || ""} ${listing?.title || ""} ${listing?.sourceUrl || ""}`));
 const storedDraft = parseStorage(DRAFT_KEY, createDefaultProject());
-const migratedDraft = /exemple|démo|demo|sample/i.test(storedDraft?.name || "") ? createDefaultProject() : storedDraft;
-if (localStorage.getItem(RADAR_DATA_VERSION_KEY) !== "2") {
-  localStorage.setItem(RADAR_DATA_VERSION_KEY, "2");
+const storedSavedProjects = parseStorage(SAVED_KEY, []);
+const selfSaleProject = (project) => ({
+  ...project,
+  flip: { ...(project?.flip || {}), sellingAgencyPct: 0 }
+});
+const migrateSelfSale = localStorage.getItem(RADAR_DATA_VERSION_KEY) !== "3";
+const draftWithoutDemo = /exemple|démo|demo|sample/i.test(storedDraft?.name || "") ? createDefaultProject() : storedDraft;
+const migratedDraft = migrateSelfSale ? selfSaleProject(draftWithoutDemo) : draftWithoutDemo;
+const migratedSavedProjects = migrateSelfSale ? storedSavedProjects.map(selfSaleProject) : storedSavedProjects;
+if (migrateSelfSale) {
+  localStorage.setItem(RADAR_DATA_VERSION_KEY, "3");
   localStorage.setItem(RADAR_LISTINGS_KEY, JSON.stringify(storedRadarListings));
+  localStorage.setItem(DRAFT_KEY, JSON.stringify(migratedDraft));
+  localStorage.setItem(SAVED_KEY, JSON.stringify(migratedSavedProjects));
 }
 
 const state = {
   project: hydrateProject(migratedDraft),
-  saved: parseStorage(SAVED_KEY, []).map(hydrateProject),
+  saved: migratedSavedProjects.map(hydrateProject),
   radarConfig: mergeDefaults(createDefaultRadarConfig(), parseStorage(RADAR_CONFIG_KEY, createDefaultRadarConfig())),
   radarListings: storedRadarListings,
   radarHistory: {},
@@ -254,7 +264,7 @@ const controls = {
   flip: [
     ["flip.resalePrice", "Prix de revente affiché estimé", 10000, 3000000, 1000, "€", "Prix cible avant négociation de l’acquéreur."],
     ["flip.resaleNegotiationPct", "Négociation à la revente (% du prix affiché)", 0, 25, .5, "%", "Décote appliquée pour obtenir le prix net vendeur estimé."],
-    ["flip.sellingAgencyPct", "Commission de revente (% du prix net)", 0, 15, .5, "%", "Honoraires de commercialisation à la sortie."],
+    ["flip.sellingAgencyPct", "Commission d’agence à la revente (% du prix net)", 0, 15, .5, "%", "0 % par défaut : vente réalisée directement. À modifier seulement si une agence intervient."],
     ["flip.holdingMonths", "Durée totale de portage", 1, 36, 1, "mois", "Travaux, délais administratifs et commercialisation."],
     ["flip.carryingCostMonthly", "Coût de portage hors crédit/mois", 0, 10000, 50, "€", "Énergie, assurance, taxe, sécurité et charges pendant le portage."],
     ["flip.divisionAndLegalFees", "Division, géomètre et juridique", 0, 100000, 500, "€", "Frais liés à une division ou restructuration juridique."],

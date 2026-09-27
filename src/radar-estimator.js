@@ -104,6 +104,9 @@ function buildQuickProject(listing, market) {
   project.sourceUrl = listing.sourceUrl || "";
   project.dpe = listing.dpe || "Non renseigné";
   project.acquisition.purchasePrice = Number(listing.askingPrice || 0);
+  // Le prix d'annonce est présumé honoraires d'agence inclus lorsqu'il provient d'une agence.
+  // Aucun forfait supplémentaire n'est ajouté sans donnée explicite de l'annonce.
+  project.acquisition.agencyFees = 0;
   project.acquisition.surfaceM2 = surface;
   project.acquisition.works = works;
   project.acquisition.furniture = group === "professional" ? 0 : Math.round(Math.min(12000, Math.max(2500, surface * 100)));
@@ -132,6 +135,8 @@ function buildQuickProject(listing, market) {
     project.shortTerm.occupancyPct = 0;
   }
   project.flip.resalePrice = Math.round(resalePrice);
+  // Modèle Berry : revente directe, sans commission d'agence.
+  project.flip.sellingAgencyPct = 0;
   project.projection.years = 25;
   return { project, works, estimatedRent: Math.round(estimatedRent), short };
 }

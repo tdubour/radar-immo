@@ -5,6 +5,8 @@ const STATE_KEY = "berryConnectorState";
 const RUN_PREFIX = "run:";
 const ALARM_PREFIX = "search:";
 const QUEUE_ALARM = "delivery-queue";
+const RADAR_DAILY_ALARM = "radar-daily-collection";
+const MARKET_DAILY_ALARM = "radar-daily-market-prices";
 const RUN_TIMEOUT_PREFIX = "run-timeout:";
 const BROWSER_JOB_KEY = "berryBrowserJob";
 const COLLECTOR_CONTEXT_KEY = "berryCollectorContext";
@@ -14,7 +16,14 @@ const BERRYPILOT_API_BASE_URL = "https://berryconciergerie-app.vercel.app";
 const EXTENSION_VERSION = chrome.runtime.getManifest().version;
 let activeBerryPilotSync = null;
 
-const defaultState = () => ({ version: 2, apps: [], searches: [], queue: [], pendingSearchIds: [], seen: {}, runs: {}, localListings: [], lastEvent: null });
+const defaultState = () => ({ version: 2, apps: [], searches: [], queue: [], pendingSearchIds: [], seen: {}, runs: {}, localListings: [], marketReferences: {}, lastEvent: null });
+
+function nextLocalHour(hour) {
+  const next = new Date();
+  next.setHours(hour, 0, 0, 0);
+  if (next.getTime() <= Date.now()) next.setDate(next.getDate() + 1);
+  return next.getTime();
+}
 
 async function getState() {
   const stored = await chrome.storage.local.get(STATE_KEY);
@@ -103,17 +112,55 @@ async function setLastEvent(patch) {
 }
 
 async function syncAlarms() {
-  const state = await getState();
   const existing = await chrome.alarms.getAll();
   await Promise.all(existing.filter((alarm) => alarm.name.startsWith(ALARM_PREFIX)).map((alarm) => chrome.alarms.clear(alarm.name)));
-  const enabledSearches = state.searches.filter((row) => row.enabled);
-  for (const [index, search] of enabledSearches.entries()) {
-    await chrome.alarms.create(`${ALARM_PREFIX}${search.id}`, {
-      delayInMinutes: Math.min(search.intervalMinutes, 2 + index * 2),
-      periodInMinutes: Math.max(30, search.intervalMinutes)
-    });
-  }
   await chrome.alarms.create(QUEUE_ALARM, { delayInMinutes: 1, periodInMinutes: 5 });
+  await chrome.alarms.create(RADAR_DAILY_ALARM, { when: nextLocalHour(1) });
+  await chrome.alarms.create(MARKET_DAILY_ALARM, { when: nextLocalHour(2) });
+}
+
+function slug(value) {
+  return String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+async function queueDailyRadarSearches() {
+  const state = await getState();
+  for (const search of state.searches.filter((row) => row.enabled && row.appIds.includes("radar-immo"))) {
+    if (!state.pendingSearchIds.includes(search.id)) state.pendingSearchIds.push(search.id);
+  }
+  await setState(state);
+  return pumpSearchQueue();
+}
+
+async function collectDailyMarketPrices() {
+  const lease = await acquireBrowserJob("market-prices", "meilleursagents");
+  if (!lease) return { ok: true, queued: true };
+  let context;
+  try {
+    const state = await getState();
+    const locations = [...new Map((state.localListings || [])
+      .filter((row) => row.city && /^\d{5}$/.test(String(row.postalCode || "")))
+      .map((row) => [`${slug(row.city)}:${row.postalCode}`, { city: row.city, postalCode: String(row.postalCode) }])).values()]
+      .slice(0, 50);
+    const references = { ...(state.marketReferences || {}) };
+    for (const location of locations) {
+      const url = `https://www.meilleursagents.com/prix-immobilier/${slug(location.city)}-${location.postalCode}/`;
+      context = context || await createDiscreteTab(url);
+      if (context.tab.url !== url) await chrome.tabs.update(context.tab.id, { url });
+      await waitForTab(context.tab.id, 45_000);
+      const reference = await messageTab(context.tab.id, { type: "COLLECT_MEILLEURSAGENTS_MARKET" });
+      if (reference?.postalCode) references[`${slug(location.city)}:${location.postalCode}`] = { ...reference, city: location.city, postalCode: location.postalCode };
+    }
+    state.marketReferences = references;
+    state.lastMarketRunAt = new Date().toISOString();
+    await setState(state);
+    await notifyRadarTabs();
+    return { ok: true, count: Object.keys(references).length };
+  } finally {
+    if (context) await closeCollectionContext({ tabId: context.tab.id, windowId: context.windowId, discreteWindow: context.discreteWindow });
+    await releaseBrowserJob(lease.id);
+    await pumpSearchQueue();
+  }
 }
 
 async function createDiscreteTab(url) {
@@ -285,6 +332,8 @@ async function getLocalRadarPayload() {
   const state = await getState();
   return {
     listings: state.localListings || [],
+    marketReferences: state.marketReferences || {},
+    lastMarketRunAt: state.lastMarketRunAt || null,
     searches: state.searches.filter((search) => search.appIds.includes("radar-immo")),
     runs: state.runs,
     updatedAt: state.lastEvent?.at || null
@@ -617,6 +666,13 @@ chrome.runtime.onInstalled.addListener(() => syncAllAlarms());
 chrome.runtime.onStartup.addListener(() => syncAllAlarms());
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === QUEUE_ALARM) retryQueue();
+  else if (alarm.name === RADAR_DAILY_ALARM) queueDailyRadarSearches()
+    .catch((error) => setLastEvent({ status: "error", error: error.message }))
+    .finally(() => chrome.alarms.create(RADAR_DAILY_ALARM, { when: nextLocalHour(1) }));
+  else if (alarm.name === MARKET_DAILY_ALARM) collectDailyMarketPrices()
+    .then((result) => chrome.alarms.create(MARKET_DAILY_ALARM, result.queued ? { delayInMinutes: 15 } : { when: nextLocalHour(2) }))
+    .catch((error) => setLastEvent({ status: "market-error", error: error.message })
+      .then(() => chrome.alarms.create(MARKET_DAILY_ALARM, { when: nextLocalHour(2) })));
   else if (alarm.name === BERRYPILOT_ALARM) runBerryPilotSync("alarm");
   else if (alarm.name.startsWith(ALARM_PREFIX)) requestSearchRun(alarm.name.slice(ALARM_PREFIX.length)).catch((error) => setLastEvent({ status: "error", error: error.message }));
   else if (alarm.name.startsWith(RUN_TIMEOUT_PREFIX)) {

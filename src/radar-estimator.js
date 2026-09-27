@@ -28,7 +28,25 @@ function pricePerM2(listing) {
   return price > 0 && surface > 0 ? price / surface : null;
 }
 
-function comparableMarket(listing, listings) {
+function marketReference(listing, references) {
+  const key = `${normalize(listing.city).replace(/\s+/g, "-")}:${listing.postalCode || ""}`;
+  const reference = references?.[key];
+  if (!reference) return null;
+  const type = propertyGroup(listing) === "apartment" ? reference.apartment : reference.house;
+  return type?.salePriceM2 ? { ...type, observedAt: reference.observedAt, observedLabel: reference.observedLabel, source: reference.source, sourceUrl: reference.sourceUrl } : null;
+}
+
+function comparableMarket(listing, listings, references) {
+  const external = marketReference(listing, references);
+  if (external) return {
+    averagePriceM2: external.salePriceM2,
+    comparableCount: null,
+    comparableScope: "commune",
+    marketSource: external.source,
+    marketSourceUrl: external.sourceUrl,
+    marketObservedAt: external.observedAt,
+    rentM2: external.rentM2
+  };
   const group = propertyGroup(listing);
   const city = normalize(listing.city);
   const dep = department(listing);
@@ -39,7 +57,11 @@ function comparableMarket(listing, listings) {
   return {
     averagePriceM2: median(selected.map(pricePerM2)),
     comparableCount: selected.length,
-    comparableScope: cityRows.length >= 3 ? "ville" : departmentRows.length >= 5 ? "département" : "zone"
+    comparableScope: cityRows.length >= 3 ? "ville" : departmentRows.length >= 5 ? "département" : "zone",
+    marketSource: "annonces collectées",
+    marketSourceUrl: null,
+    marketObservedAt: null,
+    rentM2: null
   };
 }
 
@@ -74,7 +96,7 @@ function buildQuickProject(listing, market) {
   const works = surface > 0 ? Math.round(surface * (hasWorks ? 600 : 80)) : 0;
   const estimatedRent = group === "professional"
     ? Number(listing.askingPrice || 0) * .075 / 12
-    : surface * rentPerM2(listing);
+    : surface * (market.rentM2 || rentPerM2(listing));
   const resalePrice = market.averagePriceM2 && surface ? market.averagePriceM2 * surface : Number(listing.askingPrice || 0);
   const short = shortTermAssumptions(listing);
   project.name = listing.title || "Annonce";
@@ -114,9 +136,9 @@ function buildQuickProject(listing, market) {
   return { project, works, estimatedRent: Math.round(estimatedRent), short };
 }
 
-export function quickEstimateListing(listing, listings = []) {
+export function quickEstimateListing(listing, listings = [], marketReferences = {}) {
   const currentPriceM2 = pricePerM2(listing);
-  const market = comparableMarket(listing, listings);
+  const market = comparableMarket(listing, listings, marketReferences);
   const { project, works, estimatedRent, short } = buildQuickProject(listing, market);
   const result = analyzeProject(project);
   const marketDiscountPct = currentPriceM2 && market.averagePriceM2 ? (market.averagePriceM2 - currentPriceM2) / market.averagePriceM2 * 100 : null;
@@ -138,6 +160,9 @@ export function quickEstimateListing(listing, listings = []) {
     averagePriceM2: market.averagePriceM2,
     comparableCount: market.comparableCount,
     comparableScope: market.comparableScope,
+    marketSource: market.marketSource,
+    marketSourceUrl: market.marketSourceUrl,
+    marketObservedAt: market.marketObservedAt,
     marketDiscountPct,
     estimatedWorks: works,
     estimatedMonthlyRent: estimatedRent,
@@ -157,8 +182,8 @@ export function quickEstimateListing(listing, listings = []) {
   };
 }
 
-export function enrichRadarEstimates(listings = []) {
+export function enrichRadarEstimates(listings = [], marketReferences = {}) {
   const excluded = /exemple|démo|demo|sample|viager|résidence\s+(services?|seniors?)|programme\s+neuf|appartements?\s+neufs?|maison\s+neuve|la\s+source(?:\s+université|\s+universite|\b)|promenade\s+des\s+sources/i;
   const cleanRows = listings.filter((listing) => !excluded.test(`${listing.sourceId || ""} ${listing.title || ""} ${listing.description || ""} ${listing.district || ""} ${listing.sourceUrl || ""}`));
-  return cleanRows.map((listing) => quickEstimateListing(listing, cleanRows));
+  return cleanRows.map((listing) => quickEstimateListing(listing, cleanRows, marketReferences));
 }

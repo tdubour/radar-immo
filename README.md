@@ -58,6 +58,8 @@ La première version de l’extension se trouve dans `extension/`. Elle prend en
 
 Depuis la version 1.2.1, Radar Immo est une destination locale intégrée : l’extension précharge cinq portails et vingt-deux recherches géographiques, conserve les annonces dans `chrome.storage.local` et les expose uniquement à `radar-immo-blond.vercel.app` dans le même profil Chrome. Leboncoin utilise un rayon natif de 100 km. SeLoger, Bien’ici et Logic-Immo ratissent les départements traversés par la zone ; le radar conserve toutes les communes jusqu’à 100 km, puis seulement les villes d’au moins 10 000 habitants jusqu’à 150 km. Ce mode fonctionne sans secret Vercel/GitHub et coexiste avec BerryPilot LBC Safe sans mélanger leurs données.
 
+Depuis la version 1.3.0, Chrome lance les recherches Radar chaque jour à 1 h (heure locale), puis ouvre à 2 h les pages communales MeilleursAgents correspondant aux annonces actives. Les références maison/appartement, vente/location, leur URL et leur date sont conservées localement. Elles alimentent en priorité les estimations ; si une référence manque, le radar revient à la médiane de ses annonces collectées. Chrome et l’ordinateur doivent rester ouverts. Cette intégration temporaire ne contourne ni authentification, ni CAPTCHA, ni refus d’accès et doit être remplacée par un export ou un accès autorisé dès qu’il est disponible.
+
 ```bash
 npm run build:extension
 npm run check:extension

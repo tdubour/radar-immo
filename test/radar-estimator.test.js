@@ -38,3 +38,20 @@ test("price history exposes the previous price", () => {
   assert.equal(result.previousPrice, 80000);
   assert.equal(result.priceChange, -5000);
 });
+
+test("uses a dated MeilleursAgents commune reference before listing medians", () => {
+  const references = {
+    "blois:41000": {
+      source: "meilleursagents",
+      sourceUrl: "https://www.meilleursagents.com/prix-immobilier/blois-41000/",
+      observedAt: "2026-09-27T02:00:00.000Z",
+      apartment: { salePriceM2: 1800, rentM2: 12 },
+      house: { salePriceM2: 1600, rentM2: 10 }
+    }
+  };
+  const result = quickEstimateListing(rows[0], rows, references);
+  assert.equal(result.averagePriceM2, 1800);
+  assert.equal(result.marketSource, "meilleursagents");
+  assert.equal(result.estimatedMonthlyRent, 480);
+  assert.equal(result.comparableScope, "commune");
+});

@@ -1,5 +1,6 @@
 import { extractListings } from "./adapters.js";
 import { collectBerryPilotListing, collectBerryPilotSearch } from "./berrypilot-lbc.js";
+import { extractMeilleursAgentsMarket } from "./meilleursagents.js";
 
 let lastSignature = "";
 
@@ -28,6 +29,10 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message?.type === "SCAN_NOW") {
     scan(true).then(() => sendResponse({ ok: true })).catch((error) => sendResponse({ ok: false, error: error.message }));
     return true;
+  }
+  if (message?.type === "COLLECT_MEILLEURSAGENTS_MARKET") {
+    sendResponse(extractMeilleursAgentsMarket(document, location.href));
+    return false;
   }
   return false;
 });

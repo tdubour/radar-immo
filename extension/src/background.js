@@ -123,6 +123,17 @@ function slug(value) {
   return String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
+function marketPriceUrls(location) {
+  const city = slug(location.city);
+  if (city === "le-controis-en-sologne" && location.postalCode === "41700") {
+    return ["https://www.meilleursagents.com/prix-immobilier/contres-41700/"];
+  }
+  if (city === "orleans" && location.postalCode === "45100") {
+    return ["https://www.meilleursagents.com/prix-immobilier/orleans-45000/"];
+  }
+  return [`https://www.meilleursagents.com/prix-immobilier/${city}-${location.postalCode}/`];
+}
+
 async function queueDailyRadarSearches() {
   const state = await getState();
   for (const search of state.searches.filter((row) => row.enabled && row.appIds.includes("radar-immo"))) {
@@ -144,11 +155,14 @@ async function collectDailyMarketPrices() {
       .slice(0, 50);
     const references = { ...(state.marketReferences || {}) };
     for (const location of locations) {
-      const url = `https://www.meilleursagents.com/prix-immobilier/${slug(location.city)}-${location.postalCode}/`;
-      context = context || await createDiscreteTab(url);
-      if (context.tab.url !== url) await chrome.tabs.update(context.tab.id, { url });
-      await waitForTab(context.tab.id, 45_000);
-      const reference = await messageTab(context.tab.id, { type: "COLLECT_MEILLEURSAGENTS_MARKET" });
+      let reference;
+      for (const url of marketPriceUrls(location)) {
+        context = context || await createDiscreteTab(url);
+        if (context.tab.url !== url) await chrome.tabs.update(context.tab.id, { url });
+        await waitForTab(context.tab.id, 45_000);
+        reference = await messageTab(context.tab.id, { type: "COLLECT_MEILLEURSAGENTS_MARKET" });
+        if (reference?.postalCode) break;
+      }
       if (reference?.postalCode) references[`${slug(location.city)}:${location.postalCode}`] = { ...reference, city: location.city, postalCode: location.postalCode };
     }
     state.marketReferences = references;

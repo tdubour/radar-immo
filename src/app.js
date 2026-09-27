@@ -66,6 +66,7 @@ const state = {
   radarConfig: mergeDefaults(createDefaultRadarConfig(), parseStorage(RADAR_CONFIG_KEY, createDefaultRadarConfig())),
   radarListings: storedRadarListings,
   radarHistory: {},
+  marketReferences: {},
   radarStatus: { loading: true, connected: false, extensionCount: 0, lastRun: null, error: "" },
   page: "dashboard",
   formTab: "acquisition",
@@ -79,6 +80,7 @@ const state = {
 let extensionRadarListings = [];
 let extensionRadarPayload = {};
 const communeCache = new Map();
+const currentMarketReferences = () => ({ ...(state.marketReferences || {}), ...(extensionRadarPayload.marketReferences || {}) });
 
 const comparablePlace = (value) => String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 
@@ -409,7 +411,7 @@ function chatbotHtml() {
 }
 
 function chatbotListings() {
-  return rankCandidates(enrichRadarEstimates(state.radarListings, extensionRadarPayload.marketReferences), state.radarConfig).slice(0, 50).map((listing) => ({
+  return rankCandidates(enrichRadarEstimates(state.radarListings, currentMarketReferences()), state.radarConfig).slice(0, 50).map((listing) => ({
     title: listing.title, city: listing.city, postalCode: listing.postalCode, sourceId: listing.sourceId, askingPrice: listing.askingPrice,
     surfaceM2: listing.surfaceM2, pricePerM2: listing.pricePerM2, averagePriceM2: listing.averagePriceM2, marketSource: listing.marketSource,
     marketDiscountPct: listing.marketDiscountPct, estimatedMonthlyRent: listing.estimatedMonthlyRent, longTermCashflowMonthly: listing.longTermCashflowMonthly,
@@ -511,7 +513,7 @@ function dashboardHtml() {
 
 function radarHtml() {
   const config = state.radarConfig;
-  const estimated = enrichRadarEstimates(state.radarListings, extensionRadarPayload.marketReferences);
+  const estimated = enrichRadarEstimates(state.radarListings, currentMarketReferences());
   const listings = rankCandidates(estimated, config);
   const qualified = listings.filter((listing) => listing.qualified);
   const drops = listings.filter((listing) => Number(listing.priceChange) < 0);
@@ -827,7 +829,7 @@ app.addEventListener("click", (event) => {
     refreshRemoteRadar();
   }
   if (action === "analyze-listing") {
-    const listing = enrichRadarEstimates(state.radarListings, extensionRadarPayload.marketReferences).find((item) => (item.fingerprint || item.sourceUrl) === actionButton.dataset.key);
+    const listing = enrichRadarEstimates(state.radarListings, currentMarketReferences()).find((item) => (item.fingerprint || item.sourceUrl) === actionButton.dataset.key);
     if (listing?.quickProject) {
       state.project = hydrateProject(listing.quickProject);
       state.page = "analysis";
@@ -933,11 +935,13 @@ render();
 
 async function refreshRemoteRadar() {
   try {
-    const [listingsResponse, historyResponse, healthResponse] = await Promise.all([fetch("/data/listings.json", { cache: "no-store" }), fetch("/data/history.json", { cache: "no-store" }), fetch("/data/status.json", { cache: "no-store" })]);
+    const [listingsResponse, historyResponse, healthResponse, marketResponse] = await Promise.all([fetch("/data/listings.json", { cache: "no-store" }), fetch("/data/history.json", { cache: "no-store" }), fetch("/data/status.json", { cache: "no-store" }), fetch("/data/market-references.json", { cache: "no-store" })]);
     if (!listingsResponse.ok || !historyResponse.ok || !healthResponse.ok) throw new Error("fichiers du radar indisponibles");
     const payload = await listingsResponse.json();
     const history = await historyResponse.json();
     const health = await healthResponse.json();
+    const market = marketResponse.ok ? await marketResponse.json() : {};
+    state.marketReferences = market.references && typeof market.references === "object" ? market.references : {};
     state.radarHistory = history && typeof history === "object" ? history : {};
     const remoteListings = (Array.isArray(payload.listings) ? payload.listings : []).map((listing) => {
       const points = Array.isArray(state.radarHistory[listing.fingerprint]) ? state.radarHistory[listing.fingerprint] : [];

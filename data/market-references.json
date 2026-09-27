@@ -1,0 +1,472 @@
+{
+  "updatedAt": "2026-09-27T14:30:00.000Z",
+  "requested": 29,
+  "collected": 29,
+  "failures": [],
+  "references": {
+    "avaray:41500": {
+      "city": "Avaray",
+      "postalCode": "41500",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/avaray-41500/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 septembre 2026",
+      "apartment": {
+        "salePriceM2": 1665,
+        "rentM2": 13.1
+      },
+      "house": {
+        "salePriceM2": 1521,
+        "rentM2": 12.4
+      }
+    },
+    "lamotte-beuvron:41600": {
+      "city": "Lamotte-Beuvron",
+      "postalCode": "41600",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/lamotte-beuvron-41600/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 septembre 2026",
+      "apartment": {
+        "salePriceM2": 2037,
+        "rentM2": 11.3
+      },
+      "house": {
+        "salePriceM2": 1655,
+        "rentM2": 10.7
+      }
+    },
+    "naveil:41100": {
+      "city": "Naveil",
+      "postalCode": "41100",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/naveil-41100/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 septembre 2026",
+      "apartment": {
+        "salePriceM2": 2109,
+        "rentM2": 12.3
+      },
+      "house": {
+        "salePriceM2": 1657,
+        "rentM2": 10.2
+      }
+    },
+    "blois:41000": {
+      "city": "Blois",
+      "postalCode": "41000",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/blois-41000/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 septembre 2026",
+      "apartment": {
+        "salePriceM2": 1725,
+        "rentM2": 11.8
+      },
+      "house": {
+        "salePriceM2": 1841,
+        "rentM2": 12.6
+      }
+    },
+    "fleury-les-aubrais:45400": {
+      "city": "Fleury-les-Aubrais",
+      "postalCode": "45400",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/fleury-les-aubrais-45400/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 septembre 2026",
+      "apartment": {
+        "salePriceM2": 1812,
+        "rentM2": 13
+      },
+      "house": {
+        "salePriceM2": 2358,
+        "rentM2": 13.4
+      }
+    },
+    "la-selle-sur-le-bied:45210": {
+      "city": "La Selle-sur-le-Bied",
+      "postalCode": "45210",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/la-selle-sur-le-bied-45210/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 septembre 2026",
+      "apartment": {
+        "salePriceM2": 1401,
+        "rentM2": 12.5
+      },
+      "house": {
+        "salePriceM2": 1402,
+        "rentM2": 11.8
+      }
+    },
+    "bourges:18000": {
+      "city": "Bourges",
+      "postalCode": "18000",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/bourges-18000/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 septembre 2026",
+      "apartment": {
+        "salePriceM2": 1551,
+        "rentM2": 12.1
+      },
+      "house": {
+        "salePriceM2": 1632,
+        "rentM2": 12.3
+      }
+    },
+    "orleans:45000": {
+      "city": "Orléans",
+      "postalCode": "45000",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/orleans-45000/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 septembre 2026",
+      "apartment": {
+        "salePriceM2": 2616,
+        "rentM2": 13.6
+      },
+      "house": {
+        "salePriceM2": 2825,
+        "rentM2": 14.5
+      }
+    },
+    "orleans:45100": {
+      "city": "Orléans",
+      "postalCode": "45100",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/orleans-45000/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 septembre 2026",
+      "apartment": {
+        "salePriceM2": 2616,
+        "rentM2": 13.6
+      },
+      "house": {
+        "salePriceM2": 2825,
+        "rentM2": 14.5
+      }
+    },
+    "chatres-sur-cher:41320": {
+      "city": "Châtres-sur-Cher",
+      "postalCode": "41320",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/chatres-sur-cher-41320/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 septembre 2026",
+      "apartment": {
+        "salePriceM2": 1012,
+        "rentM2": 10.2
+      },
+      "house": {
+        "salePriceM2": 1028,
+        "rentM2": 9.4
+      }
+    },
+    "checy:45430": {
+      "city": "Chécy",
+      "postalCode": "45430",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/checy-45430/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 septembre 2026",
+      "apartment": {
+        "salePriceM2": 2062,
+        "rentM2": 13.5
+      },
+      "house": {
+        "salePriceM2": 2345,
+        "rentM2": 13.3
+      }
+    },
+    "villefranche-sur-cher:41200": {
+      "city": "Villefranche-sur-Cher",
+      "postalCode": "41200",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/villefranche-sur-cher-41200/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 septembre 2026",
+      "apartment": {
+        "salePriceM2": 1467,
+        "rentM2": null
+      },
+      "house": {
+        "salePriceM2": 1182,
+        "rentM2": 8.3
+      }
+    },
+    "chaumont-sur-tharonne:41600": {
+      "city": "Chaumont-sur-Tharonne",
+      "postalCode": "41600",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/chaumont-sur-tharonne-41600/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 septembre 2026",
+      "apartment": {
+        "salePriceM2": 1525,
+        "rentM2": 13.3
+      },
+      "house": {
+        "salePriceM2": 1872,
+        "rentM2": 11.6
+      }
+    },
+    "vernou-en-sologne:41230": {
+      "city": "Vernou-en-Sologne",
+      "postalCode": "41230",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/vernou-en-sologne-41230/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 septembre 2026",
+      "apartment": {
+        "salePriceM2": 1501,
+        "rentM2": 10.2
+      },
+      "house": {
+        "salePriceM2": 1554,
+        "rentM2": 9
+      }
+    },
+    "vineuil:41350": {
+      "city": "Vineuil",
+      "postalCode": "41350",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/vineuil-41350/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 septembre 2026",
+      "apartment": {
+        "salePriceM2": 2078,
+        "rentM2": 12.8
+      },
+      "house": {
+        "salePriceM2": 2070,
+        "rentM2": 11.6
+      }
+    },
+    "aze:41100": {
+      "city": "Azé",
+      "postalCode": "41100",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/aze-41100/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 août 2026",
+      "apartment": {
+        "salePriceM2": 1873,
+        "rentM2": null
+      },
+      "house": {
+        "salePriceM2": 1530,
+        "rentM2": 10.1
+      }
+    },
+    "areines:41100": {
+      "city": "Areines",
+      "postalCode": "41100",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/areines-41100/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 septembre 2026",
+      "apartment": {
+        "salePriceM2": 1875,
+        "rentM2": 13.1
+      },
+      "house": {
+        "salePriceM2": 1812,
+        "rentM2": 12.2
+      }
+    },
+    "moree:41160": {
+      "city": "Morée",
+      "postalCode": "41160",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/moree-41160/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 septembre 2026",
+      "apartment": {
+        "salePriceM2": 2043,
+        "rentM2": 9.5
+      },
+      "house": {
+        "salePriceM2": 1260,
+        "rentM2": 9.9
+      }
+    },
+    "la-chaussee-saint-victor:41260": {
+      "city": "La Chaussée-Saint-Victor",
+      "postalCode": "41260",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/la-chaussee-saint-victor-41260/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 septembre 2026",
+      "apartment": {
+        "salePriceM2": 1858,
+        "rentM2": 12.9
+      },
+      "house": {
+        "salePriceM2": 1962,
+        "rentM2": 13.2
+      }
+    },
+    "la-marolle-en-sologne:41210": {
+      "city": "La Marolle-en-Sologne",
+      "postalCode": "41210",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/la-marolle-en-sologne-41210/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 août 2026",
+      "apartment": {
+        "salePriceM2": 1539,
+        "rentM2": null
+      },
+      "house": {
+        "salePriceM2": 1682,
+        "rentM2": 9.1
+      }
+    },
+    "montrieux-en-sologne:41210": {
+      "city": "Montrieux-en-Sologne",
+      "postalCode": "41210",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/montrieux-en-sologne-41210/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 août 2026",
+      "apartment": {
+        "salePriceM2": 1517,
+        "rentM2": null
+      },
+      "house": {
+        "salePriceM2": 1591,
+        "rentM2": 9.4
+      }
+    },
+    "mer:41500": {
+      "city": "Mer",
+      "postalCode": "41500",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/mer-41500/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 septembre 2026",
+      "apartment": {
+        "salePriceM2": 1691,
+        "rentM2": 12.3
+      },
+      "house": {
+        "salePriceM2": 1603,
+        "rentM2": 11.4
+      }
+    },
+    "yvoy-le-marron:41600": {
+      "city": "Yvoy-le-Marron",
+      "postalCode": "41600",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/yvoy-le-marron-41600/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 septembre 2026",
+      "apartment": {
+        "salePriceM2": 2075,
+        "rentM2": null
+      },
+      "house": {
+        "salePriceM2": 1917,
+        "rentM2": 11
+      }
+    },
+    "mur-de-sologne:41230": {
+      "city": "Mur-de-Sologne",
+      "postalCode": "41230",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/mur-de-sologne-41230/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 septembre 2026",
+      "apartment": {
+        "salePriceM2": 1500,
+        "rentM2": 9.6
+      },
+      "house": {
+        "salePriceM2": 1565,
+        "rentM2": 9.1
+      }
+    },
+    "meung-sur-loire:45130": {
+      "city": "Meung-sur-Loire",
+      "postalCode": "45130",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/meung-sur-loire-45130/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 septembre 2026",
+      "apartment": {
+        "salePriceM2": 1742,
+        "rentM2": 13.3
+      },
+      "house": {
+        "salePriceM2": 2130,
+        "rentM2": 13.2
+      }
+    },
+    "romorantin-lanthenay:41200": {
+      "city": "Romorantin-Lanthenay",
+      "postalCode": "41200",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/romorantin-lanthenay-41200/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 septembre 2026",
+      "apartment": {
+        "salePriceM2": 1445,
+        "rentM2": 10.8
+      },
+      "house": {
+        "salePriceM2": 1377,
+        "rentM2": 10.8
+      }
+    },
+    "saran:45770": {
+      "city": "Saran",
+      "postalCode": "45770",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/saran-45770/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 septembre 2026",
+      "apartment": {
+        "salePriceM2": 2069,
+        "rentM2": 12.8
+      },
+      "house": {
+        "salePriceM2": 2398,
+        "rentM2": 13.4
+      }
+    },
+    "le-controis-en-sologne:41700": {
+      "city": "Le Controis-en-Sologne",
+      "postalCode": "41700",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/contres-41700/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 septembre 2026",
+      "apartment": {
+        "salePriceM2": 1870,
+        "rentM2": 11.1
+      },
+      "house": {
+        "salePriceM2": 1661,
+        "rentM2": 11.3
+      }
+    },
+    "cellettes:41120": {
+      "city": "Cellettes",
+      "postalCode": "41120",
+      "source": "meilleursagents",
+      "sourceUrl": "https://www.meilleursagents.com/prix-immobilier/cellettes-41120/",
+      "observedAt": "2026-09-27T14:30:00.000Z",
+      "observedLabel": "1 septembre 2026",
+      "apartment": {
+        "salePriceM2": 1837,
+        "rentM2": 12.5
+      },
+      "house": {
+        "salePriceM2": 1981,
+        "rentM2": 12.2
+      }
+    }
+  }
+}

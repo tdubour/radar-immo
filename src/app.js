@@ -267,9 +267,9 @@ const controls = {
     ["flip.sellingAgencyPct", "Commission d’agence à la revente (% du prix net)", 0, 15, .5, "%", "0 % par défaut : vente réalisée directement. À modifier seulement si une agence intervient."],
     ["flip.holdingMonths", "Durée totale de portage", 1, 36, 1, "mois", "Travaux, délais administratifs et commercialisation."],
     ["flip.carryingCostMonthly", "Coût de portage hors crédit/mois", 0, 10000, 50, "€", "Énergie, assurance, taxe, sécurité et charges pendant le portage."],
-    ["flip.divisionAndLegalFees", "Division, géomètre et juridique", 0, 100000, 500, "€", "Frais liés à une division ou restructuration juridique."],
-    ["flip.commercialisationFees", "Commercialisation et diagnostics", 0, 100000, 500, "€", "Photos, diagnostics et frais de mise en vente hors commission."],
-    ["flip.otherCosts", "Autres coûts achat-revente", 0, 100000, 500, "€", "Provision pour les coûts spécifiques non listés."]
+    ["flip.divisionAndLegalFees", "Division, géomètre et juridique", 0, 100000, 500, "€", "Provision variable : géomètre, bornage ou plans, création ou modification de lots, copropriété, urbanisme, notaire et actes juridiques selon le projet.", "flip.includeDivisionAndLegalFees"],
+    ["flip.commercialisationFees", "Commercialisation et diagnostics", 0, 100000, 500, "€", "Provision variable : diagnostics obligatoires, mesurage, photos, annonce, diffusion et supports de vente. Hors commission d’agence.", "flip.includeCommercialisationFees"],
+    ["flip.otherCosts", "Autres coûts achat-revente", 0, 100000, 500, "€", "Provision variable pour les coûts propres au projet qui ne figurent pas ailleurs.", "flip.includeOtherCosts"]
   ],
   sci: [
     ["acquisition.landSharePct", "Quote-part terrain non amortissable (% du prix)", 0, 50, 1, "%", "Le terrain est exclu de la base amortissable. Cette quote-part doit être documentée."],
@@ -318,11 +318,13 @@ function formatScale(value, unit) {
 }
 
 function controlHtml(definition) {
-  const [path, label, min, max, step, unit, help] = definition;
+  const [path, label, min, max, step, unit, help, includePath] = definition;
   const value = Number(getPath(state.project, path) || 0);
+  const included = includePath ? Boolean(getPath(state.project, includePath)) : true;
   const decimals = String(step).includes(".") ? String(step).split(".")[1].length : 0;
-  return `<div class="control-card">
+  return `<div class="control-card${included ? "" : " optional-excluded"}">
     <div class="control-heading"><div><label>${e(label)}</label><span class="help-icon" title="${e(help)}">ⓘ</span></div><span class="current-value">${e(formatScale(value, unit))}</span></div>
+    ${includePath ? `<label class="include-toggle"><input type="checkbox" data-boolean-path="${e(includePath)}" ${included ? "checked" : ""}><span>Inclure dans le calcul</span><strong>${included ? "Inclus" : "Non comptabilisé"}</strong></label>` : ""}
     <div class="control-grid">
       <div class="slider-zone">
         <input class="range-control" data-path="${e(path)}" type="range" min="${min}" max="${max}" step="${step}" value="${value}" aria-label="${e(label)}">
@@ -543,7 +545,7 @@ function radarHtml() {
       ${kpi("Dernière collecte", state.radarStatus.lastRun?.started_at ? formatDate(state.radarStatus.lastRun.started_at) : "En attente", state.radarStatus.extensionCount ? `${state.radarStatus.extensionCount} annonces issues de l’extension` : "collecteur serveur")}
     </section>
     <section class="panel ${state.radarStatus.connected ? "success-box" : "warning"}"><strong>${state.radarStatus.connected ? "Import automatique actif" : "Import automatique incomplet"}</strong><p>${state.radarStatus.connected ? `Les annonces du collecteur quotidien et de l’extension Chrome sont fusionnées automatiquement. ${sourceStats.length ? sourceStats.map((source) => `${source.label || source.id} : ${e(sourceStatusText(source))}${source.collector === "extension" ? " (Chrome)" : ""}`).join(" · ") : ""}` : e(state.radarStatus.error || "Aucune collecte disponible.")}</p></section>
-    <section class="panel quick-assumptions"><div class="section-title"><div><span class="eyebrow">Hypothèses rapides SCI à l’IS</span><h2>Calcul immédiat, puis validation</h2></div><p>Financement sur 25 ans, apport symbolique de 1 500 €, 4,2 % + 0,3 % d’assurance, notaire 8 %, sûreté bancaire à 0 €, un mois de vacance locative par an et comptabilité interne à 0 €. Travaux : 600 €/m² si signal de rénovation, sinon réserve de 80 €/m².</p></div></section>
+    <section class="panel quick-assumptions"><div class="section-title"><div><span class="eyebrow">Hypothèses rapides SCI à l’IS</span><h2>Calcul immédiat, puis validation</h2></div><p>Financement sur 25 ans, apport symbolique de 1 500 €, 4,2 % + 0,3 % d’assurance, notaire 8 %, sûreté bancaire à 0 €, un mois de vacance locative par an et comptabilité interne à 0 €. Travaux : 600 €/m² si signal de rénovation, sinon réserve de 80 €/m². En courte durée, le prix/nuit et l’occupation sont des hypothèses internes de présélection, pas des données Airbnb ou AirDNA.</p></div></section>
     ${top.length ? `<section class="analysis-grid">${top.map((item, index) => `<article class="analysis-card ${item.qualified ? "qualified" : ""}">
       <div class="analysis-card-head"><div><span class="eyebrow">${e(item.sourceId || "source")} · ${e(item.city || "ville inconnue")}</span><h3>${e(item.title || "Sans titre")}</h3></div><strong class="radar-score">${item.score.toFixed(0)}</strong></div>
       <div class="analysis-price"><strong>${e(euros(item.askingPrice))}</strong><span>${item.pricePerM2 ? `${e(euros(item.pricePerM2))}/m²` : "surface inconnue"}</span>${priceChangeHtml(item)}</div>
@@ -740,7 +742,7 @@ function methodologyHtml() {
       <article class="panel"><h3>Coût total d’acquisition</h3><p><code>prix + notaire + agence + travaux + aléas + mobilier + banque + garantie + courtier + études</code>.</p><p>L’apport est déduit du coût total pour obtenir le capital financé.</p></article>
       <article class="panel"><h3>Mensualité du prêt</h3><p>Prêt amortissable à mensualité constante : <code>M = C × i / (1 − (1 + i)^−n)</code>, avec taux mensuel <code>i</code> et nombre de mensualités <code>n</code>.</p><p>L’assurance V1 est calculée sur le capital initial, puis ajoutée à la mensualité.</p></article>
       <article class="panel"><h3>Longue durée</h3><p><code>revenus effectifs = loyers − vacance − provision impayés</code>. Le NOI retranche gestion, GLI, entretien et charges fixes.</p><p><code>cash-flow après IS = NOI − service de dette − IS estimé</code>. Le DSCR correspond à <code>NOI / dette annuelle</code>.</p></article>
-      <article class="panel"><h3>Courte durée</h3><p><code>nuits vendues = nuits disponibles × occupation × unités</code>. Le CA additionne hébergement et ménage facturé.</p><p>Les plateformes, la conciergerie, les rotations, le linge, les consommables, la maintenance et les charges fixes sont déduits avant dette et IS.</p></article>
+      <article class="panel"><h3>Courte durée</h3><p><code>nuits vendues = nuits disponibles × occupation × unités</code>. Le CA additionne hébergement et ménage facturé.</p><p>Les plateformes, la conciergerie, les rotations, le linge, les consommables, la maintenance et les charges fixes sont déduits avant dette et IS.</p><p>Dans l’analyse automatique, le prix moyen par nuit et l’occupation sont des hypothèses internes fondées sur la ville et les caractéristiques du logement. Elles ne proviennent pas d’Airbnb, AirDNA ou PriceLabs. Les références MeilleursAgents concernent le prix de vente au m² et le loyer longue durée.</p></article>
       <article class="panel"><h3>SCI à l’IS</h3><p>Résultat fiscal simplifié : <code>NOI − intérêts − assurance − amortissements</code>. L’IS est appliqué selon les taux et le plafond paramétrés.</p><p>Amortissements : bâti hors terrain, travaux, mobilier et certains frais, chacun sur sa durée saisie.</p></article>
       <article class="panel"><h3>Achat-revente</h3><p><code>marge avant IS = prix net de sortie − coût total − frais financiers − portage − commercialisation</code>.</p><p>Le point mort reconstitue le prix affiché minimum nécessaire après négociation et commission d’agence.</p></article>
       <article class="panel"><h3>Scénarios et seuils</h3><p>Les scénarios prudent et optimiste appliquent des variations cohérentes aux travaux, taux, revenus, vacance, occupation, prix de sortie et durée de portage.</p><p>Les seuils sont recherchés numériquement, puis affichés avec une ligne zéro très visible.</p></article>
@@ -927,6 +929,12 @@ app.addEventListener("submit", (event) => {
 
 app.addEventListener("change", (event) => {
   const target = event.target;
+  if (target.matches("[data-boolean-path]")) {
+    state.project = setPath(state.project, target.dataset.booleanPath, target.checked);
+    persist();
+    render();
+    return;
+  }
   if (target.matches(".range-control, .number-control, [data-text-path]")) render();
   if (target.id === "import-json" && target.files?.[0]) {
     const reader = new FileReader();

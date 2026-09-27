@@ -110,3 +110,31 @@ test("market ranges drive prudent, central and high resale and rent assumptions"
   assert.deepEqual(scenarios.map((row) => Math.round(row.resalePriceM2)), [1200, 1600, 2200]);
   assert.deepEqual(scenarios.map((row) => Math.round(row.monthlyRent)), [800, 1100, 1500]);
 });
+
+test("optional flip provisions are excluded until explicitly included", () => {
+  const project = createDefaultProject();
+  project.flip.resalePrice = 300000;
+  project.flip.divisionAndLegalFees = 3000;
+  project.flip.commercialisationFees = 1000;
+  project.flip.otherCosts = 500;
+
+  const excluded = analyzeProject(project).flip;
+  assert.deepEqual(excluded.includedOptionalCosts, {
+    divisionAndLegalFees: 0,
+    commercialisationFees: 0,
+    otherCosts: 0
+  });
+
+  project.flip.includeDivisionAndLegalFees = true;
+  project.flip.includeCommercialisationFees = true;
+  project.flip.includeOtherCosts = true;
+  const included = analyzeProject(project).flip;
+
+  assert.equal(included.holdingCosts - excluded.holdingCosts, 4500);
+  assert.deepEqual(included.includedOptionalCosts, {
+    divisionAndLegalFees: 3000,
+    commercialisationFees: 1000,
+    otherCosts: 500
+  });
+  assert.ok(included.profitBeforeTax < excluded.profitBeforeTax);
+});

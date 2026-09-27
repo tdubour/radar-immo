@@ -70,8 +70,11 @@ export function createDefaultProject() {
       holdingMonths: 10,
       carryingCostMonthly: 350,
       divisionAndLegalFees: 3000,
+      includeDivisionAndLegalFees: false,
       commercialisationFees: 1000,
-      otherCosts: 1000
+      includeCommercialisationFees: false,
+      otherCosts: 1000,
+      includeOtherCosts: false
     },
     sci: {
       reducedTaxThreshold: 42500,

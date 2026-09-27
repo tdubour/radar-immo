@@ -11,6 +11,18 @@ function normalizeListing(value) {
   return Object.fromEntries(allowed.map((key) => [key, typeof value[key] === "string" ? safeText(value[key], 500) : value[key]]));
 }
 
+function localFallback(listings) {
+  if (!listings.length) return "Aucune annonce n’est actuellement disponible dans RadarImmo. Lance ou actualise la collecte, puis repose ta question.";
+  const ranked = [...listings].sort((a, b) => Number(b.score || 0) - Number(a.score || 0)).slice(0, 5);
+  const lines = ranked.map((listing, index) => {
+    const price = Number.isFinite(Number(listing.askingPrice)) ? `${Math.round(Number(listing.askingPrice)).toLocaleString("fr-FR")} €` : "prix inconnu";
+    const cashflow = Number.isFinite(Number(listing.longTermCashflowMonthly)) ? `${Math.round(Number(listing.longTermCashflowMonthly)).toLocaleString("fr-FR")} €/mois en longue durée` : "cash-flow non estimé";
+    const discount = Number.isFinite(Number(listing.marketDiscountPct)) ? `${Math.round(Number(listing.marketDiscountPct))} % ${Number(listing.marketDiscountPct) >= 0 ? "sous le marché estimé" : "au-dessus du marché estimé"}` : "comparaison marché indisponible";
+    return `${index + 1}. ${listing.title || "Annonce sans titre"} — ${listing.city || "ville inconnue"}, ${price}, ${cashflow}, ${discount}.`;
+  });
+  return `Le service IA est temporairement limité par le quota Vercel. Voici néanmoins le classement calculé directement par RadarImmo :\n\n${lines.join("\n")}\n\nCes chiffres restent des estimations à vérifier dans chaque annonce.`;
+}
+
 export default async function handler(request, response) {
   if (request.method !== "POST") return response.status(405).json({ error: "Méthode non autorisée." });
   const message = safeText(request.body?.message, 1500);
@@ -43,6 +55,6 @@ export default async function handler(request, response) {
     return response.status(200).json({ answer: result.text, model: usedModel.replace("openai/", ""), listingCount: listings.length });
   } catch (error) {
     console.error("radar_chat_failed", error);
-    return response.status(502).json({ error: "Le modèle d’analyse est momentanément indisponible." });
+    return response.status(200).json({ answer: localFallback(listings), model: "radar-local-fallback", listingCount: listings.length, degraded: true });
   }
 }

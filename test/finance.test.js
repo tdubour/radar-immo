@@ -98,3 +98,15 @@ test("prudent scenario is less favorable than central on a populated project", (
   assert.ok(prudent.shortTermMonthly < central.shortTermMonthly);
   assert.ok(prudent.flipNetProfit < central.flipNetProfit);
 });
+
+test("market ranges drive prudent, central and high resale and rent assumptions", () => {
+  const project = createDefaultProject();
+  project.acquisition.purchasePrice = 100000;
+  project.acquisition.surfaceM2 = 100;
+  project.longTerm.monthlyRent = 1000;
+  project.flip.resalePrice = 200000;
+  project.marketReference = { saleLowM2: 1200, saleAverageM2: 1600, saleHighM2: 2200, rentLowM2: 8, rentAverageM2: 11, rentHighM2: 15 };
+  const scenarios = scenarioTable(project);
+  assert.deepEqual(scenarios.map((row) => Math.round(row.resalePriceM2)), [1200, 1600, 2200]);
+  assert.deepEqual(scenarios.map((row) => Math.round(row.monthlyRent)), [800, 1100, 1500]);
+});

@@ -300,6 +300,16 @@ async function syncAlarms() {
 function slug(value) {
   return String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
+function marketPriceUrls(location) {
+  const city = slug(location.city);
+  if (city === "le-controis-en-sologne" && location.postalCode === "41700") {
+    return ["https://www.meilleursagents.com/prix-immobilier/contres-41700/"];
+  }
+  if (city === "orleans" && location.postalCode === "45100") {
+    return ["https://www.meilleursagents.com/prix-immobilier/orleans-45000/"];
+  }
+  return [`https://www.meilleursagents.com/prix-immobilier/${city}-${location.postalCode}/`];
+}
 async function queueDailyRadarSearches() {
   const state = await getState();
   for (const search2 of state.searches.filter((row) => row.enabled && row.appIds.includes("radar-immo"))) {
@@ -317,16 +327,31 @@ async function collectDailyMarketPrices() {
     const locations = [...new Map((state.localListings || []).filter((row) => row.city && /^\d{5}$/.test(String(row.postalCode || ""))).map((row) => [`${slug(row.city)}:${row.postalCode}`, { city: row.city, postalCode: String(row.postalCode) }])).values()].slice(0, 50);
     const references = { ...state.marketReferences || {} };
     for (const location of locations) {
-      const url = `https://www.meilleursagents.com/prix-immobilier/${slug(location.city)}-${location.postalCode}/`;
-      context = context || await createDiscreteTab(url);
-      if (context.tab.url !== url) await chrome.tabs.update(context.tab.id, { url });
-      await waitForTab(context.tab.id, 45e3);
-      const reference = await messageTab(context.tab.id, { type: "COLLECT_MEILLEURSAGENTS_MARKET" });
+      let reference;
+      for (const url of marketPriceUrls(location)) {
+        context = context || await createDiscreteTab(url);
+        if (context.tab.url !== url) await chrome.tabs.update(context.tab.id, { url });
+        await waitForTab(context.tab.id, 45e3);
+        reference = await messageTab(context.tab.id, { type: "COLLECT_MEILLEURSAGENTS_MARKET" });
+        if (reference?.postalCode) break;
+      }
       if (reference?.postalCode) references[`${slug(location.city)}:${location.postalCode}`] = { ...reference, city: location.city, postalCode: location.postalCode };
     }
     state.marketReferences = references;
     state.lastMarketRunAt = (/* @__PURE__ */ new Date()).toISOString();
     await setState(state);
+    const radarApp = state.apps.find((app) => app.id === "radar-immo" && app.transport !== "local" && app.ingestUrl && app.token);
+    if (radarApp) {
+      const syncUrl = new URL(radarApp.ingestUrl);
+      syncUrl.pathname = "/api/market-prices";
+      syncUrl.search = "";
+      const response = await fetch(syncUrl, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${radarApp.token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ appId: "radar-immo", references })
+      });
+      if (!response.ok) throw new Error(`Synchronisation march\xE9 HTTP ${response.status}`);
+    }
     await notifyRadarTabs();
     return { ok: true, count: Object.keys(references).length };
   } finally {

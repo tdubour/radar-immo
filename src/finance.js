@@ -367,26 +367,39 @@ export function analyzeProject(project) {
 }
 
 export function scenarioTable(project) {
+  const market = project.marketReference;
+  const surface = Number(project.acquisition.surfaceM2 || 0);
+  const marketResale = (level, fallbackFactor) => {
+    const priceM2 = Number(market?.[`sale${level}M2`]);
+    return priceM2 > 0 && surface > 0 ? priceM2 * surface : project.flip.resalePrice * fallbackFactor;
+  };
+  const marketRent = (level, fallbackFactor) => {
+    const rentM2 = Number(market?.[`rent${level}M2`]);
+    return rentM2 > 0 && surface > 0 ? rentM2 * surface : project.longTerm.monthlyRent * fallbackFactor;
+  };
   const variants = [
     ["Prudent", (p) => {
       p.acquisition.works *= 1.2;
       p.financing.annualRatePct += 2;
-      p.longTerm.monthlyRent *= 0.9;
+      p.longTerm.monthlyRent = marketRent("Low", 0.9);
       p.longTerm.vacancyPct = Math.min(40, p.longTerm.vacancyPct + 5);
       p.shortTerm.occupancyPct = Math.max(0, p.shortTerm.occupancyPct - 15);
       p.shortTerm.adr *= 0.9;
-      p.flip.resalePrice *= 0.9;
+      p.flip.resalePrice = marketResale("Low", 0.9);
       p.flip.holdingMonths += 4;
     }],
-    ["Central", () => {}],
+    ["Central", (p) => {
+      p.longTerm.monthlyRent = marketRent("Average", 1);
+      p.flip.resalePrice = marketResale("Average", 1);
+    }],
     ["Optimiste", (p) => {
       p.acquisition.works *= 0.95;
       p.financing.annualRatePct = Math.max(0, p.financing.annualRatePct - 0.5);
-      p.longTerm.monthlyRent *= 1.08;
+      p.longTerm.monthlyRent = marketRent("High", 1.08);
       p.longTerm.vacancyPct = Math.max(0, p.longTerm.vacancyPct - 2);
       p.shortTerm.occupancyPct = Math.min(100, p.shortTerm.occupancyPct + 10);
       p.shortTerm.adr *= 1.08;
-      p.flip.resalePrice *= 1.08;
+      p.flip.resalePrice = marketResale("High", 1.08);
       p.flip.holdingMonths = Math.max(1, p.flip.holdingMonths - 2);
     }]
   ];
@@ -394,7 +407,7 @@ export function scenarioTable(project) {
     const copy = structuredClone(project);
     mutate(copy);
     const result = analyzeProject(copy);
-    return { name, longTermMonthly: result.longTerm.cashflowAfterTaxMonthly, shortTermMonthly: result.shortTerm.cashflowAfterTaxMonthly, flipNetProfit: result.flip.netProfit };
+    return { name, longTermMonthly: result.longTerm.cashflowAfterTaxMonthly, shortTermMonthly: result.shortTerm.cashflowAfterTaxMonthly, flipNetProfit: result.flip.netProfit, resalePriceM2: surface ? copy.flip.resalePrice / surface : null, monthlyRent: copy.longTerm.monthlyRent };
   });
 }
 

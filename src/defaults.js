@@ -5,6 +5,7 @@ export function createDefaultProject() {
     city: "",
     sourceUrl: "",
     dpe: "D",
+    marketReference: null,
     acquisition: {
       purchasePrice: 0,
       surfaceM2: 0,

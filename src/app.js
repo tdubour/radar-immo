@@ -600,6 +600,28 @@ function viabilityHtml(result) {
   </section>`;
 }
 
+function marketReferenceHtml() {
+  const market = state.project.marketReference;
+  if (!market?.saleAverageM2) return "";
+  const purchaseM2 = Number(state.project.acquisition.surfaceM2) > 0 ? Number(state.project.acquisition.purchasePrice) / Number(state.project.acquisition.surfaceM2) : null;
+  const gap = (reference) => purchaseM2 && reference ? (purchaseM2 - reference) / reference * 100 : null;
+  const gapText = (reference) => {
+    const value = gap(reference);
+    return value === null ? "Écart indisponible" : `${value >= 0 ? "Surcote" : "Décote"} ${Math.abs(value).toFixed(1)} %`;
+  };
+  const sourceLabel = market.source === "meilleursagents" ? "MeilleursAgents" : market.source || "Référence marché";
+  return `<section class="panel market-reference-panel">
+    <div class="section-title"><div><span class="eyebrow">Fourchette communale · ${e(sourceLabel)}</span><h2>Positionnement du prix au m²</h2></div><p>${e(market.observedLabel || "Date non renseignée")}${market.sourceUrl ? ` · <a href="${e(market.sourceUrl)}" target="_blank" rel="noopener noreferrer">Voir la source</a>` : ""}</p></div>
+    <div class="threshold-grid">
+      <article class="threshold-card"><span>PRIX DU BIEN</span><strong>${purchaseM2 ? `${e(euros(purchaseM2))}/m²` : "—"}</strong><small>Prix d’achat divisé par la surface</small></article>
+      <article class="threshold-card"><span>PRUDENT · BAS</span><strong>${market.saleLowM2 ? `${e(euros(market.saleLowM2))}/m²` : "—"}</strong><small>${e(gapText(market.saleLowM2))}</small></article>
+      <article class="threshold-card"><span>CENTRAL · MOYEN</span><strong>${e(euros(market.saleAverageM2))}/m²</strong><small>${e(gapText(market.saleAverageM2))}</small></article>
+      <article class="threshold-card"><span>HAUT DE FOURCHETTE</span><strong>${market.saleHighM2 ? `${e(euros(market.saleHighM2))}/m²` : "—"}</strong><small>${e(gapText(market.saleHighM2))}</small></article>
+    </div>
+    <div class="range-table"><div class="range-head"><span>Location longue durée</span><span>Bas</span><span>Moyen</span><span>Haut</span></div><div class="range-row"><strong>Loyer au m²</strong><span>${market.rentLowM2 ? `${e(euros(market.rentLowM2))}/m²` : "—"}</span><span>${market.rentAverageM2 ? `${e(euros(market.rentAverageM2))}/m²` : "—"}</span><span>${market.rentHighM2 ? `${e(euros(market.rentHighM2))}/m²` : "—"}</span></div></div>
+  </section>`;
+}
+
 function analysisHtml() {
   const result = analyzeProject(state.project);
   const activeControls = controls[state.formTab] ?? [];
@@ -615,8 +637,10 @@ function analysisHtml() {
   return `<div class="page-stack">
     <section class="panel form-panel">
       <div class="section-title"><div><span class="eyebrow">Identification</span><h2>Projet analysé</h2></div><p>Chaque donnée est enregistrée automatiquement dans le navigateur.</p></div>
-      ${identityFields()}
+    ${identityFields()}
     </section>
+
+    ${marketReferenceHtml()}
 
     ${viabilityHtml(result)}
 
@@ -668,8 +692,8 @@ function sensitivityHtml() {
     </section>
 
     <section class="panel">
-      <div class="section-title"><div><span class="eyebrow">Prudent · Central · Optimiste</span><h2>Scénarios simultanés</h2></div><p>Stress : taux +2 pts, travaux +20 %, loyers −10 %, vacance +5 pts, occupation LCD −15 pts.</p></div>
-      <div class="table-wrap"><table><thead><tr><th>Scénario</th><th>CF longue durée/mois</th><th>CF courte durée/mois</th><th>Marge achat-revente</th></tr></thead><tbody>${scenarios.map((row) => `<tr><td>${e(row.name)}</td><td class="${row.longTermMonthly >= 0 ? "positive-text" : "negative-text"}">${e(euros(row.longTermMonthly))}</td><td class="${row.shortTermMonthly >= 0 ? "positive-text" : "negative-text"}">${e(euros(row.shortTermMonthly))}</td><td class="${row.flipNetProfit >= 0 ? "positive-text" : "negative-text"}">${e(euros(row.flipNetProfit))}</td></tr>`).join("")}</tbody></table></div>
+      <div class="section-title"><div><span class="eyebrow">Prudent · Central · Haut</span><h2>Scénarios simultanés</h2></div><p>Avec une référence marché : bornes basse, moyenne et haute publiées. Le scénario prudent ajoute aussi taux +2 pts, travaux +20 %, vacance +5 pts et occupation LCD −15 pts.</p></div>
+      <div class="table-wrap"><table><thead><tr><th>Scénario</th><th>Revente €/m²</th><th>Loyer mensuel</th><th>CF longue durée/mois</th><th>CF courte durée/mois</th><th>Marge achat-revente</th></tr></thead><tbody>${scenarios.map((row) => `<tr><td>${e(row.name === "Optimiste" ? "Haut" : row.name)}</td><td>${row.resalePriceM2 ? `${e(euros(row.resalePriceM2))}/m²` : "—"}</td><td>${e(euros(row.monthlyRent))}</td><td class="${row.longTermMonthly >= 0 ? "positive-text" : "negative-text"}">${e(euros(row.longTermMonthly))}</td><td class="${row.shortTermMonthly >= 0 ? "positive-text" : "negative-text"}">${e(euros(row.shortTermMonthly))}</td><td class="${row.flipNetProfit >= 0 ? "positive-text" : "negative-text"}">${e(euros(row.flipNetProfit))}</td></tr>`).join("")}</tbody></table></div>
     </section>
 
     <section class="threshold-grid">
@@ -945,7 +969,7 @@ render();
 
 async function refreshRemoteRadar() {
   try {
-    const [listingsResponse, historyResponse, healthResponse, marketResponse] = await Promise.all([fetch("/data/listings.json", { cache: "no-store" }), fetch("/data/history.json", { cache: "no-store" }), fetch("/data/status.json", { cache: "no-store" }), fetch("/data/market-references.json", { cache: "no-store" })]);
+    const [listingsResponse, historyResponse, healthResponse, marketResponse] = await Promise.all([fetch("/data/listings.json", { cache: "no-store" }), fetch("/data/history.json", { cache: "no-store" }), fetch("/data/status.json", { cache: "no-store" }), fetch("/api/market-prices", { cache: "no-store" })]);
     if (!listingsResponse.ok || !historyResponse.ok || !healthResponse.ok) throw new Error("fichiers du radar indisponibles");
     const payload = await listingsResponse.json();
     const history = await historyResponse.json();

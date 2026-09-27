@@ -168,6 +168,18 @@ async function collectDailyMarketPrices() {
     state.marketReferences = references;
     state.lastMarketRunAt = new Date().toISOString();
     await setState(state);
+    const radarApp = state.apps.find((app) => app.id === "radar-immo" && app.transport !== "local" && app.ingestUrl && app.token);
+    if (radarApp) {
+      const syncUrl = new URL(radarApp.ingestUrl);
+      syncUrl.pathname = "/api/market-prices";
+      syncUrl.search = "";
+      const response = await fetch(syncUrl, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${radarApp.token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ appId: "radar-immo", references })
+      });
+      if (!response.ok) throw new Error(`Synchronisation marché HTTP ${response.status}`);
+    }
     await notifyRadarTabs();
     return { ok: true, count: Object.keys(references).length };
   } finally {

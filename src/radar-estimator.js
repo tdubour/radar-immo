@@ -45,7 +45,12 @@ function comparableMarket(listing, listings, references) {
     marketSource: external.source,
     marketSourceUrl: external.sourceUrl,
     marketObservedAt: external.observedAt,
-    rentM2: external.rentM2
+    rentM2: external.rentM2,
+    saleLowM2: external.saleLowM2,
+    saleHighM2: external.saleHighM2,
+    rentLowM2: external.rentLowM2,
+    rentHighM2: external.rentHighM2,
+    marketObservedLabel: external.observedLabel
   };
   const group = propertyGroup(listing);
   const city = normalize(listing.city);
@@ -61,7 +66,12 @@ function comparableMarket(listing, listings, references) {
     marketSource: "annonces collectées",
     marketSourceUrl: null,
     marketObservedAt: null,
-    rentM2: null
+    rentM2: null,
+    saleLowM2: null,
+    saleHighM2: null,
+    rentLowM2: null,
+    rentHighM2: null,
+    marketObservedLabel: null
   };
 }
 
@@ -138,6 +148,18 @@ function buildQuickProject(listing, market) {
   // Modèle Berry : revente directe, sans commission d'agence.
   project.flip.sellingAgencyPct = 0;
   project.projection.years = 25;
+  project.marketReference = market.averagePriceM2 ? {
+    source: market.marketSource,
+    sourceUrl: market.marketSourceUrl,
+    observedAt: market.marketObservedAt,
+    observedLabel: market.marketObservedLabel,
+    saleLowM2: market.saleLowM2,
+    saleAverageM2: market.averagePriceM2,
+    saleHighM2: market.saleHighM2,
+    rentLowM2: market.rentLowM2,
+    rentAverageM2: market.rentM2,
+    rentHighM2: market.rentHighM2
+  } : null;
   return { project, works, estimatedRent: Math.round(estimatedRent), short };
 }
 
@@ -163,6 +185,11 @@ export function quickEstimateListing(listing, listings = [], marketReferences = 
     propertyGroup: propertyGroup(listing),
     pricePerM2: currentPriceM2,
     averagePriceM2: market.averagePriceM2,
+    marketSaleLowM2: market.saleLowM2,
+    marketSaleHighM2: market.saleHighM2,
+    marketRentLowM2: market.rentLowM2,
+    marketRentAverageM2: market.rentM2,
+    marketRentHighM2: market.rentHighM2,
     comparableCount: market.comparableCount,
     comparableScope: market.comparableScope,
     marketSource: market.marketSource,

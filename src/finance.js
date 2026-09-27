@@ -311,7 +311,10 @@ export function flipResult(project) {
   const interest = period.reduce((sum, row) => sum + row.interest, 0);
   const insurance = loan.monthlyInsurance * months;
   const financeCosts = interest + insurance;
-  const holdingCosts = project.flip.carryingCostMonthly * months + project.flip.divisionAndLegalFees + project.flip.commercialisationFees + project.flip.otherCosts;
+  const divisionAndLegalFees = project.flip.includeDivisionAndLegalFees ? project.flip.divisionAndLegalFees : 0;
+  const commercialisationFees = project.flip.includeCommercialisationFees ? project.flip.commercialisationFees : 0;
+  const otherCosts = project.flip.includeOtherCosts ? project.flip.otherCosts : 0;
+  const holdingCosts = project.flip.carryingCostMonthly * months + divisionAndLegalFees + commercialisationFees + otherCosts;
   const netResalePrice = project.flip.resalePrice * (1 - pct(project.flip.resaleNegotiationPct));
   const sellingCosts = netResalePrice * pct(project.flip.sellingAgencyPct);
   const profitBeforeTax = netResalePrice - sellingCosts - acquisition.totalProjectCost - financeCosts - holdingCosts;
@@ -339,6 +342,7 @@ export function flipResult(project) {
     sellingCosts,
     financeCosts,
     holdingCosts,
+    includedOptionalCosts: { divisionAndLegalFees, commercialisationFees, otherCosts },
     profitBeforeTax,
     corporateTax: tax,
     netProfit,

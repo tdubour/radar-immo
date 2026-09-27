@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createDefaultRadarConfig, dedupeCandidates, evaluateCandidate, isInSearchArea } from "../src/radar.js";
+import { createDefaultRadarConfig, dedupeCandidates, evaluateCandidate, isInSearchArea, sortRadarListings } from "../src/radar.js";
 
 test("search area includes the main radius and large extended cities", () => {
   const config = createDefaultRadarConfig();
@@ -24,4 +24,16 @@ test("private sellers receive a ranking advantage", () => {
 test("deduplication keeps one source listing", () => {
   const rows = [{ sourceId: "pap", externalId: "1" }, { sourceId: "pap", externalId: "1" }];
   assert.equal(dedupeCandidates(rows).length, 1);
+});
+
+test("column sorting applies one direction and keeps missing values last", () => {
+  const rows = [
+    { title: "B", estimatedResaleProfit: 20000 },
+    { title: "A", estimatedResaleProfit: null },
+    { title: "C", estimatedResaleProfit: 50000 }
+  ];
+  assert.deepEqual(sortRadarListings(rows, { key: "estimatedResaleProfit", direction: "desc" }).map((row) => row.title), ["C", "B", "A"]);
+  assert.deepEqual(sortRadarListings(rows, { key: "estimatedResaleProfit", direction: "asc" }).map((row) => row.title), ["B", "C", "A"]);
+  assert.deepEqual(sortRadarListings(rows, { key: "title", direction: "asc" }).map((row) => row.title), ["A", "B", "C"]);
+  assert.equal(sortRadarListings(rows, null), rows);
 });

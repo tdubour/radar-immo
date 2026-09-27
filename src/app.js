@@ -10,7 +10,7 @@ import {
   viabilityRange
 } from "./finance.js";
 import { barChart, chartCard, lineChart } from "./charts.js";
-import { createDefaultRadarConfig, rankCandidates } from "./radar.js";
+import { createDefaultRadarConfig, rankCandidates, sortRadarListings } from "./radar.js";
 import { enrichRadarEstimates } from "./radar-estimator.js";
 import { mergeExtensionSourceStatuses, sourceStatusText } from "./radar-status.js";
 
@@ -85,6 +85,7 @@ const state = {
   chatOpen: false,
   chatPending: false,
   chatDraft: "",
+  radarSort: null,
   chatMessages: [{ role: "assistant", content: "Bonjour ! Je peux comparer les annonces du radar, expliquer les estimations et faire ressortir les opportunités ou les points à vérifier." }]
 };
 let extensionRadarListings = [];
@@ -527,6 +528,7 @@ function radarHtml() {
   const config = state.radarConfig;
   const estimated = enrichRadarEstimates(state.radarListings, currentMarketReferences());
   const listings = rankCandidates(estimated, config);
+  const sortedListings = sortRadarListings(listings, state.radarSort);
   const qualified = listings.filter((listing) => listing.qualified);
   const drops = listings.filter((listing) => Number(listing.priceChange) < 0);
   const formatDate = (value) => value ? new Date(value).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" }) : "—";
@@ -536,6 +538,12 @@ function radarHtml() {
     : `<span class="price-stable">Stable</span>`;
   const sourceStats = state.radarStatus.sources || [];
   const top = listings.filter((item) => item.inArea).slice(0, 6);
+  const sortHeader = (label, key, defaultDirection = "desc") => {
+    const active = state.radarSort?.key === key;
+    const direction = active ? state.radarSort.direction : defaultDirection;
+    const arrow = active ? direction === "asc" ? "↑" : "↓" : "↕";
+    return `<button class="sort-button${active ? " active" : ""}" data-sort-key="${e(key)}" data-sort-default="${e(defaultDirection)}" title="Trier par ${e(label)}">${e(label)} <span>${arrow}</span></button>`;
+  };
   return `<div class="page-stack radar-page">
     <section class="hero-panel"><div><span class="eyebrow">Analyse automatique · SCI à l’IS</span><h2>Biens analysés en priorité</h2><p>Chaque annonce est comparée au prix au m² du lot, puis simulée en location longue durée, courte durée et revente. Les chiffres marqués « estimation » servent au tri rapide avant vérification des charges, loyers et travaux.</p></div><div class="hero-actions"><button class="secondary" data-action="import-radar-listings">Importer un JSON</button><button class="primary" data-action="refresh-radar">Actualiser maintenant</button></div></section>
     <section class="kpi-grid">
@@ -553,7 +561,7 @@ function radarHtml() {
       <div class="analysis-dates"><span>Collectée ${formatDate(item.firstSeenAt || item.capturedAt || item.receivedAt)}</span><span>Mise à jour ${formatDate(item.priceChangedAt || item.updatedAt || item.lastSeenAt || item.capturedAt)}</span></div>
       <div class="analysis-actions"><a class="secondary" href="${e(item.sourceUrl)}" target="_blank" rel="noopener noreferrer">Voir l’annonce</a><button class="primary" data-action="analyze-listing" data-key="${e(item.fingerprint || item.sourceUrl)}">Simulation complète</button></div>
     </article>`).join("")}</section>` : ""}
-    <section class="panel"><div class="section-title"><div><span class="eyebrow">Base collectée</span><h2>Toutes les annonces réelles</h2></div><p>${listings.length} annonces dédupliquées. Références communales MeilleursAgents lorsqu’elles sont disponibles, sinon médiane des annonces collectées. ${new Set(listings.map((item) => item.city).filter(Boolean)).size} communes couvertes.</p></div>${listings.length ? `<div class="table-wrap radar-table"><table><thead><tr><th>Annonce</th><th>Prix / évolution</th><th>€/m² vs marché</th><th>CF longue</th><th>CF courte</th><th>Revente</th><th>Collecte</th><th>Mise à jour</th><th></th></tr></thead><tbody>${listings.map((item) => `<tr><td><a href="${e(item.sourceUrl)}" target="_blank" rel="noopener noreferrer"><strong>${e(item.title || "Sans titre")}</strong><small>${e(item.city || "—")} · ${Number.isFinite(Number(item.distanceKm)) ? `${Number(item.distanceKm).toFixed(0)} km` : "distance inconnue"} · ${e(item.sourceId || "source")}</small></a></td><td><strong>${e(euros(item.askingPrice))}</strong>${priceChangeHtml(item)}</td><td>${item.pricePerM2 ? `<strong>${e(euros(item.pricePerM2))}</strong><small>${item.averagePriceM2 ? `marché ${e(euros(item.averagePriceM2))} · ${item.marketDiscountPct >= 0 ? "décote" : "surcote"} ${Math.abs(item.marketDiscountPct).toFixed(0)} % · ${e(item.marketSource || item.comparableScope)}` : "comparables insuffisants"}</small>` : "—"}</td><td class="${item.longTermCashflowMonthly >= 100 ? "positive-text" : "negative-text"}"><strong>${e(compactMoney(item.longTermCashflowMonthly))}</strong><small>${e(euros(item.estimatedMonthlyRent))} de loyer estimé</small></td><td class="${item.shortTermCashflowMonthly >= 100 ? "positive-text" : "negative-text"}"><strong>${item.shortTermCashflowMonthly === null ? "—" : e(compactMoney(item.shortTermCashflowMonthly))}</strong><small>${item.estimatedAdr ? `${e(euros(item.estimatedAdr))}/nuit · ${item.estimatedOccupancyPct} %` : "non résidentiel"}</small></td><td class="${item.estimatedResaleProfit >= 0 ? "positive-text" : "negative-text"}"><strong>${e(compactMoney(item.estimatedResaleProfit))}</strong><small>sortie ${e(compactMoney(item.estimatedResalePrice))}</small></td><td>${formatDate(item.firstSeenAt || item.capturedAt || item.receivedAt)}</td><td>${formatDate(item.priceChangedAt || item.updatedAt || item.lastSeenAt || item.capturedAt)}</td><td><button class="secondary compact-button" data-action="analyze-listing" data-key="${e(item.fingerprint || item.sourceUrl)}">Ouvrir</button></td></tr>`).join("")}</tbody></table></div>` : `<div class="empty"><div class="brand-mark">◎</div><h3>Aucune annonce réelle</h3><p>L’extension et le collecteur quotidien alimenteront automatiquement cette page. Aucun exemple n’est injecté.</p></div>`}</section>
+    <section class="panel"><div class="section-title radar-list-heading"><div><span class="eyebrow">Base collectée</span><h2>Toutes les annonces réelles</h2></div><div class="radar-list-tools"><p>${listings.length} annonces dédupliquées. Références communales MeilleursAgents lorsqu’elles sont disponibles, sinon médiane des annonces collectées. ${new Set(listings.map((item) => item.city).filter(Boolean)).size} communes couvertes.</p><button class="secondary compact-button" data-action="reset-radar-sort" ${state.radarSort ? "" : "disabled"}>Retirer le tri</button></div></div>${listings.length ? `<div class="table-wrap radar-table"><table><thead><tr><th>${sortHeader("Annonce", "title", "asc")}</th><th>${sortHeader("Prix / évolution", "askingPrice")}</th><th>${sortHeader("€/m² vs marché", "pricePerM2")}</th><th>${sortHeader("CF longue", "longTermCashflowMonthly")}</th><th>${sortHeader("CF courte", "shortTermCashflowMonthly")}</th><th>${sortHeader("Revente", "estimatedResaleProfit")}</th><th>${sortHeader("Collecte", "collectedAt")}</th><th>${sortHeader("Mise à jour", "updatedAt")}</th><th></th></tr></thead><tbody>${sortedListings.map((item) => `<tr><td><a href="${e(item.sourceUrl)}" target="_blank" rel="noopener noreferrer"><strong>${e(item.title || "Sans titre")}</strong><small>${e(item.city || "—")} · ${Number.isFinite(Number(item.distanceKm)) ? `${Number(item.distanceKm).toFixed(0)} km` : "distance inconnue"} · ${e(item.sourceId || "source")}</small></a></td><td><strong>${e(euros(item.askingPrice))}</strong>${priceChangeHtml(item)}</td><td>${item.pricePerM2 ? `<strong>${e(euros(item.pricePerM2))}</strong><small>${item.averagePriceM2 ? `marché ${e(euros(item.averagePriceM2))} · ${item.marketDiscountPct >= 0 ? "décote" : "surcote"} ${Math.abs(item.marketDiscountPct).toFixed(0)} % · ${e(item.marketSource || item.comparableScope)}` : "comparables insuffisants"}</small>` : "—"}</td><td class="${item.longTermCashflowMonthly >= 100 ? "positive-text" : "negative-text"}"><strong>${e(compactMoney(item.longTermCashflowMonthly))}</strong><small>${e(euros(item.estimatedMonthlyRent))} de loyer estimé</small></td><td class="${item.shortTermCashflowMonthly >= 100 ? "positive-text" : "negative-text"}"><strong>${item.shortTermCashflowMonthly === null ? "—" : e(compactMoney(item.shortTermCashflowMonthly))}</strong><small>${item.estimatedAdr ? `${e(euros(item.estimatedAdr))}/nuit · ${item.estimatedOccupancyPct} %` : "non résidentiel"}</small></td><td class="${item.estimatedResaleProfit >= 0 ? "positive-text" : "negative-text"}"><strong>${e(compactMoney(item.estimatedResaleProfit))}</strong><small>sortie ${e(compactMoney(item.estimatedResalePrice))}</small></td><td>${formatDate(item.firstSeenAt || item.capturedAt || item.receivedAt)}</td><td>${formatDate(item.priceChangedAt || item.updatedAt || item.lastSeenAt || item.capturedAt)}</td><td><button class="secondary compact-button" data-action="analyze-listing" data-key="${e(item.fingerprint || item.sourceUrl)}">Ouvrir</button></td></tr>`).join("")}</tbody></table></div>` : `<div class="empty"><div class="brand-mark">◎</div><h3>Aucune annonce réelle</h3><p>L’extension et le collecteur quotidien alimenteront automatiquement cette page. Aucun exemple n’est injecté.</p></div>`}</section>
   </div>`;
 }
 
@@ -816,6 +824,16 @@ function updateLiveResults() {
 }
 
 app.addEventListener("click", (event) => {
+  const sortButton = event.target.closest("[data-sort-key]");
+  if (sortButton) {
+    const key = sortButton.dataset.sortKey;
+    const defaultDirection = sortButton.dataset.sortDefault || "desc";
+    state.radarSort = state.radarSort?.key === key
+      ? { key, direction: state.radarSort.direction === "desc" ? "asc" : "desc" }
+      : { key, direction: defaultDirection };
+    render();
+    return;
+  }
   const chatAction = event.target.closest("[data-chat-action]")?.dataset.chatAction;
   if (chatAction) {
     state.chatOpen = chatAction === "toggle" ? !state.chatOpen : false;
@@ -847,6 +865,11 @@ app.addEventListener("click", (event) => {
   const actionButton = event.target.closest("[data-action]");
   if (!actionButton) return;
   const action = actionButton.dataset.action;
+  if (action === "reset-radar-sort") {
+    state.radarSort = null;
+    render();
+    return;
+  }
   if (action === "save") saveCurrentProject();
   if (action === "theme") {
     state.theme = state.theme === "dark" ? "light" : "dark";

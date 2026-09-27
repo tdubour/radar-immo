@@ -60,6 +60,8 @@ test("new project starts without example acquisition data", () => {
   assert.equal(acquisition.guaranteeFees, 0);
   assert.equal(acquisition.totalProjectCost, 0);
   assert.equal(acquisition.loanAmount, 0);
+  assert.equal(project.acquisition.agencyFees, 0);
+  assert.equal(project.flip.sellingAgencyPct, 0);
 });
 
 test("corporateTax applies reduced and normal bands", () => {

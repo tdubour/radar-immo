@@ -14,6 +14,7 @@ import { createDefaultRadarConfig, rankCandidates, sortRadarListings } from "./r
 import { enrichRadarEstimates, isLandListing, isProfessionalListing } from "./radar-estimator.js";
 import { mergeExtensionSourceStatuses, sourceStatusText } from "./radar-status.js";
 import { selectChatContext } from "./chat-context.js";
+import { renderChatMarkdown } from "./chat-markdown.js";
 
 const DRAFT_KEY = "radar-immo:draft:v1";
 const SAVED_KEY = "radar-immo:projects:v1";
@@ -417,7 +418,7 @@ function shell(content) {
 function chatbotHtml() {
   return `<aside class="radar-chat ${state.chatOpen ? "open" : ""}" aria-label="Assistant d’analyse des annonces">
     ${state.chatOpen ? `<section class="radar-chat-panel"><header><div><strong>Analyste RadarImmo</strong><small>IA légère · annonces du radar</small></div><button data-chat-action="close" aria-label="Fermer">×</button></header>
-      <div class="radar-chat-messages" aria-live="polite">${state.chatMessages.map((message) => `<p class="${message.role}">${e(message.content)}</p>`).join("")}${state.chatPending ? `<p class="assistant pending">Analyse en cours…</p>` : ""}</div>
+      <div class="radar-chat-messages" aria-live="polite">${state.chatMessages.map((message) => message.role === "assistant" ? `<div class="assistant chat-rich-text">${renderChatMarkdown(message.content)}</div>` : `<p class="user">${e(message.content)}</p>`).join("")}${state.chatPending ? `<p class="assistant pending">Analyse en cours…</p>` : ""}</div>
       <form id="radar-chat-form"><input id="radar-chat-input" maxlength="1500" autocomplete="off" placeholder="Ex. Quelles annonces prioriser ?" value="${e(state.chatDraft)}" ${state.chatPending ? "disabled" : ""}><button class="primary" ${state.chatPending ? "disabled" : ""}>Envoyer</button></form>
       <small class="radar-chat-note">Analyse indicative : vérifie les données avant toute décision.</small></section>` : ""}
     <button class="radar-chat-toggle" data-chat-action="toggle">${state.chatOpen ? "Fermer" : "✦ Analyser les annonces"}</button>

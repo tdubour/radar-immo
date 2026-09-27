@@ -80,3 +80,31 @@ export function dedupeCandidates(candidates) {
 export function rankCandidates(candidates, config = createDefaultRadarConfig()) {
   return dedupeCandidates(candidates).map((candidate) => evaluateCandidate(candidate, config)).sort((a, b) => b.score - a.score);
 }
+
+const sortableNumber = (value) => value === null || value === undefined || value === "" ? Number.NaN : Number(value);
+
+const radarSortValues = {
+  title: (item) => String(item.title || "").toLocaleLowerCase("fr"),
+  askingPrice: (item) => sortableNumber(item.askingPrice),
+  pricePerM2: (item) => sortableNumber(item.pricePerM2),
+  longTermCashflowMonthly: (item) => sortableNumber(item.longTermCashflowMonthly),
+  shortTermCashflowMonthly: (item) => sortableNumber(item.shortTermCashflowMonthly),
+  estimatedResaleProfit: (item) => sortableNumber(item.estimatedResaleProfit),
+  collectedAt: (item) => Date.parse(item.firstSeenAt || item.capturedAt || item.receivedAt || ""),
+  updatedAt: (item) => Date.parse(item.priceChangedAt || item.updatedAt || item.lastSeenAt || item.capturedAt || "")
+};
+
+export function sortRadarListings(listings, sort) {
+  const accessor = radarSortValues[sort?.key];
+  if (!accessor || !["asc", "desc"].includes(sort?.direction)) return listings;
+  const direction = sort.direction === "asc" ? 1 : -1;
+  return listings.map((item, index) => ({ item, index })).sort((left, right) => {
+    const first = accessor(left.item);
+    const second = accessor(right.item);
+    const firstMissing = first === "" || !Number.isFinite(first) && typeof first !== "string";
+    const secondMissing = second === "" || !Number.isFinite(second) && typeof second !== "string";
+    if (firstMissing !== secondMissing) return firstMissing ? 1 : -1;
+    const comparison = typeof first === "string" ? first.localeCompare(second, "fr") : first - second;
+    return comparison ? comparison * direction : left.index - right.index;
+  }).map(({ item }) => item);
+}

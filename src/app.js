@@ -13,6 +13,7 @@ import { barChart, chartCard, lineChart } from "./charts.js";
 import { createDefaultRadarConfig, rankCandidates, sortRadarListings } from "./radar.js";
 import { enrichRadarEstimates, isLandListing, isProfessionalListing } from "./radar-estimator.js";
 import { mergeExtensionSourceStatuses, sourceStatusText } from "./radar-status.js";
+import { selectChatContext } from "./chat-context.js";
 
 const DRAFT_KEY = "radar-immo:draft:v1";
 const SAVED_KEY = "radar-immo:projects:v1";
@@ -423,8 +424,9 @@ function chatbotHtml() {
   </aside>`;
 }
 
-function chatbotListings() {
-  return rankCandidates(enrichRadarEstimates(state.radarListings, currentMarketReferences()), state.radarConfig).slice(0, 50).map((listing) => ({
+function chatbotListings(query = "") {
+  const ranked = rankCandidates(enrichRadarEstimates(state.radarListings, currentMarketReferences()), state.radarConfig);
+  return selectChatContext(ranked, query, 50).map((listing) => ({
     title: listing.title, city: listing.city, postalCode: listing.postalCode, sourceId: listing.sourceId, askingPrice: listing.askingPrice,
     surfaceM2: listing.surfaceM2, pricePerM2: listing.pricePerM2, averagePriceM2: listing.averagePriceM2, marketSource: listing.marketSource,
     marketDiscountPct: listing.marketDiscountPct, estimatedMonthlyRent: listing.estimatedMonthlyRent, longTermCashflowMonthly: listing.longTermCashflowMonthly,
@@ -441,7 +443,8 @@ async function submitChat() {
   state.chatPending = true;
   render();
   try {
-    const response = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: content, history: state.chatMessages.slice(-8), listings: chatbotListings() }) });
+    const contextQuery = state.chatMessages.filter((message) => message.role === "user").slice(-3).map((message) => message.content).join("\n");
+    const response = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: content, history: state.chatMessages.slice(-8), listings: chatbotListings(contextQuery) }) });
     const result = await response.json();
     state.chatMessages.push({ role: "assistant", content: result.answer || result.error || "L’analyse est indisponible." });
   } catch {

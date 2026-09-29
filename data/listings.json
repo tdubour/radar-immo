@@ -1,65 +1,245 @@
 {
-  "generatedAt": "2026-09-28T11:44:07.308Z",
+  "generatedAt": "2026-09-29T11:23:49.887Z",
   "listings": [
     {
-      "fingerprint": "5c1fecba3d4970962420398735d888e2c124db63d37dd74f41c7689e9c293297",
+      "fingerprint": "576b288a4dbaa35f8af4ec313b6e867c71d3bce2ba696f6eafb2ed21081dbacb",
       "sourceId": "bienici",
       "externalId": null,
-      "sourceUrl": "https://www.bienici.com/annonce/vente/blois/appartement/3pieces/citya-1-373-TAPP404602?q=%2Frecherche%2Fachat%2Floir-et-cher-41&depuis-mise-en-avant=oui",
-      "title": "Appartement 3 pièces 80 m² 41000 Blois (Saint Georges - Quinière - Les Grouëts)",
-      "description": "Citya Blois 15 UNIQUEMENT SUR BIEN’ICI* Appartement 3 pièces 80 m² 41000 Blois (Saint Georges - Quinière - Les Grouëts) 119 900 € 1 374 €/m²",
-      "askingPrice": 119900,
-      "surfaceM2": 80,
+      "sourceUrl": "https://www.bienici.com/annonce/vente/la-chaussee-saint-victor/appartement/4pieces/netty-fmconseil-appt-4339?q=%2Frecherche%2Fachat%2Floir-et-cher-41&depuis-mise-en-avant=oui",
+      "title": "Appartement 4 pièces 86 m² 41260 La Chaussée-Saint-Victor",
+      "description": "FM Conseil 7 Appartement 4 pièces 86 m² 41260 La Chaussée-Saint-Victor 168 000 € 1 953 €/m²",
+      "askingPrice": 168000,
+      "surfaceM2": 86,
+      "rooms": 4,
+      "postalCode": "41260",
+      "city": "La Chaussée-Saint-Victor",
+      "dpe": null,
+      "sellerType": "unknown",
+      "firstSeenAt": "2026-09-29T11:23:49.887Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
+      "cityPopulation": 4471,
+      "latitude": 47.6097,
+      "longitude": 1.3599,
+      "distanceKm": 40.8,
+      "priceHistory": [
+        {
+          "observedAt": "2026-09-29T11:23:49.887Z",
+          "askingPrice": 168000
+        }
+      ],
+      "previousPrice": null,
+      "priceChangedAt": null,
+      "updatedAt": "2026-09-29T11:23:49.887Z"
+    },
+    {
+      "fingerprint": "ed2187f31083b87472bf4272228edad4bbc0442e3d1c97790180a9f5e896fe00",
+      "sourceId": "bienici",
+      "externalId": null,
+      "sourceUrl": "https://www.bienici.com/annonce/vente/blois/appartement/3pieces/citya-1-373-TAPP11590A?q=%2Frecherche%2Fachat%2Floir-et-cher-41&depuis-mise-en-avant=oui",
+      "title": "Appartement 3 pièces 59 m² 41000 Blois (Centre-ville)",
+      "description": "Citya Blois 12 Appartement 3 pièces 59 m² 41000 Blois (Centre-ville) 93 800 € 1 433 €/m²",
+      "askingPrice": 93800,
+      "surfaceM2": 59,
       "rooms": 3,
       "postalCode": "41000",
       "city": "Blois",
       "dpe": null,
       "sellerType": "unknown",
-      "firstSeenAt": "2026-09-28T11:44:07.308Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "firstSeenAt": "2026-09-29T11:23:49.887Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 47219,
       "latitude": 47.5813,
       "longitude": 1.3049,
       "distanceKm": 45,
       "priceHistory": [
         {
-          "observedAt": "2026-09-28T11:44:07.308Z",
-          "askingPrice": 119900
+          "observedAt": "2026-09-20T09:50:34.531Z",
+          "askingPrice": 93800
         }
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
-      "fingerprint": "9c079e9280d675a3995593365648375548b2daff0eb21578bda26a3fd92a9e0b",
+      "fingerprint": "d1a650ecda74c47536b1a08a722d64ab2d705c08c3100f076851eac789319b1d",
       "sourceId": "bienici",
       "externalId": null,
-      "sourceUrl": "https://www.bienici.com/annonce/vente/pruniers-en-sologne/maison/5pieces/ifsp6a-4839706?q=%2Frecherche%2Fachat%2Floir-et-cher-41&depuis-mise-en-avant=oui",
-      "title": "Maison 5 pièces 173 m² 41200 Pruniers-en-Sologne",
-      "description": "16 VIDÉO EXCLUSIVITÉ Maison 5 pièces 173 m² 41200 Pruniers-en-Sologne 286 200 € 1 557 €/m²",
-      "askingPrice": 286200,
-      "surfaceM2": 173,
+      "sourceUrl": "https://www.bienici.com/annonce/vente/saint-denis-en-val/maison/5pieces/era-2-60136878?q=%2Frecherche%2Fachat%2Floiret-45&depuis-mise-en-avant=oui",
+      "title": "Maison 5 pièces 117 m² 45560 Saint-Denis-en-Val",
+      "description": "12 Maison 5 pièces 117 m² 45560 Saint-Denis-en-Val 260 000 € 2 222 €/m²",
+      "askingPrice": 260000,
+      "surfaceM2": 117,
       "rooms": 5,
-      "postalCode": "41200",
-      "city": "Pruniers-en-Sologne",
+      "postalCode": "45560",
+      "city": "Saint-Denis-en-Val",
       "dpe": null,
       "sellerType": "unknown",
-      "firstSeenAt": "2026-09-28T11:44:07.308Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
-      "cityPopulation": 2245,
-      "latitude": 47.3432,
-      "longitude": 1.6672,
-      "distanceKm": 34.6,
+      "firstSeenAt": "2026-09-29T11:23:49.887Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
+      "cityPopulation": 7766,
+      "latitude": 47.8791,
+      "longitude": 1.9714,
+      "distanceKm": 30.4,
       "priceHistory": [
         {
-          "observedAt": "2026-09-15T10:07:52.955Z",
-          "askingPrice": 286200
+          "observedAt": "2026-09-29T11:23:49.887Z",
+          "askingPrice": 260000
         }
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
+    },
+    {
+      "fingerprint": "ab619a8131573405bc8b0400834a68f0e06fa216c694fbc4a05f25f3f2ecd28b",
+      "sourceId": "bienici",
+      "externalId": null,
+      "sourceUrl": "https://www.bienici.com/annonce/vente/orleans/maison/8pieces/century-21-202_3805_373?q=%2Frecherche%2Fachat%2Floiret-45&depuis-mise-en-avant=oui",
+      "title": "Maison 8 pièces 170 m² 45100 Orléans (Soleil Levant - Champ de Mars)",
+      "description": "CENTURY 21 L'Écu d'Or 14 VIDÉO EXCLUSIVITÉ Maison 8 pièces 170 m² 45100 Orléans (Soleil Levant - Champ de Mars) 509 600 € 2 882 €/m²",
+      "askingPrice": 509600,
+      "surfaceM2": 170,
+      "rooms": 8,
+      "postalCode": "45100",
+      "city": "Orléans",
+      "dpe": null,
+      "sellerType": "unknown",
+      "firstSeenAt": "2026-09-29T11:23:49.887Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
+      "cityPopulation": 116357,
+      "latitude": 47.8734,
+      "longitude": 1.9122,
+      "distanceKm": 29.3,
+      "priceHistory": [
+        {
+          "observedAt": "2026-09-29T11:23:49.887Z",
+          "askingPrice": 509600
+        }
+      ],
+      "previousPrice": null,
+      "priceChangedAt": null,
+      "updatedAt": "2026-09-29T11:23:49.887Z"
+    },
+    {
+      "fingerprint": "29ed061628a192a496ac4bf9b81aee99b60ee4c34ebb1daad99f33a0be5a5964",
+      "sourceId": "bienici",
+      "externalId": null,
+      "sourceUrl": "https://www.bienici.com/annonce/vente/orleans/maison/5pieces/iad-france-1028377?q=%2Frecherche%2Fachat%2Floiret-45",
+      "title": "Maison 5 pièces 127 m² 45100 Orléans (La Bolière - Campus)",
+      "description": "27 EXCLUSIVITÉ Maison 5 pièces 127 m² 45100 Orléans (La Bolière - Campus) 229 000 € 1 797 €/m²",
+      "askingPrice": 229000,
+      "surfaceM2": 127,
+      "rooms": 5,
+      "postalCode": "45100",
+      "city": "Orléans",
+      "dpe": null,
+      "sellerType": "unknown",
+      "firstSeenAt": "2026-09-29T11:23:49.887Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
+      "cityPopulation": 116357,
+      "latitude": 47.8734,
+      "longitude": 1.9122,
+      "distanceKm": 29.3,
+      "priceHistory": [
+        {
+          "observedAt": "2026-09-29T11:23:49.887Z",
+          "askingPrice": 229000
+        }
+      ],
+      "previousPrice": null,
+      "priceChangedAt": null,
+      "updatedAt": "2026-09-29T11:23:49.887Z"
+    },
+    {
+      "fingerprint": "6affe4a21d0513af716ec69a45dd771dec1704e5277fd67a77a37e4dc84b19a7",
+      "sourceId": "bienici",
+      "externalId": null,
+      "sourceUrl": "https://www.bienici.com/annonce/vente/bourges/appartement/4pieces/square-habitat-immo-facile-43305392?q=%2Frecherche%2Fachat%2Fcher-18&depuis-mise-en-avant=oui",
+      "title": "Appartement 4 pièces 74 m² 18000 Bourges (Aéroport - Vauvert - Pierrelay - Pissevieille)",
+      "description": "Square Habitat BOURGES 10 EXCLUSIVITÉ Appartement 4 pièces 74 m² 18000 Bourges (Aéroport - Vauvert - Pierrelay - Pissevieille) 138 500 € 1 872 €/m²",
+      "askingPrice": 138500,
+      "surfaceM2": 74,
+      "rooms": 4,
+      "postalCode": "18000",
+      "city": "Bourges",
+      "dpe": null,
+      "sellerType": "unknown",
+      "firstSeenAt": "2026-09-29T11:23:49.887Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
+      "cityPopulation": 64186,
+      "latitude": 47.078,
+      "longitude": 2.3983,
+      "distanceKm": 69.9,
+      "priceHistory": [
+        {
+          "observedAt": "2026-09-29T11:23:49.887Z",
+          "askingPrice": 138500
+        }
+      ],
+      "previousPrice": null,
+      "priceChangedAt": null,
+      "updatedAt": "2026-09-29T11:23:49.887Z"
+    },
+    {
+      "fingerprint": "0e27ef578f1d5f5eedf4a5c1949fc724d2bc7fa385c669fb6d48f9dc1f97407d",
+      "sourceId": "bienici",
+      "externalId": null,
+      "sourceUrl": "https://www.bienici.com/annonce/vente/la-chapelle-saint-ursin/maison/6pieces/guy-hoquet-18-GT0046-M11053?q=%2Frecherche%2Fachat%2Fcher-18&depuis-mise-en-avant=oui",
+      "title": "Maison 6 pièces 202 m² 18570 La Chapelle-Saint-Ursin",
+      "description": "Guy Hoquet BOURGES 9 EXCLUSIVITÉ Maison 6 pièces 202 m² 18570 La Chapelle-Saint-Ursin 275 700 € 1 365 €/m²",
+      "askingPrice": 275700,
+      "surfaceM2": 202,
+      "rooms": 6,
+      "postalCode": "18570",
+      "city": "La Chapelle-Saint-Ursin",
+      "dpe": null,
+      "sellerType": "unknown",
+      "firstSeenAt": "2026-09-29T11:23:49.887Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
+      "cityPopulation": 3681,
+      "latitude": 47.0546,
+      "longitude": 2.3211,
+      "distanceKm": 69.3,
+      "priceHistory": [
+        {
+          "observedAt": "2026-09-29T11:23:49.887Z",
+          "askingPrice": 275700
+        }
+      ],
+      "previousPrice": null,
+      "priceChangedAt": null,
+      "updatedAt": "2026-09-29T11:23:49.887Z"
+    },
+    {
+      "fingerprint": "3ca74d28f7f6e850fff155eb6502597bbd7def1b66675e4170952640cdb0184f",
+      "sourceId": "paruvendu",
+      "externalId": null,
+      "sourceUrl": "https://www.paruvendu.fr/immobilier/vente/appartement/1295769895A1KIVHAP000",
+      "title": "Appartement 93 m2 Romorantin-Lanthenay (41)",
+      "description": "Nouveau Voir d'autres photos 6 67 990 € Appartement 93 m2 Romorantin-Lanthenay (41) 4 pièces 3 chambres Balcon DPE : E Achat appartement 3 chambres. Appartement romorantin lanthenay 4 pièces 93 m2. 41200 - romorantin lanthenay - appartement 93m² - 3 chambres - grenier aménageable - centre ville. ............................................... en plein coeur du centre-ville, avec commerces et...",
+      "askingPrice": 667990,
+      "surfaceM2": 93,
+      "rooms": 4,
+      "postalCode": "41200",
+      "city": "Loreux",
+      "dpe": "E",
+      "sellerType": "unknown",
+      "firstSeenAt": "2026-09-29T11:23:49.887Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
+      "cityPopulation": 238,
+      "latitude": 47.4042,
+      "longitude": 1.8399,
+      "distanceKm": 23.3,
+      "priceHistory": [
+        {
+          "observedAt": "2026-09-29T11:23:49.887Z",
+          "askingPrice": 667990
+        }
+      ],
+      "previousPrice": null,
+      "priceChangedAt": null,
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "959b49d8e99b6ff403081aa546a6db0c7980ae0e630e2b505fe1fc0fe9f4b0c5",
@@ -67,16 +247,16 @@
       "externalId": null,
       "sourceUrl": "https://www.bienici.com/annonce/vente/la-chapelle-vendomoise/maison/7pieces/citya-1-373-TMAI145074AA?q=%2Frecherche%2Fachat%2Floir-et-cher-41",
       "title": "Maison 7 pièces 150 m² 41330 La Chapelle-Vendômoise",
-      "description": "Citya Blois 18 Coup de de l’agence UNIQUEMENT SUR BIEN’ICI* Maison 7 pièces 150 m² 41330 La Chapelle-Vendômoise 212 000 € 1 332 €/m²",
+      "description": "Citya Blois 18 UNIQUEMENT SUR BIEN’ICI* Maison 7 pièces 150 m² 41330 La Chapelle-Vendômoise 212 000 € 1 332 €/m²",
       "askingPrice": 212000,
       "surfaceM2": 150,
       "rooms": 7,
       "postalCode": "41330",
       "city": "La Chapelle-Vendômoise",
       "dpe": null,
-      "sellerType": "agency",
+      "sellerType": "unknown",
       "firstSeenAt": "2026-09-28T11:44:07.308Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 795,
       "latitude": 47.6768,
       "longitude": 1.2353,
@@ -89,97 +269,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
-    },
-    {
-      "fingerprint": "7f86617b55f4a62288aaca7376b037082211e2c3e3fb58576dd226400a99e259",
-      "sourceId": "bienici",
-      "externalId": null,
-      "sourceUrl": "https://www.bienici.com/annonce/vente/tavers/maison/hektor-rives-loire-immobilier41-221?q=%2Frecherche%2Fachat%2Floiret-45&depuis-mise-en-avant=oui",
-      "title": "Maison 977 m² 45190 Tavers",
-      "description": "RIVES LOIRE IMMOBILIER 20 Maison 977 m² 45190 Tavers 600 000 € 594 €/m²",
-      "askingPrice": 600000,
-      "surfaceM2": 977,
-      "rooms": 0,
-      "postalCode": "45190",
-      "city": "Tavers",
-      "dpe": null,
-      "sellerType": "unknown",
-      "firstSeenAt": "2026-09-28T11:44:07.308Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
-      "cityPopulation": 1334,
-      "latitude": 47.7576,
-      "longitude": 1.5882,
-      "distanceKm": 28.8,
-      "priceHistory": [
-        {
-          "observedAt": "2026-09-28T11:44:07.308Z",
-          "askingPrice": 600000
-        }
-      ],
-      "previousPrice": null,
-      "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
-    },
-    {
-      "fingerprint": "89781b0f32787221e7952785db45bf59d5569eb122e79778a5665ff4e6129842",
-      "sourceId": "bienici",
-      "externalId": null,
-      "sourceUrl": "https://www.bienici.com/annonce/vente-de-prestige/saint-martin-sur-ocre/maison/7pieces/netty-company53660mvh-house-2305?q=%2Frecherche%2Fachat%2Floiret-45&depuis-mise-en-avant=oui",
-      "title": "Maison 7 pièces 263 m² 45500 Saint-Martin-sur-Ocre",
-      "description": "Arche Immobilier 16 Maison 7 pièces 263 m² 45500 Saint-Martin-sur-Ocre 370 000 € 1 407 €/m²",
-      "askingPrice": 370000,
-      "surfaceM2": 263,
-      "rooms": 7,
-      "postalCode": "45500",
-      "city": "Saint-Martin-sur-Ocre",
-      "dpe": null,
-      "sellerType": "unknown",
-      "firstSeenAt": "2026-09-28T11:44:07.308Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
-      "cityPopulation": 1222,
-      "latitude": 47.6461,
-      "longitude": 2.6477,
-      "distanceKm": 55.9,
-      "priceHistory": [
-        {
-          "observedAt": "2026-09-28T11:44:07.308Z",
-          "askingPrice": 370000
-        }
-      ],
-      "previousPrice": null,
-      "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
-    },
-    {
-      "fingerprint": "9e02ec0adb75b7f7f6bd8556e4d4bd09294a8b0ca7e39d9b6005b30551bc19a3",
-      "sourceId": "bienici",
-      "externalId": null,
-      "sourceUrl": "https://www.bienici.com/annonce/vente/saint-doulchard/maison/8pieces/netty-sgti-house-416?q=%2Frecherche%2Fachat%2Fcher-18&depuis-mise-en-avant=oui",
-      "title": "Maison 8 pièces 200 m² 18230 Saint-Doulchard",
-      "description": "BARTH 25 VIDÉO Maison 8 pièces 200 m² 18230 Saint-Doulchard 475 000 € 2 375 €/m²",
-      "askingPrice": 475000,
-      "surfaceM2": 200,
-      "rooms": 8,
-      "postalCode": "18230",
-      "city": "Saint-Doulchard",
-      "dpe": null,
-      "sellerType": "unknown",
-      "firstSeenAt": "2026-09-28T11:44:07.308Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
-      "cityPopulation": 9647,
-      "latitude": 47.1116,
-      "longitude": 2.3554,
-      "distanceKm": 65,
-      "priceHistory": [
-        {
-          "observedAt": "2026-09-28T11:44:07.308Z",
-          "askingPrice": 475000
-        }
-      ],
-      "previousPrice": null,
-      "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "3605fdd1254a2afff8308d198ab6ab1643088dcf3a66ab534c8f857b4cf2e392",
@@ -196,7 +286,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-27T10:34:59.955Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 2442,
       "latitude": 47.788,
       "longitude": 1.0223,
@@ -209,7 +299,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "2dda6b8f6c5c485a019fa567a56f4bfc9cc67c6e8f4b6ad3dbf1f7206cf5fdbe",
@@ -226,7 +316,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-25T10:14:19.123Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 116357,
       "latitude": 47.8734,
       "longitude": 1.9122,
@@ -239,7 +329,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "9ada943a34f40a93cc65488f391e6f91b12861de6fd629dacb233505d3c51496",
@@ -256,7 +346,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-25T10:14:19.123Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 116357,
       "latitude": 47.8734,
       "longitude": 1.9122,
@@ -269,7 +359,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "321f3573b8020327659ffc8d5622306cc7b9d2578189178a58139d55f63501cb",
@@ -277,16 +367,16 @@
       "externalId": null,
       "sourceUrl": "https://www.bienici.com/annonce/vente/bourges/maison/3pieces/citya-1-374-TMAI374-967662?q=%2Frecherche%2Fachat%2Fcher-18",
       "title": "Maison 3 pièces 48 m² 18000 Bourges (Val d'Auron - Hameau de Gionne - Mazières - Pijolins)",
-      "description": "Citya Jacques Cœur 14 VIDÉO UNIQUEMENT SUR BIEN’ICI* Maison 3 pièces 48 m² 18000 Bourges (Val d'Auron - Hameau de Gionne - Mazières - Pijolins) 110 000 € 2 312 €/m²",
+      "description": "Citya Jacques Cœur 14 Coup de de l’agence VIDÉO UNIQUEMENT SUR BIEN’ICI* Maison 3 pièces 48 m² 18000 Bourges (Val d'Auron - Hameau de Gionne - Mazières - Pijolins) 110 000 € 2 312 €/m²",
       "askingPrice": 110000,
       "surfaceM2": 48,
       "rooms": 3,
       "postalCode": "18000",
       "city": "Bourges",
       "dpe": null,
-      "sellerType": "unknown",
+      "sellerType": "agency",
       "firstSeenAt": "2026-09-25T10:14:19.123Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 64186,
       "latitude": 47.078,
       "longitude": 2.3983,
@@ -299,7 +389,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "b79e07d46cbd31b26aa857625121df554abc18028e88080ab6c8bb822c3cc2f6",
@@ -316,7 +406,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-25T10:14:19.123Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 64186,
       "latitude": 47.078,
       "longitude": 2.3983,
@@ -329,7 +419,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "00324c4a487542e83843067763655723545989bdcc8e276427bb10851742585e",
@@ -346,7 +436,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-24T10:04:55.418Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 116357,
       "latitude": 47.8734,
       "longitude": 1.9122,
@@ -359,7 +449,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "711fedc11317ef4bfd92af6cc9b12d9b9d8a4cecd590d04045e0d3ed09ce8791",
@@ -376,7 +466,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-23T10:01:46.416Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 64186,
       "latitude": 47.078,
       "longitude": 2.3983,
@@ -389,7 +479,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "d62ece24cd339d1cf2320d7b4f52e1d174fd09a20b8650f8cf29bfaa8f945f2a",
@@ -406,7 +496,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-22T10:00:48.638Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 1132,
       "latitude": 47.2957,
       "longitude": 1.926,
@@ -419,7 +509,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "32e46b870f344a3e497a81a4af5b5d61af9f094706491cddb467f8114ca80fa3",
@@ -436,7 +526,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-22T10:00:48.638Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 116357,
       "latitude": 47.8734,
       "longitude": 1.9122,
@@ -449,7 +539,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "e4446146c7e63f5d1a4df0263a51b729ed9442b2618e51b4ff626d2aa7ab1ea5",
@@ -466,7 +556,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-22T10:00:48.638Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 64186,
       "latitude": 47.078,
       "longitude": 2.3983,
@@ -479,7 +569,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "3d9de4be8b44611b559e3643b2342a9fc3fc0511642d7a08f7f80018a2100a88",
@@ -496,7 +586,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-20T09:50:34.531Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 116357,
       "latitude": 47.8734,
       "longitude": 1.9122,
@@ -509,37 +599,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
-    },
-    {
-      "fingerprint": "dab4fe1667096304294a1889da3e10c9ad780d2e0b0ea4f00a003aad65ba6c8b",
-      "sourceId": "bienici",
-      "externalId": null,
-      "sourceUrl": "https://www.bienici.com/annonce/vente/orleans/appartement/3pieces/ag133861-550561649?q=%2Frecherche%2Fachat%2Floiret-45",
-      "title": "Appartement 3 pièces 56 m² 45000 Orléans (Bourgogne - Saint-Euverte)",
-      "description": "15 EXCLUSIVITÉ Appartement 3 pièces 56 m² 45000 Orléans (Bourgogne - Saint-Euverte) 189 900 € 3 391 €/m²",
-      "askingPrice": 189900,
-      "surfaceM2": 56,
-      "rooms": 3,
-      "postalCode": "45000",
-      "city": "Orléans",
-      "dpe": null,
-      "sellerType": "unknown",
-      "firstSeenAt": "2026-09-20T09:50:34.531Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
-      "cityPopulation": 116357,
-      "latitude": 47.8734,
-      "longitude": 1.9122,
-      "distanceKm": 29.3,
-      "priceHistory": [
-        {
-          "observedAt": "2026-09-20T09:50:34.531Z",
-          "askingPrice": 189900
-        }
-      ],
-      "previousPrice": null,
-      "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "e7389f306d46be4a20754f28947f9f7ea3524b1b72cf3593ac07f7f08415ef94",
@@ -556,7 +616,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-19T09:34:12.375Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 64186,
       "latitude": 47.078,
       "longitude": 2.3983,
@@ -569,7 +629,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "027e41c56218b11138450f7ab6700e986d34a99bc6fa7dfea88b773845434b79",
@@ -586,7 +646,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-19T09:34:12.375Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 64186,
       "latitude": 47.078,
       "longitude": 2.3983,
@@ -599,7 +659,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "1c484f62a5cc53d3db9d0dfa7aef8b7927a999d8cf52bcb11b3dec76b160d1d9",
@@ -616,7 +676,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-19T09:34:12.375Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 64186,
       "latitude": 47.078,
       "longitude": 2.3983,
@@ -629,7 +689,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "5f2a0a043080f429fe72f7e479b89e130e4515602056ded951172f2317052998",
@@ -646,7 +706,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-19T09:34:12.375Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 9083,
       "latitude": 47.9019,
       "longitude": 2.0223,
@@ -659,7 +719,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "bbcefc7f5a8f2256a8ee0738880f93001bc95dc158f6f40ce945322a0c73a047",
@@ -676,7 +736,7 @@
       "dpe": null,
       "sellerType": "agency",
       "firstSeenAt": "2026-09-18T09:49:24.915Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 64186,
       "latitude": 47.078,
       "longitude": 2.3983,
@@ -689,7 +749,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "d1d0172705d052ce222ccf6a91cf3309fc72984df7f2ecb6d49001bc38874efc",
@@ -706,7 +766,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-17T10:02:24.921Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 2678,
       "latitude": 47.3093,
       "longitude": 1.757,
@@ -719,7 +779,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "b4044f2f8a31913d65ea9891739ae2fc5ca568edbb82dcf68fcd9bbc3ede443f",
@@ -736,7 +796,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-17T10:02:24.921Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 47219,
       "latitude": 47.5813,
       "longitude": 1.3049,
@@ -749,7 +809,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "42e1f494ea0a153cf66a75626d557fc00f92214c3d3632a5788c48f68d8414d1",
@@ -766,7 +826,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-17T10:02:24.921Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 116357,
       "latitude": 47.8734,
       "longitude": 1.9122,
@@ -779,7 +839,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "9c027c6e8250ba34483c38f385ad3c7c44b9653f8a23b247f93fe951651ab36f",
@@ -796,7 +856,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-16T09:59:17.138Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 64186,
       "latitude": 47.078,
       "longitude": 2.3983,
@@ -809,7 +869,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "6afbe94caffcbdd941d2a1ce82fadef928f5a6e084e0b1e43cf0a3d0ba758aad",
@@ -826,7 +886,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-15T10:07:52.955Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 1042,
       "latitude": 47.6212,
       "longitude": 1.9216,
@@ -860,7 +920,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-15T10:07:52.955Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 550,
       "latitude": 47.4976,
       "longitude": 1.6964,
@@ -894,7 +954,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-15T10:07:52.955Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 8064,
       "latitude": 47.5855,
       "longitude": 1.3886,
@@ -907,7 +967,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "ae19520f88b3b19d66a67bcaf27c02f615655098e6fb5456cbd364548eb2f3d4",
@@ -924,7 +984,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-15T10:07:52.955Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 971,
       "latitude": 47.8587,
       "longitude": 0.9986,
@@ -937,7 +997,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "725d9a74a659d14090be07b4e99a0c862802a54bf4418721f004f4076a8add67",
@@ -954,7 +1014,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-15T10:07:52.955Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 572,
       "latitude": 47.7976,
       "longitude": 1.1021,
@@ -967,7 +1027,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "f14c5dbb4b46a5c24b403211f2e75f0c8d97b31bdf1f9d1b1dabffcc5209cec8",
@@ -984,7 +1044,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-15T10:07:52.955Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 1077,
       "latitude": 47.9143,
       "longitude": 1.2544,
@@ -997,7 +1057,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "413ceb28e9a205dde9c1c7ba8f88f7fb91cc4f1e43850c32468b40360afcc265",
@@ -1014,7 +1074,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-15T10:07:52.955Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 47219,
       "latitude": 47.5813,
       "longitude": 1.3049,
@@ -1027,7 +1087,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "49498b40ebee6a8c01870523c3bc9d15f043d6f4bdad1adee02c223e41e2a914",
@@ -1044,7 +1104,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-15T10:07:52.955Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 4471,
       "latitude": 47.6097,
       "longitude": 1.3599,
@@ -1057,7 +1117,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "49c6320bd2dfd74e859d31466ad200bdbdd6942ce0dfc5428912e3f4b074589b",
@@ -1074,7 +1134,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-15T10:07:52.955Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 379,
       "latitude": 47.5808,
       "longitude": 1.7933,
@@ -1087,7 +1147,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "ff6bd7853919d7fc4b7071e2a0c40ad416b9d3891e4dd948170c7db7ae2644d6",
@@ -1095,16 +1155,16 @@
       "externalId": null,
       "sourceUrl": "https://www.bienici.com/annonce/vente/montrieux-en-sologne/maison/8pieces/immo-facile-60159142?q=%2Frecherche%2Fachat%2Floir-et-cher-41",
       "title": "Maison 8 pièces 228 m² 41210 Montrieux-en-Sologne",
-      "description": "21 360° EXCLUSIVITÉ Maison 8 pièces 228 m² 41210 Montrieux-en-Sologne 379 800 € 1 666 €/m²",
+      "description": "21 Coup de de l’agence 360° EXCLUSIVITÉ Maison 8 pièces 228 m² 41210 Montrieux-en-Sologne 379 800 € 1 666 €/m²",
       "askingPrice": 379800,
       "surfaceM2": 228,
       "rooms": 8,
       "postalCode": "41210",
       "city": "Montrieux-en-Sologne",
       "dpe": null,
-      "sellerType": "unknown",
+      "sellerType": "agency",
       "firstSeenAt": "2026-09-15T10:07:52.955Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 638,
       "latitude": 47.556,
       "longitude": 1.709,
@@ -1117,7 +1177,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "9bf8607771f86d74c57ac6c9c7726e05e3de973d72e227b1fb1a76cb4f822a00",
@@ -1134,7 +1194,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-15T10:07:52.955Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 2678,
       "latitude": 47.3093,
       "longitude": 1.757,
@@ -1147,7 +1207,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "f92956aec2e4db528659cf455b96a83b8a98a533828a4afa0f9adcd6398dc9f9",
@@ -1164,7 +1224,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-15T10:07:52.955Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 116357,
       "latitude": 47.8734,
       "longitude": 1.9122,
@@ -1177,7 +1237,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "9a9ef4569561b348856769b8a395aa1d4bdc861c1f50f5e6034a902976ae7c97",
@@ -1194,7 +1254,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-15T10:07:52.955Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 116357,
       "latitude": 47.8734,
       "longitude": 1.9122,
@@ -1207,7 +1267,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "0db58db7b3daf4223957848276a5237a7942e62c3aff547688e27285b855e9b0",
@@ -1224,7 +1284,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-15T10:07:52.955Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 116357,
       "latitude": 47.8734,
       "longitude": 1.9122,
@@ -1237,7 +1297,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "3c6c108bcb093cf4fff82b17bb6e0883343a188af3992954c103ab72d0a1e963",
@@ -1254,7 +1314,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-15T10:07:52.955Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 116357,
       "latitude": 47.8734,
       "longitude": 1.9122,
@@ -1267,7 +1327,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "ea43ae9c5fbc43c6fd584069223aba1a795f4b374a7d557256cfab27da70d418",
@@ -1284,7 +1344,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-15T10:07:52.955Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 116357,
       "latitude": 47.8734,
       "longitude": 1.9122,
@@ -1297,7 +1357,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "c009653598e962d1be28b58edd33f0e29cf16c9c294d76819303d0b65d9569ce",
@@ -1314,7 +1374,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-15T10:07:52.955Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 116357,
       "latitude": 47.8734,
       "longitude": 1.9122,
@@ -1327,7 +1387,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "8bf8664813a932523fb979a303f34427b252a9150a7ce2885eb6aa694310c0e9",
@@ -1344,7 +1404,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-15T10:07:52.955Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 116357,
       "latitude": 47.8734,
       "longitude": 1.9122,
@@ -1357,7 +1417,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "a2f457357d895965f46226ed1d1e84e9bf2b8548ead14afe0c50733579f4b87a",
@@ -1374,7 +1434,7 @@
       "dpe": null,
       "sellerType": "agency",
       "firstSeenAt": "2026-09-15T10:07:52.955Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 116357,
       "latitude": 47.8734,
       "longitude": 1.9122,
@@ -1387,7 +1447,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "f1d3d782d7b827561e9c7c5f110a570da25629bd0512d7c687c421d03ca3da41",
@@ -1404,7 +1464,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-15T10:07:52.955Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 116357,
       "latitude": 47.8734,
       "longitude": 1.9122,
@@ -1417,7 +1477,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "7934c69126e1e30ae27512e9d011a315452d8e1cb5f4e4e0c5ae75162bd3b6a9",
@@ -1434,7 +1494,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-15T10:07:52.955Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 64186,
       "latitude": 47.078,
       "longitude": 2.3983,
@@ -1447,7 +1507,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "2f9cf0b21eaeb48542f6558b3bec60f5bfad3794179ad21ee7ec00d350a0488c",
@@ -1464,7 +1524,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-13T10:19:51.050Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 6250,
       "latitude": 47.7123,
       "longitude": 1.5051,
@@ -1477,7 +1537,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "bd3f2e13abffe6d4df7ee410e319a1266c3b3a13df4b4ff726e8d577224492c4",
@@ -1494,7 +1554,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-12T09:24:52.492Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 47219,
       "latitude": 47.5813,
       "longitude": 1.3049,
@@ -1507,7 +1567,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "6e9aa326e04c52b5913396ed86d93256841cc5cee03557358bb60b23ae8a0198",
@@ -1524,7 +1584,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-11T09:46:07.763Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 64186,
       "latitude": 47.078,
       "longitude": 2.3983,
@@ -1537,7 +1597,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "6aa6e353c9d04c3b709e295b2dc3c4f38571a6f0412be9214c1d7ae493f9b3dc",
@@ -1554,7 +1614,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-10T09:48:06.871Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 64186,
       "latitude": 47.078,
       "longitude": 2.3983,
@@ -1567,7 +1627,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "b79d90b4587a038b03fa3d8c0aba3a206a242f69221f004b264ef84836d62c9d",
@@ -1584,7 +1644,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-09T09:49:45.257Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 64186,
       "latitude": 47.078,
       "longitude": 2.3983,
@@ -1597,7 +1657,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "e7cfd58d74957cad8c94cf2bc167345bc133a8b8d8d2cf163f873dd4fc337c10",
@@ -1614,7 +1674,7 @@
       "dpe": null,
       "sellerType": "agency",
       "firstSeenAt": "2026-09-04T09:49:11.910Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 746,
       "latitude": 47.6382,
       "longitude": 1.8543,
@@ -1627,7 +1687,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "6e85f21366a34efee8cfeba915c7f2da4405414f1030e2a0cafce9ad6331f3b4",
@@ -1644,7 +1704,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-02T09:41:07.309Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 1518,
       "latitude": 47.4241,
       "longitude": 1.6094,
@@ -1657,24 +1717,24 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "ea163712a4d47e68bae7f04dd0bed998d5bc2de270b911a9d87025594dd339b7",
       "sourceId": "geolocaux",
       "externalId": null,
       "sourceUrl": "https://www.geolocaux.com/annonce/entrepot-neuf-a-vendre-meung-sur-loire-proximite-a10-et-gare-sncf-x4-555428.html",
-      "title": "Locaux d'activité à vendre Meung-sur-Loire - Proximité A10 et SNCF",
-      "description": "VOIR TOUTES LES PHOTOS Locaux d'activité à vendre Meung-sur-Loire - Proximité A10 et SNCF Voir plus Immprove Paris IDF Prix sur demande 824 à 8 714 m² VOIR TOUTES LES PHOTOS Locaux d'activité à vendre Meung-sur-Loire - Proche A10 Voir plus SPJ Conseils 600 000 € 1 570 m² Précédemment sur Geolocaux Entrepôt neuf à vendre Meung-sur-Loire - Proximité A10 et gare SNCF Voir plus CBRE Activité IDF Prix sur demande 824 à 7 066 m² VOIR AUX ALENTOURS Étendre ma recherche sur la zone de la carte 45130 Meung-sur-Loire",
+      "title": "Locaux d'activité à vendre Meung-sur-Loire - Proche A10",
+      "description": "VOIR TOUTES LES PHOTOS Locaux d'activité à vendre Meung-sur-Loire - Proche A10 Voir plus SPJ Conseils 600 000 € 1 570 m² Précédemment sur Geolocaux Locaux d'activité à vendre Meung-sur-Loire - Proximité A10 et SNCF Voir plus Immprove Paris IDF Prix sur demande 824 à 8 714 m² Entrepôt neuf à vendre Meung-sur-Loire - Proximité A10 et gare SNCF Voir plus CBRE Activité IDF Prix sur demande 824 à 7 066 m² VOIR AUX ALENTOURS Étendre ma recherche sur la zone de la carte 45130 Meung-sur-Loire",
       "askingPrice": 600000,
-      "surfaceM2": 714,
+      "surfaceM2": 570,
       "rooms": 0,
       "postalCode": "45130",
       "city": "Meung-sur-Loire",
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-09-02T09:41:07.309Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 6670,
       "latitude": 47.8396,
       "longitude": 1.6918,
@@ -1687,7 +1747,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "0a591fe9bbebc770af49d0e705e69d8246251de3412ba6a78a7adf37b915e5d7",
@@ -1704,7 +1764,7 @@
       "dpe": null,
       "sellerType": "agency",
       "firstSeenAt": "2026-09-01T10:10:33.406Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 116357,
       "latitude": 47.8734,
       "longitude": 1.9122,
@@ -1717,7 +1777,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "d30a3beeb68ebd51154c8a2da665b66a3e0009cbdf24bb4e298a6ca195bad019",
@@ -1734,7 +1794,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-08-30T10:30:17.473Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 116357,
       "latitude": 47.8734,
       "longitude": 1.9122,
@@ -1747,7 +1807,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "58f59a0c02d74d862e3cda404b15d28d3ed86d721900102bfdcf7667761af48e",
@@ -1764,7 +1824,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-08-27T16:32:59.164Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 64186,
       "latitude": 47.078,
       "longitude": 2.3983,
@@ -1777,7 +1837,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "8fa3c9e2d704ea9e4ea6116a0ee87c4e09f2cdb97a8dbb23a31997671da96db9",
@@ -1794,7 +1854,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-08-25T05:49:29.522Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 64186,
       "latitude": 47.078,
       "longitude": 2.3983,
@@ -1807,7 +1867,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "cb26a8eabb763eb2da43d5ebdd667f8a02bc614fe029cb6c2e3e7a1711ca6b78",
@@ -1824,7 +1884,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-08-23T05:47:18.324Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 64186,
       "latitude": 47.078,
       "longitude": 2.3983,
@@ -1837,7 +1897,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "25ff44ee01a1b961737276a2acadb59dfc180f5522b82ad42069d7260b17e7de",
@@ -1854,7 +1914,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-08-15T05:43:35.698Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 64186,
       "latitude": 47.078,
       "longitude": 2.3983,
@@ -1867,7 +1927,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "be09e1fdd74bf66cc9402b47fb54f89f834e276fb6066ec4d7b6a74a27100a23",
@@ -1875,7 +1935,7 @@
       "externalId": null,
       "sourceUrl": "https://www.bienici.com/annonce/vente/bourges/maison/4pieces/citya-1-374-TMAI374-967661?q=%2Frecherche%2Fachat%2Fcher-18",
       "title": "Maison 4 pièces 89 m² 18000 Bourges (Val d'Auron - Hameau de Gionne - Mazières - Pijolins)",
-      "description": "Citya Jacques Cœur 14 VIDÉO UNIQUEMENT SUR BIEN’ICI* Maison 4 pièces 89 m² 18000 Bourges (Val d'Auron - Hameau de Gionne - Mazières - Pijolins) 180 000 € 2 032 €/m²",
+      "description": "Citya Jacques Cœur 12 VIDÉO UNIQUEMENT SUR BIEN’ICI* Maison 4 pièces 89 m² 18000 Bourges (Val d'Auron - Hameau de Gionne - Mazières - Pijolins) 180 000 € 2 032 €/m²",
       "askingPrice": 180000,
       "surfaceM2": 89,
       "rooms": 4,
@@ -1884,7 +1944,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-08-15T05:43:35.698Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 64186,
       "latitude": 47.078,
       "longitude": 2.3983,
@@ -1918,7 +1978,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-08-14T06:44:42.991Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 2442,
       "latitude": 47.788,
       "longitude": 1.0223,
@@ -1931,7 +1991,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "5cd0209a784a6f75e5636e1b1d19cca55ba79e70ddf7c8aaa28fc5e9d8b88144",
@@ -1948,7 +2008,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-08-14T06:44:42.991Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 2442,
       "latitude": 47.788,
       "longitude": 1.0223,
@@ -1961,7 +2021,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "aa67b3e47a859c36c1a9f9e28e0245edc07708b3b4a09ba0ef8b6c344ada178e",
@@ -1978,7 +2038,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-08-11T03:02:28.231Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 18373,
       "latitude": 47.3725,
       "longitude": 1.7368,
@@ -1991,7 +2051,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "596f1844eeaf489bf7489f1a0da0ffed94ba8794e15e76f84c1c005e79bab818",
@@ -2008,7 +2068,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-08-11T03:02:28.231Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 17316,
       "latitude": 47.9479,
       "longitude": 1.8806,
@@ -2021,7 +2081,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "f633c632b2f6dd821b4dc1252a489e195133d7d547fff2b8aa4e0af839b080f0",
@@ -2038,7 +2098,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-08-11T03:02:28.231Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 17316,
       "latitude": 47.9479,
       "longitude": 1.8806,
@@ -2051,7 +2111,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "9283797cc98acc473acb52de9e11e04cf82a7ed4396511ded66ccb2f4bd35968",
@@ -2068,7 +2128,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-08-11T03:02:28.231Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 17316,
       "latitude": 47.9479,
       "longitude": 1.8806,
@@ -2081,7 +2141,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "1c0a6fa958f1223d954fe6898c18bc897928380ddc52a56356056579699f211e",
@@ -2098,7 +2158,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-08-11T03:02:28.231Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 9083,
       "latitude": 47.9019,
       "longitude": 2.0223,
@@ -2111,7 +2171,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "56512bedfa6c39d01c2d1d328fc6e82b13c708822ab4146e10526d3ea36ca660",
@@ -2128,7 +2188,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-08-11T03:02:28.231Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 17316,
       "latitude": 47.9479,
       "longitude": 1.8806,
@@ -2141,7 +2201,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "fac40ec0f3476d198e6d7f4b598415081984df9c47e0520f3dc2d67b2f822872",
@@ -2158,7 +2218,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-08-11T03:02:28.231Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 17316,
       "latitude": 47.9479,
       "longitude": 1.8806,
@@ -2171,37 +2231,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
-    },
-    {
-      "fingerprint": "cfc2fbe37edd115e30931a594fa153e0caf41136c5aa736961a32910319766c6",
-      "sourceId": "geolocaux",
-      "externalId": null,
-      "sourceUrl": "https://www.geolocaux.com/annonce/locaux-d-activite-a-vendre-meung-sur-loire-proximite-a10-et-sncf-659839.html",
-      "title": "Locaux d'activité à vendre Meung-sur-Loire - Proximité A10 et SNCF",
-      "description": "VOIR TOUTES LES PHOTOS Locaux d'activité à vendre Meung-sur-Loire - Proximité A10 et SNCF Voir plus Immprove Paris IDF Prix sur demande 824 à 8 714 m² VOIR TOUTES LES PHOTOS Locaux d'activité à vendre Meung-sur-Loire - Proche A10 Voir plus SPJ Conseils 600 000 € 1 570 m² Précédemment sur Geolocaux Entrepôt neuf à vendre Meung-sur-Loire - Proximité A10 et gare SNCF Voir plus CBRE Activité IDF Prix sur demande 824 à 7 066 m² VOIR AUX ALENTOURS Étendre ma recherche sur la zone de la carte 45130 Meung-sur-Loire",
-      "askingPrice": 600000,
-      "surfaceM2": 714,
-      "rooms": 0,
-      "postalCode": "45130",
-      "city": "Meung-sur-Loire",
-      "dpe": null,
-      "sellerType": "unknown",
-      "firstSeenAt": "2026-08-11T03:02:28.231Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
-      "cityPopulation": 6670,
-      "latitude": 47.8396,
-      "longitude": 1.6918,
-      "distanceKm": 30.1,
-      "priceHistory": [
-        {
-          "observedAt": "2026-08-11T03:02:28.231Z",
-          "askingPrice": 600000
-        }
-      ],
-      "previousPrice": null,
-      "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "0b36a9eee6e931ea9512e2957b30dfa99acd083d561436e089d961117df900f0",
@@ -2218,7 +2248,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-08-11T03:02:28.231Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 6670,
       "latitude": 47.8396,
       "longitude": 1.6918,
@@ -2231,7 +2261,37 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
+    },
+    {
+      "fingerprint": "cfc2fbe37edd115e30931a594fa153e0caf41136c5aa736961a32910319766c6",
+      "sourceId": "geolocaux",
+      "externalId": null,
+      "sourceUrl": "https://www.geolocaux.com/annonce/locaux-d-activite-a-vendre-meung-sur-loire-proximite-a10-et-sncf-659839.html",
+      "title": "Locaux d'activité à vendre Meung-sur-Loire - Proche A10",
+      "description": "VOIR TOUTES LES PHOTOS Locaux d'activité à vendre Meung-sur-Loire - Proche A10 Voir plus SPJ Conseils 600 000 € 1 570 m² Précédemment sur Geolocaux Locaux d'activité à vendre Meung-sur-Loire - Proximité A10 et SNCF Voir plus Immprove Paris IDF Prix sur demande 824 à 8 714 m² Entrepôt neuf à vendre Meung-sur-Loire - Proximité A10 et gare SNCF Voir plus CBRE Activité IDF Prix sur demande 824 à 7 066 m² VOIR AUX ALENTOURS Étendre ma recherche sur la zone de la carte 45130 Meung-sur-Loire",
+      "askingPrice": 600000,
+      "surfaceM2": 570,
+      "rooms": 0,
+      "postalCode": "45130",
+      "city": "Meung-sur-Loire",
+      "dpe": null,
+      "sellerType": "unknown",
+      "firstSeenAt": "2026-08-11T03:02:28.231Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
+      "cityPopulation": 6670,
+      "latitude": 47.8396,
+      "longitude": 1.6918,
+      "distanceKm": 30.1,
+      "priceHistory": [
+        {
+          "observedAt": "2026-08-11T03:02:28.231Z",
+          "askingPrice": 600000
+        }
+      ],
+      "previousPrice": null,
+      "priceChangedAt": null,
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "a857524f7e23c8be410bead8a25bbbb27a88d313bc384ec5b043299036117bf3",
@@ -2248,7 +2308,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-08-11T03:02:28.231Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 9083,
       "latitude": 47.9019,
       "longitude": 2.0223,
@@ -2261,7 +2321,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "4af353187ac1a575ca783a192cbe6e269058bde1188428d94bf7bf32befd1c42",
@@ -2278,7 +2338,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-08-11T03:02:28.231Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 9083,
       "latitude": 47.9019,
       "longitude": 2.0223,
@@ -2291,7 +2351,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "dfa52a6d5b53a08426b4dc52cf7558be68e1d8e87f671e311e1b9030d9e04a09",
@@ -2308,7 +2368,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-08-11T02:37:29.906Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 6860,
       "latitude": 47.4327,
       "longitude": 1.3851,
@@ -2342,7 +2402,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-08-11T02:37:29.906Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 2678,
       "latitude": 47.3093,
       "longitude": 1.757,
@@ -2355,7 +2415,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "3b3b1fe14080389acdcff863ec6545f7c85f0ff9e66d5249897162c6179cb306",
@@ -2372,7 +2432,7 @@
       "dpe": null,
       "sellerType": "agency",
       "firstSeenAt": "2026-08-11T02:37:29.906Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 2715,
       "latitude": 47.5263,
       "longitude": 1.3814,
@@ -2385,7 +2445,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "db3bb62eebb5257023a7a8e1e182d2aa36fdaef2b6252a265d0a8bcc6da89347",
@@ -2393,16 +2453,16 @@
       "externalId": null,
       "sourceUrl": "https://www.bienici.com/annonce/vente/orleans/maison/6pieces/hektor-SAINTAY2019-18042?q=%2Frecherche%2Fachat%2Floiret-45",
       "title": "Maison 6 pièces 117 m² 45100 Orléans (Soleil Levant - Champ de Mars)",
-      "description": "SAINT AY IMMOBILIER 28 Coup de de l’agence VIDÉO EXCLUSIVITÉ Maison 6 pièces 117 m² 45100 Orléans (Soleil Levant - Champ de Mars) 269 000 € 2 309 €/m²",
+      "description": "SAINT AY IMMOBILIER 28 VIDÉO EXCLUSIVITÉ Maison 6 pièces 117 m² 45100 Orléans (Soleil Levant - Champ de Mars) 269 000 € 2 309 €/m²",
       "askingPrice": 269000,
       "surfaceM2": 117,
       "rooms": 6,
       "postalCode": "45100",
       "city": "Orléans",
       "dpe": null,
-      "sellerType": "agency",
+      "sellerType": "unknown",
       "firstSeenAt": "2026-08-11T02:37:29.906Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 116357,
       "latitude": 47.8734,
       "longitude": 1.9122,
@@ -2415,7 +2475,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "a3ca50a2e62480b7af3489200d271cd47279d5af8699d0b690f3f05a96743760",
@@ -2432,7 +2492,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-08-11T02:37:29.906Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 116357,
       "latitude": 47.8734,
       "longitude": 1.9122,
@@ -2445,7 +2505,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "9860c27d477dec92a3928967dba6d6bbb5b64c3e526fa0eb22d7fd24c3f637bf",
@@ -2462,7 +2522,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-08-11T02:37:29.906Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 116357,
       "latitude": 47.8734,
       "longitude": 1.9122,
@@ -2496,7 +2556,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-08-11T02:37:29.906Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 64186,
       "latitude": 47.078,
       "longitude": 2.3983,
@@ -2509,7 +2569,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "18d90c92ff29b21bfb7a844e1fb4d8291e510ab853d1a3856d3a64c50a4929f2",
@@ -2517,16 +2577,16 @@
       "externalId": null,
       "sourceUrl": "https://www.bienici.com/annonce/vente/bourges/maison/10pieces/netty-sgti-house-336?q=%2Frecherche%2Fachat%2Fcher-18",
       "title": "Maison 10 pièces 350 m² 18000 Bourges (Centre-ville - Charlet - Lahitolle - Pignoux - Sembat)",
-      "description": "BARTH 30 Coup de de l’agence EXCLUSIVITÉ Maison 10 pièces 350 m² 18000 Bourges (Centre-ville - Charlet - Lahitolle - Pignoux - Sembat) 549 000 € 1 569 €/m²",
+      "description": "BARTH 30 EXCLUSIVITÉ Maison 10 pièces 350 m² 18000 Bourges (Centre-ville - Charlet - Lahitolle - Pignoux - Sembat) 549 000 € 1 569 €/m²",
       "askingPrice": 549000,
       "surfaceM2": 350,
       "rooms": 10,
       "postalCode": "18000",
       "city": "Bourges",
       "dpe": null,
-      "sellerType": "agency",
+      "sellerType": "unknown",
       "firstSeenAt": "2026-08-11T02:37:29.906Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 64186,
       "latitude": 47.078,
       "longitude": 2.3983,
@@ -2539,7 +2599,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "4970b44f975f7bbe5ede96a9bada7326cf062a2277c4dc7f98d8be596a975bfd",
@@ -2556,7 +2616,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-08-11T02:37:29.906Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 64186,
       "latitude": 47.078,
       "longitude": 2.3983,
@@ -2569,7 +2629,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "affb7b477364ae57a46cb8253eea12ec32331d5cfed22c0fa5d17f887567bb21",
@@ -2586,7 +2646,7 @@
       "dpe": null,
       "sellerType": "unknown",
       "firstSeenAt": "2026-08-11T02:37:29.906Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 64186,
       "latitude": 47.078,
       "longitude": 2.3983,
@@ -2599,7 +2659,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "ab6ffbe9bf9313752b4dec6e6729fd9aaf1ab4396e48e48af009872144f03fbc",
@@ -2607,16 +2667,16 @@
       "externalId": null,
       "sourceUrl": "https://www.bienici.com/annonce/vente/bourges/appartement/4pieces/citya-1-374-TAPP961856?q=%2Frecherche%2Fachat%2Fcher-18",
       "title": "Appartement 4 pièces 101 m² 18000 Bourges (Centre-ville - Charlet - Lahitolle - Pignoux - Sembat)",
-      "description": "Citya Jacques Cœur 13 Coup de de l’agence VIDÉO UNIQUEMENT SUR BIEN’ICI* Appartement 4 pièces 101 m² 18000 Bourges (Centre-ville - Charlet - Lahitolle - Pignoux - Sembat) 170 000 € 1 687 €/m²",
+      "description": "Citya Jacques Cœur 13 VIDÉO UNIQUEMENT SUR BIEN’ICI* Appartement 4 pièces 101 m² 18000 Bourges (Centre-ville - Charlet - Lahitolle - Pignoux - Sembat) 170 000 € 1 687 €/m²",
       "askingPrice": 170000,
       "surfaceM2": 101,
       "rooms": 4,
       "postalCode": "18000",
       "city": "Bourges",
       "dpe": null,
-      "sellerType": "agency",
+      "sellerType": "unknown",
       "firstSeenAt": "2026-08-11T02:37:29.906Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 64186,
       "latitude": 47.078,
       "longitude": 2.3983,
@@ -2629,7 +2689,7 @@
       ],
       "previousPrice": null,
       "priceChangedAt": null,
-      "updatedAt": "2026-09-28T11:44:07.308Z"
+      "updatedAt": "2026-09-29T11:23:49.887Z"
     },
     {
       "fingerprint": "d47aa54d696fdc12ee0c182d179665a36d496d5658d4daf45a7ad5ffe2f2eccb",
@@ -2637,16 +2697,16 @@
       "externalId": null,
       "sourceUrl": "https://www.bienici.com/annonce/vente/bourges/maison/6pieces/citya-1-374-TMAI374-967648?q=%2Frecherche%2Fachat%2Fcher-18",
       "title": "Maison 6 pièces 174 m² 18000 Bourges (Aéroport - Vauvert - Pierrelay - Pissevieille)",
-      "description": "Citya Jacques Cœur 18 VIDÉO UNIQUEMENT SUR BIEN’ICI* Maison 6 pièces 174 m² 18000 Bourges (Aéroport - Vauvert - Pierrelay - Pissevieille) 242 000 € 1 391 €/m²",
+      "description": "Citya Jacques Cœur 18 Coup de de l’agence VIDÉO UNIQUEMENT SUR BIEN’ICI* Maison 6 pièces 174 m² 18000 Bourges (Aéroport - Vauvert - Pierrelay - Pissevieille) 242 000 € 1 391 €/m²",
       "askingPrice": 242000,
       "surfaceM2": 174,
       "rooms": 6,
       "postalCode": "18000",
       "city": "Bourges",
       "dpe": null,
-      "sellerType": "unknown",
+      "sellerType": "agency",
       "firstSeenAt": "2026-08-11T02:37:29.906Z",
-      "lastSeenAt": "2026-09-28T11:44:07.308Z",
+      "lastSeenAt": "2026-09-29T11:23:49.887Z",
       "cityPopulation": 64186,
       "latitude": 47.078,
       "longitude": 2.3983,

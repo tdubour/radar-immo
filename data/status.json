@@ -1,7 +1,7 @@
 {
   "ok": true,
-  "generatedAt": "2026-10-09T11:56:02.245Z",
-  "message": "88 annonces actives",
+  "generatedAt": "2026-10-10T11:12:36.840Z",
+  "message": "87 annonces actives",
   "sources": [
     {
       "id": "leboncoin",
@@ -28,7 +28,7 @@
       "id": "bienici-41",
       "label": "Bien'ici Loir-et-Cher",
       "ok": true,
-      "count": 25
+      "count": 26
     },
     {
       "id": "bienici-45",

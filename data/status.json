@@ -1,7 +1,7 @@
 {
   "ok": true,
-  "generatedAt": "2026-10-29T11:33:23.125Z",
-  "message": "89 annonces actives",
+  "generatedAt": "2026-10-30T11:25:42.741Z",
+  "message": "88 annonces actives",
   "sources": [
     {
       "id": "leboncoin",
@@ -53,7 +53,7 @@
       "id": "paruvendu-41",
       "label": "ParuVendu Loir-et-Cher",
       "ok": true,
-      "count": 2
+      "count": 1
     },
     {
       "id": "geolocaux-41",
